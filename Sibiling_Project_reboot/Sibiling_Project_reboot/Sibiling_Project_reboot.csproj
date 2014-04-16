@@ -68,6 +68,8 @@
     <Content Include="blue_player.png" />
     <Content Include="game.js" />
     <Content Include="index.html" />
+    <Content Include="neighBackground.png" />
+    <Content Include="runBoy1.png" />
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>

@@ -212,7 +212,7 @@ function Tile(x, y) {
     this.bottom = true;
     this.left = true;
     this.right = true;
-    this.color = "Yellow";
+    this.color = "Red";
 }
 
 // GameBoard code below

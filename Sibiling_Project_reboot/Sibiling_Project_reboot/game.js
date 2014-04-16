@@ -1,5 +1,7 @@
 ﻿// This game shell was happily copied from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
+heroSpriteSheet = "runBoy1.png";
+
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -123,6 +125,24 @@ GameEngine.prototype.startInput = function () {
         that.wheel = e;
     }, false);
 
+    this.ctx.canvas.addEventListener("keydown", function (e) {
+        if (e.keyCode === 39) {
+            that.rightArrow = true;
+        }
+        if (e.keyCode === 32) {
+            that.space = true;
+        }
+        e.preventDefault();
+    }, false);
+
+    this.ctx.canvas.addEventListener("keyup", function (e) {
+        if (e.keyCode === 39) {
+            that.rightArrow = false;
+            that.isRunKeyUp = true;
+        }
+        e.preventDefault();
+    }, false);
+
     console.log('Input started');
 }
 
@@ -161,12 +181,18 @@ GameEngine.prototype.update = function () {
     }
 }
 
+
 GameEngine.prototype.loop = function () {
+    this.clockTick = this.timer.tick();
     this.update();
     this.draw();
+    this.isRunKeyUp = false;
+    this.rightArrow = null;
+    this.space = null;
     this.click = null;
     this.wheel = null;
 }
+
 
 function Entity(game, x, y) {
     this.game = game;
@@ -275,6 +301,13 @@ Background.prototype.update = function () {
 }
 
 Background.prototype.draw = function (ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 400, 1200, 300);
+    ctx.clearRect(0, 0, 1200, 435);
+
+}
+/*
+Background.prototype.draw = function (ctx) {
     //Ground to run on
     ctx.fillStyle = "Green";
     ctx.fillRect(0, 500, 10240, 60);
@@ -299,6 +332,7 @@ Background.prototype.draw = function (ctx) {
         ctx.fillRect(0, h, WIDTH, 1);
     }
 }
+*/
 
 function Player(game) {
 
@@ -322,32 +356,105 @@ Player.prototype.draw = function (ctx) {
 var HEIGHT = 560;
 var WIDTH = 1024;
 
+
+function RunBoy(game) {
+    this.standing = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 18, 35, 0.07, 1, true, false);
+    this.runAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 18, 35, 0.04, 12, true, false);
+    this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 96, 18, 29, 0.07, 18, false);
+    this.jumping = false;
+    this.running = false;
+
+    // set the sprite's starting position on the canvas
+    Entity.call(this, game, 20, 372);
+}
+
+RunBoy.prototype = new Entity();
+RunBoy.prototype.constructor = RunBoy;
+
+RunBoy.prototype.update = function () {
+
+    if (this.game.rightArrow && !this.game.isRunKeyUp) {
+        this.running = true;
+        this.x += 1;
+    }
+
+    if (this.game.isRunKeyUp) {
+        this.running = false;
+    }
+
+    if (this.game.space) {
+        this.jumping = true;
+        this.x += 10;
+    }
+    Entity.prototype.update.call(this);
+}
+
+RunBoy.prototype.draw = function (ctx) {
+
+    if (this.jumping) {
+        var height = 0;
+        var duration = this.jumpAnimation.elapsedTime + this.game.clockTick;
+        var maxHeight = 300;
+        if (duration > this.jumpAnimation.totalTime / 2) duration = this.jumpAnimation.totalTime - duration;
+        duration = duration / this.jumpAnimation.totalTime;
+        // linear jump
+        var height = maxHeight * 2 * duration + 17;
+
+        // quadratic jump
+        height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+
+        //this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x + 32, this.y - height);
+        this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
+
+
+        if (this.jumpAnimation.isDone()) {
+            this.jumpAnimation.elapsedTime = 0;
+            this.jumping = false;
+        }
+
+    }
+    else if (this.running) {
+
+        this.runAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    } else {
+        this.standing.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+    }
+}
+
 // the "main" code begins here
 
 var ASSET_MANAGER = new AssetManager();
-
-//ASSET_MANAGER.queueDownload("./img/myMarioSprite.png");
+ASSET_MANAGER.queueDownload(heroSpriteSheet);
 
 ASSET_MANAGER.downloadAll(function () {
     console.log("starting up da sheild");
     var canvas = document.getElementById('gameWorld');
+    canvas.focus();
     var ctx = canvas.getContext('2d');
 
     var gameEngine = new GameEngine();
-    var gameboard = new GameBoard(gameEngine);
+    //var gameboard = new GameBoard(gameEngine);
 
-    var back = new Background(gameEngine);
-    var player = new Player(gameEngine);
-    gameEngine.addEntity(gameboard);
+    //var back = new Background(gameEngine);
+    //var player = new Player(gameEngine);
+    //gameEngine.addEntity(gameboard);
 
-    gameEngine.addEntity(player);
-    gameEngine.addEntity(back);
+    //gameEngine.addEntity(player);
+    //gameEngine.addEntity(back);
+
+    var bg = new Background(gameEngine);
+    var boy = new RunBoy(gameEngine);
+
+    gameEngine.addEntity(bg);
+    gameEngine.addEntity(boy);
 
 
     gameEngine.init(ctx);
     gameEngine.start();
 });
 
+/*
 function Board() {
 
     this.board = [];
@@ -359,3 +466,4 @@ function Board() {
         }
     }
 }
+*/

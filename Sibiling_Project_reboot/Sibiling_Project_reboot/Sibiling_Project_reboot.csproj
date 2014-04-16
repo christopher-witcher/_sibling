@@ -65,6 +65,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="blue_player.png" />
     <Content Include="game.js" />
     <Content Include="index.html" />
     <Content Include="neighBackground.png" />

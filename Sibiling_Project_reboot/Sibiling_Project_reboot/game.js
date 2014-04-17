@@ -235,6 +235,9 @@ GameEngine.prototype.draw = function (drawCallback) {
     this.ctx.restore();
 }
 
+/*
+Update all entities
+*/
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
 
@@ -258,9 +261,9 @@ GameEngine.prototype.loop = function () {
     this.update();
     this.draw();
     this.isRightArrowUp = true;
-    this.rightArrow = null;
+    this.rightArrow = false;
     this.isLeftArrowUp = true;
-    this.leftArrow = null;
+    this.leftArrow = false;
     this.space = null;
     this.click = null;
     this.wheel = null;
@@ -363,8 +366,8 @@ RunBoy.prototype.update = function () {
         this.x -= 20;
     }
 
-    if (this.game.isRightArrowUp || this.game.isLeftArrowUp) {
-        this.running = false;
+    if (this.running = false) {
+        
         this.standing = true;
     }
 

@@ -1,6 +1,7 @@
 ﻿// This game shell was happily copied from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
 heroSpriteSheet = "blue_player.png";
+direction = true; // player's direction, true = right
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -131,6 +132,7 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+
 }
 
 GameEngine.prototype.init = function (ctx) {
@@ -185,7 +187,14 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keydown", function (e) {
         if (e.keyCode === 39) {
             that.rightArrow = true;
+            direction = true; // true = right, false = left
         }
+
+        if (e.keyCode === 37) {
+            that.leftArrow = true;
+            direction = false; // true = right, false = left
+        }
+
         if (e.keyCode === 32) {
             that.space = true;
         }
@@ -197,9 +206,12 @@ GameEngine.prototype.startInput = function () {
             that.rightArrow = false;
             that.isRunKeyUp = true;
         }
+        if (e.keyCode === 37) {
+            that.leftArrow = false;
+            that.isLeftArrowUp = true;
+        }
         e.preventDefault();
     }, false);
-
 
     console.log('Input started');
 }
@@ -245,6 +257,8 @@ GameEngine.prototype.loop = function () {
     this.draw();
     this.isRunKeyUp = false;
     this.rightArrow = null;
+    this.isLeftArrowUp = false;
+    this.leftArrow = null;
     this.space = null;
     this.click = null;
     this.wheel = null;
@@ -312,10 +326,16 @@ Background.prototype.draw = function (ctx) {
 //Used to initialize RunBoy with all his specs
 function RunBoy(game) {
     this.standing = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 330, 60, 120, 0.01, 1, true, false);
+
     this.runAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
+
     this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
     this.jumping = false;
     this.running = false;
+   
 
     // set the sprite's starting position on the canvas
     Entity.call(this, game, 20, 550);
@@ -328,10 +348,17 @@ RunBoy.prototype.update = function () {
 
     if (this.game.rightArrow && !this.game.isRunKeyUp) {
         this.running = true;
+        direction = true;
         this.x += 20;
     }
 
-    if (this.game.isRunKeyUp) {
+    if (this.game.leftArrow && !this.game.isLeftArrowUp) {
+        this.running = true;
+        direction = false;
+        this.x -= 20;
+    }
+
+    if (this.game.isRunKeyUp || this.game.isLeftArrowUp) {
         this.running = false;
     }
 
@@ -365,12 +392,19 @@ RunBoy.prototype.draw = function (ctx) {
             this.jumping = false;
         }
 
-    }
-    else if (this.running) {
-
+    } else if (this.running && this.game.rightArrow) {
+        
         this.runAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 
-    } else {
+    } else if (this.running && this.game.leftArrow) {
+
+        this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    } else if (!direction) {
+        
+        this.leftStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+
+    } else if (direction) {
         this.standing.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     }
 }

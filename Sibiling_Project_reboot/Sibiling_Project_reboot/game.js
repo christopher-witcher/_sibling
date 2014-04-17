@@ -1,6 +1,6 @@
 ﻿// This game shell was happily copied from Googler Seth Ladd's "Bad Aliens" game and his Google IO talk in 2011
 
-heroSpriteSheet = "runBoy1.png";
+heroSpriteSheet = "blue_player.png";
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -290,7 +290,7 @@ Entity.prototype.rotateAndCache = function (image, angle) {
 // GameBoard code below
 
 function Background(game) {
-    Entity.call(this, game, 0, 400);
+    Entity.call(this, game, 0, 0);
 }
 
 Background.prototype = new Entity();
@@ -301,21 +301,24 @@ Background.prototype.update = function () {
 }
 
 Background.prototype.draw = function (ctx) {
-    ctx.fillStyle = "black";
-    ctx.fillRect(0, 400, 1200, 300);
-    ctx.clearRect(0, 0, 1200, 435);
+    this.image = ASSET_MANAGER.getAsset(backImg);
+    try {
+        ctx.drawImage(this.image, 0, 0);
+    } catch (Exception) {
+        console.log(Exception.message);
+    }
 
 }
-
+//Used to initialize RunBoy with all his specs
 function RunBoy(game) {
-    this.standing = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 18, 35, 0.07, 1, true, false);
-    this.runAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 18, 35, 0.04, 12, true, false);
-    this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 96, 18, 29, 0.07, 18, false);
+    this.standing = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
+    this.runAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
+    this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
     this.jumping = false;
     this.running = false;
 
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, 20, 372);
+    Entity.call(this, game, 20, 550);
 }
 
 RunBoy.prototype = new Entity();
@@ -325,7 +328,7 @@ RunBoy.prototype.update = function () {
 
     if (this.game.rightArrow && !this.game.isRunKeyUp) {
         this.running = true;
-        this.x += 1;
+        this.x += 20;
     }
 
     if (this.game.isRunKeyUp) {
@@ -372,11 +375,15 @@ RunBoy.prototype.draw = function (ctx) {
     }
 }
 
+var backImg = "neighBackgroundext.png";
+
 // the "main" code begins here
 
 var ASSET_MANAGER = new AssetManager();
-
+ASSET_MANAGER.queueDownload(backImg);
 ASSET_MANAGER.queueDownload(heroSpriteSheet);
+
+
 
 ASSET_MANAGER.downloadAll(function () {
 
@@ -388,10 +395,10 @@ ASSET_MANAGER.downloadAll(function () {
     var gameEngine = new GameEngine();
     var bg = new Background(gameEngine);
     var boy = new RunBoy(gameEngine);
-
+    
     gameEngine.addEntity(bg);
     gameEngine.addEntity(boy);
-
+    
     gameEngine.init(ctx);
     gameEngine.start();
 });

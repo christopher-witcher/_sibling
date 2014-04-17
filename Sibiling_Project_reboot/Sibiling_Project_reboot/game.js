@@ -187,12 +187,14 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keydown", function (e) {
         if (e.keyCode === 39) {
             that.rightArrow = true;
-            direction = true; // true = right, false = left
+            that.isRightArrowUp = false;
+            direction = true; // true = right
         }
 
         if (e.keyCode === 37) {
             that.leftArrow = true;
-            direction = false; // true = right, false = left
+            that.isLeftArrowUp = false;
+            direction = false; // false = left
         }
 
         if (e.keyCode === 32) {
@@ -204,7 +206,7 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("keyup", function (e) {
         if (e.keyCode === 39) {
             that.rightArrow = false;
-            that.isRunKeyUp = true;
+            that.isRightArrowUp = true;
         }
         if (e.keyCode === 37) {
             that.leftArrow = false;
@@ -255,9 +257,9 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
-    this.isRunKeyUp = false;
+    this.isRightArrowUp = true;
     this.rightArrow = null;
-    this.isLeftArrowUp = false;
+    this.isLeftArrowUp = true;
     this.leftArrow = null;
     this.space = null;
     this.click = null;
@@ -325,17 +327,18 @@ Background.prototype.draw = function (ctx) {
 }
 //Used to initialize RunBoy with all his specs
 function RunBoy(game) {
-    this.standing = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 330, 60, 120, 0.01, 1, true, false);
 
-    this.runAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 145, 330, 60, 120, 0.01, 1, true, false);
+
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
 
-    this.jumpAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
     this.jumping = false;
     this.running = false;
-   
+    this.standing = true;
 
     // set the sprite's starting position on the canvas
     Entity.call(this, game, 20, 550);
@@ -346,20 +349,23 @@ RunBoy.prototype.constructor = RunBoy;
 
 RunBoy.prototype.update = function () {
 
-    if (this.game.rightArrow && !this.game.isRunKeyUp) {
+    if (this.game.rightArrow && !this.game.isRightArrowUp) {
         this.running = true;
+        this.standing = false;
         direction = true;
         this.x += 20;
     }
 
     if (this.game.leftArrow && !this.game.isLeftArrowUp) {
         this.running = true;
+        this.standing = false;
         direction = false;
         this.x -= 20;
     }
 
-    if (this.game.isRunKeyUp || this.game.isLeftArrowUp) {
+    if (this.game.isRightArrowUp || this.game.isLeftArrowUp) {
         this.running = false;
+        this.standing = true;
     }
 
     if (this.game.space) {
@@ -372,40 +378,60 @@ RunBoy.prototype.update = function () {
 RunBoy.prototype.draw = function (ctx) {
 
     if (this.jumping) {
+
         var height = 0;
-        var duration = this.jumpAnimation.elapsedTime + this.game.clockTick;
         var maxHeight = 300;
-        if (duration > this.jumpAnimation.totalTime / 2) duration = this.jumpAnimation.totalTime - duration;
-        duration = duration / this.jumpAnimation.totalTime;
-        // linear jump
-        var height = maxHeight * 2 * duration + 17;
 
-        // quadratic jump
-        height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+        if (direction) {
+            
+            var duration = this.jumpRight.elapsedTime + this.game.clockTick;
+            if (duration > this.jumpRight.totalTime / 2) duration = this.jumpRight.totalTime - duration;
+            duration = duration / this.jumpRight.totalTime;
+            // linear jump
+            height = maxHeight * 2 * duration + 17;
 
-        //this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x + 32, this.y - height);
-        this.jumpAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
+            // quadratic jump
+            height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
 
+            if (this.jumpRight.isDone()) {
+                this.jumpRight.elapsedTime = 0;
+                this.jumping = false;
+            }
 
-        if (this.jumpAnimation.isDone()) {
-            this.jumpAnimation.elapsedTime = 0;
-            this.jumping = false;
+        } else {
+            var duration = this.jumpLeft.elapsedTime + this.game.clockTick;
+            if (duration > this.jumpLeft.totalTime / 2) duration = this.jumpLeft.totalTime - duration;
+            duration = duration / this.jumpLeft.totalTime;
+            // linear jump
+            height = maxHeight * 2 * duration + 17;
+
+            // quadratic jump
+            height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
+
+            if (this.jumpLeft.isDone()) {
+                this.jumpLeft.elapsedTime = 0;
+                this.jumping = false;
+            }
         }
 
-    } else if (this.running && this.game.rightArrow) {
+    } else if (this.running) {
+    
+        if (direction) {
+            this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        } else {
+            this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        }
+
+    } else {
         
-        this.runAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        if (direction) {
+            this.rightStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        } else {
+            this.leftStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        }
 
-    } else if (this.running && this.game.leftArrow) {
-
-        this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-
-    } else if (!direction) {
-        
-        this.leftStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-
-    } else if (direction) {
-        this.standing.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     }
 }
 

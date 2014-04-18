@@ -2,22 +2,21 @@
 
 
 function Background(game) {
+    this.backDrop = new Animation(ASSET_MANAGER.getAsset(backImg), 0, 0, 2048, 700, 0.01, 1, true, false);
     Entity.call(this, game, 0, 0);
+    this.game = game;
 }
 
 Background.prototype = new Entity();
 Background.prototype.constructor = Background;
 
 Background.prototype.update = function () {
+    
     Entity.prototype.update.call(this);
 }
 
 Background.prototype.draw = function (ctx) {
     this.image = ASSET_MANAGER.getAsset(backImg);
-    try {
-        ctx.drawImage(this.image, 0, 0);
-    } catch (Exception) {
-        console.log(Exception.message);
-    }
+    this.backDrop.drawFrame(this.game.clockTick, ctx, 0, 0);
 
 }

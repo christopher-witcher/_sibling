@@ -1,6 +1,6 @@
 ﻿heroSpriteSheet = "blue_player.png";
 direction = true;
-
+screenOffSet = 0;
 var backImg = "neighBackgroundext.png";
 var gameEngine;
 
@@ -67,6 +67,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
+    
 }
 
 Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
@@ -133,6 +134,9 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+    this.LeftLimit = 0;
+    this.rightLimit = 1024;
+    
 
 }
 

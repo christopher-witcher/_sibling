@@ -8,7 +8,7 @@ function RunBoy(game) {
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 340, 70, 100, 0.5, 1, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 490, 100, 110, .333, 3, false);
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 385, 340, 85, 100, 0.5, 1, false);
     this.jumping = false;
     this.running = false;
@@ -29,6 +29,7 @@ RunBoy.prototype.update = function () {
         this.standing = false;
         direction = true;
         this.x += 5;
+        
     }
 
     if (this.game.leftArrow) {
@@ -36,6 +37,7 @@ RunBoy.prototype.update = function () {
         this.standing = false;
         direction = false;
         this.x -= 5;
+        
     }
 
     if (this.running === false) {
@@ -44,7 +46,7 @@ RunBoy.prototype.update = function () {
 
     if (this.game.space) {
         this.jumping = true;
-        this.x += 10;
+        //this.x += 10;
     }
     Entity.prototype.update.call(this);
 }

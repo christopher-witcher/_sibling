@@ -315,23 +315,24 @@ Entity.prototype.rotateAndCache = function (image, angle) {
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);
 ASSET_MANAGER.queueDownload(heroSpriteSheet);
+window.onload = initialize;
+function initialize() {
+    ASSET_MANAGER.downloadAll(function () {
 
-ASSET_MANAGER.downloadAll(function () {
+        var canvas = document.getElementById('gameWorld');
+        canvas.setAttribute("tabindex", 0);
+        canvas.focus();
+        var ctx = canvas.getContext('2d');
 
-    var canvas = document.getElementById('gameWorld');
-    canvas.setAttribute("tabindex", 0);
-    canvas.focus();
-    var ctx = canvas.getContext('2d');
+        gameEngine = new GameEngine();
+        var bg = new Background(gameEngine);
+        var boy = new RunBoy(gameEngine);
 
-    gameEngine = new GameEngine();
-    var bg = new Background(gameEngine);
-    var boy = new RunBoy(gameEngine);
-    
-    gameEngine.addEntity(bg);
-    gameEngine.addEntity(boy);
+        gameEngine.addEntity(bg);
+        gameEngine.addEntity(boy);
 
-    gameEngine.init(ctx);
-    gameEngine.start();
-});
+        gameEngine.init(ctx);
+        gameEngine.start();
+    });
+}
 
-window.onload("load", gameEngine.start());

@@ -9,7 +9,7 @@ function RunBoy(game) {
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
 
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 490, 100, 110, .333, 3, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 385, 340, 85, 100, 0.5, 1, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 360, 100, 110, 0.333, 3, false);
     this.jumping = false;
     this.running = false;
     this.standing = true;

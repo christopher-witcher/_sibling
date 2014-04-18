@@ -8,8 +8,8 @@ function RunBoy(game) {
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 510, 490, 100, 110, .333, 3, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 407, 360, 99, 110, 0.4, 4, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 490, 100, 110, .4, 4, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 360, 100, 110, 0.4, 4, false);
     this.jumping = false;
     this.running = false;
     this.standing = true;

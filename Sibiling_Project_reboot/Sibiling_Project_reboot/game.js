@@ -190,7 +190,7 @@ GameEngine.prototype.startInput = function () {
             that.isRightArrowUp = false;
             direction = true; // true = right
         }
-
+        
         if (e.keyCode === 37) {
             that.leftArrow = true;
             that.isLeftArrowUp = false;
@@ -352,22 +352,22 @@ RunBoy.prototype.constructor = RunBoy;
 
 RunBoy.prototype.update = function () {
 
-    if (this.game.rightArrow && !this.game.isRightArrowUp) {
+    if (this.game.rightArrow) {
+
         this.running = true;
         this.standing = false;
         direction = true;
-        this.x += 20;
+        this.x += 5;
     }
 
-    if (this.game.leftArrow && !this.game.isLeftArrowUp) {
+    if (this.game.leftArrow) {
         this.running = true;
         this.standing = false;
         direction = false;
-        this.x -= 20;
+        this.x -= 5;
     }
 
-    if (this.running = false) {
-        
+    if (this.running === false) {
         this.standing = true;
     }
 
@@ -419,16 +419,16 @@ RunBoy.prototype.draw = function (ctx) {
             }
         }
 
-    } else if (this.running) {
-    
+    } else if (this.running && (!this.game.isLeftArrowUp || !this.game.isRightArrowUp)) {
+        //this.standing = false;
         if (direction) {
             this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         } else {
             this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
 
-    } else {
-        
+    } else if (this.standing) {
+
         if (direction) {
             this.rightStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         } else {

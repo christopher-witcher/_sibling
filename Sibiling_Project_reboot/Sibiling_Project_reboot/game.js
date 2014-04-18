@@ -260,10 +260,10 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
-    this.isRightArrowUp = true;
-    this.rightArrow = false;
-    this.isLeftArrowUp = true;
-    this.leftArrow = false;
+    //this.isRightArrowUp = true;
+    //this.rightArrow = false;
+    //this.isLeftArrowUp = true;
+    //this.leftArrow = false;
     this.space = null;
     this.click = null;
     this.wheel = null;
@@ -419,7 +419,7 @@ RunBoy.prototype.draw = function (ctx) {
             }
         }
 
-    } else if (this.running && (!this.game.isLeftArrowUp || !this.game.isRightArrowUp)) {
+    } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;
         if (direction) {
             this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
@@ -427,7 +427,7 @@ RunBoy.prototype.draw = function (ctx) {
             this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
 
-    } else if (this.standing) {
+    } else {
 
         if (direction) {
             this.rightStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);

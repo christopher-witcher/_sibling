@@ -1,12 +1,14 @@
-﻿heroSpriteSheet = "blue_player.png";
+﻿//The location of the sprite sheet
+heroSpriteSheet = "blue_player.png";
 
+//Sets up different animation of runboy and initializes the controls
 function RunBoy(game) {
 
     this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
     this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 145, 330, 60, 120, 0.01, 1, true, false);
 
-    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 145, 145, 0.1, 6, true, false);
-    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 180, 145, 145, 0.1, 6, true, false);
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 20, 143, 145, 0.15, 6, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 165, 143, 145, 0.15, 6, true, false);
 
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 490, 100, 110, .4, 4, false);
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 360, 100, 110, 0.4, 4, false);
@@ -21,6 +23,8 @@ function RunBoy(game) {
 RunBoy.prototype = new Entity();
 RunBoy.prototype.constructor = RunBoy;
 
+//The update method for run boy
+//has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
 
     if (this.game.rightArrow) {
@@ -28,7 +32,7 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = true;
-        this.x += 5;
+        this.x += 7;
         
     }
 
@@ -36,7 +40,7 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = false;
-        this.x -= 5;
+        this.x -= 7;
         
     }
 
@@ -53,11 +57,14 @@ RunBoy.prototype.update = function () {
 
 RunBoy.prototype.draw = function (ctx) {
 
+    //checks if the player want to jump.
     if (this.jumping) {
 
         var height = 0;
         var maxHeight = 300;
 
+        //is there a differece between this if and else?
+        //running to the right.
         if (direction) {
 
             var duration = this.jumpRight.elapsedTime + this.game.clockTick;
@@ -74,7 +81,7 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
             }
-
+        //running to the left.
         } else {
             var duration = this.jumpLeft.elapsedTime + this.game.clockTick;
             if (duration > this.jumpLeft.totalTime / 2) duration = this.jumpLeft.totalTime - duration;

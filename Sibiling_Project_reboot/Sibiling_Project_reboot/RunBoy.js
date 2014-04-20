@@ -4,11 +4,11 @@ heroSpriteSheet = "blue_player.png";
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 330, 60, 120, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 334, 60, 125, 0.01, 1, true, false);
     this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 145, 330, 60, 120, 0.01, 1, true, false);
 
-    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 20, 143, 145, 0.15, 6, true, false);
-    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 165, 143, 145, 0.15, 6, true, false);
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 19, 143, 143, 0.15, 6, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 164, 143, 143, 0.15, 6, true, false);
 
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 490, 100, 110, .4, 4, false);
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 360, 100, 110, 0.4, 4, false);

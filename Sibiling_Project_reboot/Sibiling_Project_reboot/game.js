@@ -15,6 +15,7 @@ window.requestAnimFrame = (function () {
             };
 })();
 
+//initializes the asset manager.
 function AssetManager() {
     this.successCount = 0;
     this.errorCount = 0;
@@ -22,6 +23,7 @@ function AssetManager() {
     this.downloadQueue = [];
 }
 
+//
 AssetManager.prototype.queueDownload = function (path) {
     console.log(path.toString());
     this.downloadQueue.push(path);
@@ -50,11 +52,13 @@ AssetManager.prototype.downloadAll = function (callback) {
     }
 }
 
+//gets an asset to add to the cache.
 AssetManager.prototype.getAsset = function (path) {
     //console.log(path.toString());
     return this.cache[path];
 }
 
+//Creates an animation to be created for the user.
 function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
     this.spriteSheet = spriteSheet;
     this.startX = startX;
@@ -70,6 +74,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     
 }
 
+//Draws an image on the canvas
 Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     var scaleBy = scaleBy || 1;
     this.elapsedTime += tick;
@@ -102,6 +107,7 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
                   this.frameHeight * scaleBy);
 }
 
+//
 Animation.prototype.currentFrame = function () {
     return Math.floor(this.elapsedTime / this.frameDuration);
 }
@@ -110,12 +116,14 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
+//Intializes the timer for the game.
 function Timer() {
     this.gameTime = 0;
     this.maxStep = 0.05;
     this.wallLastTimestamp = 0;
 }
 
+//Controls the game Timer.
 Timer.prototype.tick = function () {
     var wallCurrent = Date.now();
     var wallDelta = (wallCurrent - this.wallLastTimestamp) / 1000;
@@ -126,6 +134,7 @@ Timer.prototype.tick = function () {
     return gameDelta;
 }
 
+//The game engine.
 function GameEngine() {
     this.entities = [];
     this.ctx = null;
@@ -140,6 +149,7 @@ function GameEngine() {
 
 }
 
+//Intilizes the game engine. Sets up things to start the game.
 GameEngine.prototype.init = function (ctx) {
     this.ctx = ctx;
     this.surfaceWidth = this.ctx.canvas.width;
@@ -149,6 +159,7 @@ GameEngine.prototype.init = function (ctx) {
     console.log('game initialized');
 }
 
+//Starts looping through the game.
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
@@ -158,6 +169,7 @@ GameEngine.prototype.start = function () {
     })();
 }
 
+//Sets up listeners for input from the user.
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
 
@@ -223,11 +235,13 @@ GameEngine.prototype.startInput = function () {
     console.log('Input started');
 }
 
+//Adds and entity to the game engine.
 GameEngine.prototype.addEntity = function (entity) {
     console.log('added entity');
     this.entities.push(entity);
 }
 
+//Draws all entities onto the canvas.
 GameEngine.prototype.draw = function (drawCallback) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
@@ -261,6 +275,7 @@ GameEngine.prototype.update = function () {
     }
 }
 
+//What the games does during a loop of the game.
 GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();

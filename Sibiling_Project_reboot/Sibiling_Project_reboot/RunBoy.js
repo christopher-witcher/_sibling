@@ -98,7 +98,7 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumping = false;
             }
         }
-
+    //control for running. can't run in both directions.
     } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;
         if (direction) {
@@ -106,7 +106,7 @@ RunBoy.prototype.draw = function (ctx) {
         } else {
             this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
-
+    //if there is no movement they are standing.
     } else {
 
         if (direction) {

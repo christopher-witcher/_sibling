@@ -68,6 +68,7 @@
     <Content Include="Background.js" />
     <Content Include="blue_player.png" />
     <Content Include="game.js" />
+    <Content Include="runboySprite.png" />
     <Content Include="_game.js" />
     <Content Include="index.html" />
     <Content Include="neighBackground.png" />

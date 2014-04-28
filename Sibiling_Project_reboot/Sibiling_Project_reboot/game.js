@@ -1,4 +1,4 @@
-﻿heroSpriteSheet = "blue_player.png";
+﻿heroSpriteSheet = "runboySprite.png";
 direction = true;
 screenOffSet = 0;
 var backImg = "neighBackgroundext.png";

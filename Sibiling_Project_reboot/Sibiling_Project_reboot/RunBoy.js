@@ -1,23 +1,23 @@
 ﻿//The location of the sprite sheet
-heroSpriteSheet = "blue_player.png";
+heroSpriteSheet = "runboySprite.png";
 
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 40, 334, 60, 125, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 145, 330, 60, 120, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 300, 100, 150, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 300, 100, 150, 0.01, 1, true, false);
 
-    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 19, 143, 143, 0.15, 6, true, false);
-    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 164, 143, 143, 0.15, 6, true, false);
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 100, 150, 0.008, 120, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 150, 100, 150, 0.008, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 490, 100, 110, .4, 4, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 410, 360, 100, 110, 0.4, 4, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 475, 114, 160, .0333, 90, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 650, 114, 160, 0.0333, 60, false);
     this.jumping = false;
     this.running = false;
     this.standing = true;
 
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, 20, 550);
+    Entity.call(this, game, 20, 520);
 }
 
 RunBoy.prototype = new Entity();
@@ -32,7 +32,7 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = true;
-        this.x += 7;
+        this.x += 5;
         
     }
 
@@ -40,7 +40,7 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = false;
-        this.x -= 7;
+        this.x -= 5;
         
     }
 

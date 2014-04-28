@@ -3,6 +3,8 @@ direction = true;
 screenOffSet = 0;
 var backImg = "neighBackgroundext.png";
 var gameEngine;
+var canvasWidth = 1250;
+var canvasHeight = 700;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -145,9 +147,14 @@ function GameEngine() {
     this.surfaceHeight = null;
     this.LeftLimit = null;
     this.rightLimit = null;
-    
+    this.canvasWidth = canvasWidth;
+    this.viewPort = null;
 
 }
+
+GameEngine.prototype.setViewPort = function (viewPort) {
+    this.viewPort = viewPort;
+};
 
 //Intilizes the game engine. Sets up things to start the game.
 GameEngine.prototype.init = function (ctx) {
@@ -248,7 +255,12 @@ GameEngine.prototype.draw = function (drawCallback) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].draw(this.ctx);
+
+        // Only draw an entity if it is within the Viewport
+        if (this.entities[i].worldX > this.viewPort.leftX && this.entities[i].worldX < this.viewPort.rightX) {
+            this.entities[i].draw(this.ctx);
+        }
+
     }
     if (drawCallback) {
         drawCallback(this);
@@ -264,6 +276,11 @@ GameEngine.prototype.update = function () {
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
+
+        // Update all entities' x value except Runboy
+        if (!(entity instanceof RunBoy)) {
+            entity.x = canvasWidth + (entity.worldX - this.viewPort.rightX);
+        }
 
         if (!entity.removeFromWorld) {
             entity.update();
@@ -281,11 +298,8 @@ GameEngine.prototype.update = function () {
 GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
+    this.viewPort.update(); // update the viewPort with Runboy's new coordinates
     this.draw();
-    //this.isRightArrowUp = true;
-    //this.rightArrow = false;
-    //this.isLeftArrowUp = true;
-    //this.leftArrow = false;
     this.space = null;
     this.click = null;
     this.wheel = null;
@@ -295,6 +309,8 @@ function Entity(game, x, y) {
     this.game = game;
     this.x = x;
     this.y = y;
+    this.worldX = x; //initial worldX is the same as x
+    this.worldY = y; //initial worldY is the same as y
     this.removeFromWorld = false;
 }
 
@@ -328,6 +344,56 @@ Entity.prototype.rotateAndCache = function (image, angle) {
     return offscreenCanvas;
 }
 
+/*
+ * Tells the game engine which Entities should be drawn based on their proximity
+ * to the hero. The Viewport is currently larger than the canvas by 800 px. This is
+ * to account for the width of any Entity and can be adjusted if necessary.
+ */
+function Viewport(hero, canvasWidth, canvasHeight, worldWidth, worldHeight) {
+    this.hero = hero;
+    this.width = canvasWidth;
+    this.height = canvasHeight;
+    this.worldWidth = worldWidth;
+    this.worldHeight = worldHeight;
+    this.leftX = (this.hero.worldX - 400) - canvasWidth / 2;
+    this.rightX = (this.hero.worldX + 400) + canvasWidth / 2;
+}
+
+Viewport.prototype.constructor = Viewport;
+
+Viewport.prototype.update = function () {
+    this.leftX = (this.hero.worldX - 400) - this.width / 2;
+    this.rightX = (this.hero.worldX + 400) + this.height / 2;
+};
+
+/*
+ * A simple object to test scrolling
+ */
+function Block(game, canvasWidth) {
+    this.game = game;
+    this.worldX = 875;
+    this.worldY = 520;
+    this.width = 275;
+    this.height = 145;
+    this.canvasWidth = canvasWidth;
+
+    // set the block's initial position in the world
+    Entity.call(this, game, this.worldX, this.worldY);
+};
+
+Block.prototype = new Entity();
+Block.prototype.constructor = Block;
+
+Block.prototype.update = function () {
+    Entity.prototype.update.call(this);
+};
+
+Block.prototype.draw = function (ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.x, this.worldY, this.width, this.height);
+};
+
+
 
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);
@@ -336,17 +402,22 @@ window.onload = initialize;
 function initialize() {
     ASSET_MANAGER.downloadAll(function () {
 
-        var canvas = document.getElementById('gameWorld');
+        var canvas = document.getElementById('world');
         canvas.setAttribute("tabindex", 0);
         canvas.focus();
         var ctx = canvas.getContext('2d');
 
         gameEngine = new GameEngine();
-        var bg = new Background(gameEngine);
-        var boy = new RunBoy(gameEngine);
+        var gameWorld = new Background(gameEngine, canvasWidth);
+        var block = new Block(gameEngine, canvasWidth);
+        var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
 
-        gameEngine.addEntity(bg);
+        gameEngine.addEntity(gameWorld);
+        gameEngine.addEntity(block);
         gameEngine.addEntity(boy);
+
+        var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
+        gameEngine.setViewPort(viewPort);
 
         gameEngine.init(ctx);
         gameEngine.start();

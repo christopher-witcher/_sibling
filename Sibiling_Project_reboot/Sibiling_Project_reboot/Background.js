@@ -1,4 +1,5 @@
-﻿var backImg = "neighBackgroundext.png";
+﻿/*
+var backImg = "neighBackgroundext.png";
 
 
 function Background(game) {
@@ -20,3 +21,24 @@ Background.prototype.draw = function (ctx) {
     this.backDrop.drawFrame(this.game.clockTick, ctx, 0, 0);
 
 }
+*/
+
+/*
+ * For having a blank background
+ */
+function Background(game, height) {
+    this.width = 2500; //the width of the level or world
+    this.height = height;
+    this.game = game;
+    Entity.call(this, game, 0, 0);
+}
+
+Background.prototype = new Entity();
+Background.prototype.constructor = Background;
+
+Background.prototype.update = function () {
+    Entity.prototype.update.call(this);
+};
+
+Background.prototype.draw = function () {
+};

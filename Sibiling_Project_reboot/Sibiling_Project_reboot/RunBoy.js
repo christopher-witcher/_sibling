@@ -2,7 +2,7 @@
 heroSpriteSheet = "runboySprite.png";
 
 //Sets up different animation of runboy and initializes the controls
-function RunBoy(game) {
+function RunBoy(game, canvasWidth, worldWidth) {
 
     this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 300, 100, 150, 0.01, 1, true, false);
     this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 300, 100, 150, 0.01, 1, true, false);
@@ -15,6 +15,9 @@ function RunBoy(game) {
     this.jumping = false;
     this.running = false;
     this.standing = true;
+
+    this.canvasWidth = canvasWidth;
+    this.worldWidth = worldWidth;
 
     // set the sprite's starting position on the canvas
     Entity.call(this, game, 20, 520);
@@ -30,23 +33,38 @@ RunBoy.prototype.update = function () {
     if (this.game.rightArrow) {
 
         this.running = true;
-        this.standing = false;
+        //this.standing = false;
         direction = true;
         console.log(this.game.rightLimit);
-        if (this.x + 5 <= this.game.rightLimit) { //need to change to right limit, but not sure how to access it. note this ended up being more then the right limit.
-            this.x += 5;
+
+        if ((this.x < this.canvasWidth / 2) || (this.worldX >= this.worldWidth - this.canvasWidth / 2)) {
+
+            if (this.worldX + 110 <= this.worldWidth - 7) {
+                this.x += 7;
+                this.worldX += 7;
+            }
+        } else if (this.worldX === this.worldWidth) {
+            // do nothing, he's at the right edge of the world and canvas
+        } else {
+            this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
         }
-        
+
     }
 
     if (this.game.leftArrow) {
         this.running = true;
-        this.standing = false;
+        //this.standing = false;
         direction = false;
-        if (this.x - 5 >= this.game.LeftLimit) { //need to change to left limit, but not sure how to access it.
-            this.x -= 5;
+
+        if (this.worldX < this.canvasWidth / 2 && (this.x >= 7) || (this.worldX > this.worldWidth - this.canvasWidth / 2)) {
+            this.x -= 7;
+            this.worldX -= 7;
+        } else if (this.x === 0 || this.worldX === 0) {
+            // do nothing, he's at the left edge of the world and canvas
+        } else {
+            this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
         }
-        
+
     }
 
     if (this.running === false) {

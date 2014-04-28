@@ -32,7 +32,9 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = true;
-        this.x += 5;
+        if (this.x + 5 <= 1450) { //need to change to right limit, but not sure how to access it. note this ended up being more then the right limit.
+            this.x += 5;
+        }
         
     }
 
@@ -40,7 +42,9 @@ RunBoy.prototype.update = function () {
         this.running = true;
         this.standing = false;
         direction = false;
-        this.x -= 5;
+        if (this.x - 5 >= 0) { //need to change to left limit, but not sure how to access it.
+            this.x -= 5;
+        }
         
     }
 

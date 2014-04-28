@@ -143,8 +143,8 @@ function GameEngine() {
     this.wheel = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
-    this.LeftLimit = 0;
-    this.rightLimit = 1024;
+    this.LeftLimit = null;
+    this.rightLimit = null;
     
 
 }
@@ -156,6 +156,8 @@ GameEngine.prototype.init = function (ctx) {
     this.surfaceHeight = this.ctx.canvas.height;
     this.startInput();
     this.timer = new Timer();
+    this.LeftLimit = 0;
+    this.rightLimit = 1450;
     console.log('game initialized');
 }
 

@@ -104,7 +104,7 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
             }
-            //running to the left.
+        //running to the left.
         } else {
             var duration = this.jumpLeft.elapsedTime + this.game.clockTick;
             if (duration > this.jumpLeft.totalTime / 2) duration = this.jumpLeft.totalTime - duration;
@@ -121,7 +121,7 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumping = false;
             }
         }
-        //control for running. can't run in both directions.
+    //control for running. can't run in both directions.
     } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;
         if (direction) {
@@ -129,7 +129,7 @@ RunBoy.prototype.draw = function (ctx) {
         } else {
             this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
-        //if there is no movement they are standing.
+    //if there is no movement they are standing.
     } else {
 
         if (direction) {

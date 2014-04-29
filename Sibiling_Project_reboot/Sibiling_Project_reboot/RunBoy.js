@@ -37,14 +37,16 @@ RunBoy.prototype.update = function () {
         this.running = true;
         //this.standing = false;
         direction = true;
-        console.log(this.game.rightLimit);
+        //console.log(this.game.rightLimit);
 
         if ((this.x < this.canvasWidth / 2) || (this.worldX >= this.worldWidth - this.canvasWidth / 2)) {
 
             if (this.worldX + 110 <= this.worldWidth - 7) {
                 this.x += 7;
                 this.worldX += 7;
-                this.boundingbox.x = this.boundingbox.x + 7;
+                this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+                //this.boundingbox.x = this.worldX;
+                
             }
         } else if (this.worldX === this.worldWidth) {
             // do nothing, he's at the right edge of the world and canvas
@@ -52,7 +54,7 @@ RunBoy.prototype.update = function () {
             this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
             //this.boundingbox.x = this.boundingbox.x + 7;
         }
-
+        this.didICollide();
     }
 
     if (this.game.leftArrow) {
@@ -63,13 +65,15 @@ RunBoy.prototype.update = function () {
         if (this.worldX < this.canvasWidth / 2 && (this.x >= 7) || (this.worldX > this.worldWidth - this.canvasWidth / 2)) {
             this.x -= 7;
             this.worldX -= 7;
-            this.boundingbox.x = this.boundingbox.x - 7;
+            this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+            //this.boundingbox.x = this.worldX;
+            
         } else if (this.x === 0 || this.worldX === 0) {
             // do nothing, he's at the left edge of the world and canvas
         } else {
             this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
         }
-
+        this.didICollide();
     }
 
     if (this.running === false) {
@@ -149,4 +153,16 @@ RunBoy.prototype.draw = function (ctx) {
     }
     ctx.strokeStyle = "purple";
     ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+}
+
+RunBoy.prototype.didICollide = function () {
+    //console.log("check if they collide");
+    for (i = 0; i < this.game.entities.length; i++) {
+        var entity = this.game.entities[i];
+        if (entity instanceof Block) {
+            //console.log("I'm a box");
+            console.log(this.boundingbox.collide(entity.boundingBox));
+        }
+    }
+    
 }

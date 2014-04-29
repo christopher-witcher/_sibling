@@ -381,7 +381,19 @@ function BoundingBox(x, y, width, height) {
 
 //checks if this bounding box collided with the other.
 BoundingBox.prototype.collide = function (oth) {
-    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) return true;
+    //console.log("I'm checking");
+    if (oth == null) {
+        return null;
+    }
+    //console.log("my right: " + this.right + " their left: " + oth.left);
+    //console.log(this.right > oth.left);
+   //console.log(this.left < oth.right);
+    //console.log(this.top < oth.bottom);
+    //console.log(this.bottom > oth.top);
+    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) {
+        return true;
+    }
+    //console.log("no collision");
     return false;
 }
 
@@ -396,7 +408,7 @@ function Block(game, canvasWidth) {
     this.height = 145;
     this.canvasWidth = canvasWidth;
 
-    this.boudingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
     // set the block's initial position in the world
     Entity.call(this, game, this.worldX, this.worldY);
 };
@@ -405,7 +417,7 @@ Block.prototype = new Entity();
 Block.prototype.constructor = Block;
 
 Block.prototype.update = function () {
-    this.boudingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
@@ -413,7 +425,7 @@ Block.prototype.draw = function (ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(this.x, this.worldY, this.width, this.height);
     ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boudingBox.x, this.boudingBox.y, this.boudingBox.width, this.boudingBox.height);
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 

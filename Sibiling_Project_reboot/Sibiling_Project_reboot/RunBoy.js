@@ -18,6 +18,8 @@ function RunBoy(game, canvasWidth, worldWidth) {
 
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
+   this.boundingbox = new BoundingBox(20, 540, 90, 140);
+    
 
     // set the sprite's starting position on the canvas
     Entity.call(this, game, 20, 520);
@@ -42,11 +44,13 @@ RunBoy.prototype.update = function () {
             if (this.worldX + 110 <= this.worldWidth - 7) {
                 this.x += 7;
                 this.worldX += 7;
+                this.boundingbox.x = this.boundingbox.x + 7;
             }
         } else if (this.worldX === this.worldWidth) {
             // do nothing, he's at the right edge of the world and canvas
         } else {
             this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
+            //this.boundingbox.x = this.boundingbox.x + 7;
         }
 
     }
@@ -59,6 +63,7 @@ RunBoy.prototype.update = function () {
         if (this.worldX < this.canvasWidth / 2 && (this.x >= 7) || (this.worldX > this.worldWidth - this.canvasWidth / 2)) {
             this.x -= 7;
             this.worldX -= 7;
+            this.boundingbox.x = this.boundingbox.x - 7;
         } else if (this.x === 0 || this.worldX === 0) {
             // do nothing, he's at the left edge of the world and canvas
         } else {
@@ -86,7 +91,6 @@ RunBoy.prototype.draw = function (ctx) {
         var height = 0;
         var maxHeight = 300;
 
-        //is there a differece between this if and else?
         //running to the right.
         if (direction) {
 
@@ -99,10 +103,12 @@ RunBoy.prototype.draw = function (ctx) {
             // quadratic jump
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
+            this.boundingbox.y = this.y - height / 2;
 
             if (this.jumpRight.isDone()) {
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
+                this.boundingbox.y = 540;
             }
         //running to the left.
         } else {
@@ -115,10 +121,12 @@ RunBoy.prototype.draw = function (ctx) {
             // quadratic jump
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
             this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
+            this.boundingbox.y = this.y - height / 2;
 
             if (this.jumpLeft.isDone()) {
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
+                this.boundingbox.y = 540;
             }
         }
     //control for running. can't run in both directions.
@@ -139,4 +147,6 @@ RunBoy.prototype.draw = function (ctx) {
         }
 
     }
+    ctx.strokeStyle = "purple";
+    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 }

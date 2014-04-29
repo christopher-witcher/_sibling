@@ -366,6 +366,25 @@ Viewport.prototype.update = function () {
     this.rightX = (this.hero.worldX + 400) + this.height / 2;
 };
 
+//A class for the bounding box of collision detection.
+function BoundingBox(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+
+    this.left = x;
+    this.top = y;
+    this.right = this.left + width;
+    this.bottom = this.top + height;
+}
+
+//checks if this bounding box collided with the other.
+BoundingBox.prototype.collide = function (oth) {
+    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) return true;
+    return false;
+}
+
 /*
  * A simple object to test scrolling
  */
@@ -377,6 +396,7 @@ function Block(game, canvasWidth) {
     this.height = 145;
     this.canvasWidth = canvasWidth;
 
+    this.boudingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
     // set the block's initial position in the world
     Entity.call(this, game, this.worldX, this.worldY);
 };
@@ -385,12 +405,15 @@ Block.prototype = new Entity();
 Block.prototype.constructor = Block;
 
 Block.prototype.update = function () {
+    this.boudingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
 Block.prototype.draw = function (ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(this.x, this.worldY, this.width, this.height);
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.boudingBox.x, this.boudingBox.y, this.boudingBox.width, this.boudingBox.height);
 };
 
 

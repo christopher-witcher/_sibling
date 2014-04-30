@@ -95,16 +95,19 @@ RunBoy.prototype.update = function () {
             // do nothing, he's at the left edge of the world and canvas
         } else {
             this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
-            this.boundingbox = new BoundingBox(this.boundingbox.x - 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+            this.boundingbox = new BoundingBox(this.boundingbox.x - 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
         this.didICollide();
+        this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         if (!this.canPass) {
             this.worldX = tempWorldX;
             this.x = tempX;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
+        
 
     }
+    
     
     //console.log(this.canPass);
     if (this.running === false) {
@@ -138,12 +141,15 @@ RunBoy.prototype.draw = function (ctx) {
             // quadratic jump
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
-            this.boundingbox.y = this.y - height / 2;
+            var temp = this.y - height / 2;
+            //this.boundingbox.y = temp;
+            this.boundingbox = new BoundingBox(this.boundingbox.x, temp, this.boundingbox.width, this.boundingbox.height);
 
             if (this.jumpRight.isDone()) {
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
-                this.boundingbox.y = 540;
+                //this.boundingbox.y = 540;
+                this.boundingbox = new BoundingBox(this.boundingbox.x, 540, this.boundingbox.width, this.boundingbox.height);
             }
         //running to the left.
         } else {
@@ -156,16 +162,18 @@ RunBoy.prototype.draw = function (ctx) {
             // quadratic jump
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
             this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
-            this.boundingbox.y = this.y - height / 2;
+            var temp = this.y - height / 2;
+            this.boundingbox = new BoundingBox(this.boundingbox.x, temp, this.boundingbox.width, this.boundingbox.height);
 
             if (this.jumpLeft.isDone()) {
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
-                this.boundingbox.y = 540;
+                this.boundingbox = new BoundingBox(this.boundingbox.x, 540, this.boundingbox.width, this.boundingbox.height);
             }
             
         }
-
+        this.didICollide();
+        console.log(this.canPass);
     //control for running. can't run in both directions.
     } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;

@@ -33,8 +33,8 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
 
-    console.log("world: " + this.worldX);
-    console.log("x: " + this.x)
+    //console.log("world: " + this.worldX);
+    //console.log("x: " + this.x)
     var tempX = this.x;
     var tempWorldX = this.worldX;
     if (this.game.rightArrow) {
@@ -125,7 +125,7 @@ RunBoy.prototype.draw = function (ctx) {
         //running to the right.
         if (direction) {
 
-            var duration = this.jumpRight.elapsedTime + this.game.clockTick;
+            var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
             if (duration > this.jumpRight.totalTime / 2) duration = this.jumpRight.totalTime - duration;
             duration = duration / this.jumpRight.totalTime;
             // linear jump
@@ -159,7 +159,9 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumping = false;
                 this.boundingbox.y = 540;
             }
+            
         }
+
     //control for running. can't run in both directions.
     } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;

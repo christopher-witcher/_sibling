@@ -33,9 +33,13 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
 
+    console.log("world: " + this.worldX);
+    console.log("x: " + this.x)
     var tempX = this.x;
     var tempWorldX = this.worldX;
     if (this.game.rightArrow) {
+
+        //console.log("In right");
 
         this.running = true;
         //this.standing = false;
@@ -51,44 +55,53 @@ RunBoy.prototype.update = function () {
                 //this.boundingbox.x = this.worldX;
                 
             }
-        } else if (this.worldX === this.worldWidth) {
+        } else if (this.worldX >= this.worldWidth) {
+            this.worldX = this.worldWidth;
             // do nothing, he's at the right edge of the world and canvas
         } else {
             this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
+            //this.boundingbox = new BoundingBox(this.boundingbox.x + 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
             //this.boundingbox.x = this.boundingbox.x + 7;
         }
-        //this.didICollide();
-        //if (!this.canPass) {
-        //    this.worldX = tempWorldX;
-        //    this.x = tempX;
-        //    this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-        //}
+        this.didICollide();
+        if (!this.canPass) {
+            this.worldX = tempWorldX;
+            this.x = tempX;
+            this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+        }
     }
 
     if (this.game.leftArrow) {
+        
+        //console.log("in left");
         this.running = true;
         //this.standing = false;
         direction = false;
 
         if (this.worldX < this.canvasWidth / 2 && (this.x >= 7) || (this.worldX > this.worldWidth - this.canvasWidth / 2)) {
+            //console.log("update me");
             this.x -= 7;
             this.worldX -= 7;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
             //this.boundingbox.x = this.worldX;
             
-        } else if (this.x === 0 || this.worldX === 0) {
+        } else if (this.x <= 0 || this.worldX <= 0) {
+            this.worldX = 0;
+            this.x = 0;
             // do nothing, he's at the left edge of the world and canvas
         } else {
             this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
+            this.boundingbox = new BoundingBox(this.boundingbox.x - 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+        }
+        this.didICollide();
+        if (!this.canPass) {
+            this.worldX = tempWorldX;
+            this.x = tempX;
+            this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
 
     }
-    this.didICollide();
-    if (!this.canPass) {
-        this.worldX = tempWorldX;
-        this.x = tempX;
-        this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-    }
+    
     //console.log(this.canPass);
     if (this.running === false) {
         this.standing = true;
@@ -116,7 +129,7 @@ RunBoy.prototype.draw = function (ctx) {
             if (duration > this.jumpRight.totalTime / 2) duration = this.jumpRight.totalTime - duration;
             duration = duration / this.jumpRight.totalTime;
             // linear jump
-            height = maxHeight * 2 * duration + 17;
+           // height = maxHeight * 2 * duration + 17;
 
             // quadratic jump
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;

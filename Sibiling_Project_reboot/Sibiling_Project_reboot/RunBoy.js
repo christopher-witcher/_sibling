@@ -10,8 +10,12 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 100, 150, 0.008, 120, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 150, 100, 150, 0.008, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 475, 114, 160, .0333, 90, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 650, 114, 160, 0.0333, 60, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 475, 114, 160, .0333, 45, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 650, 114, 160, 0.0333, 45, false);
+
+    this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 475, 114, 160, 0.033, 45, false);
+    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 650, 114, 160, 0.033, 45, false);
+
     this.jumping = false;
     this.running = false;
     this.standing = true;

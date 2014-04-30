@@ -15,6 +15,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.jumping = false;
     this.running = false;
     this.standing = true;
+    this.canPass = true;
 
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
@@ -32,6 +33,8 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
 
+    var tempX = this.x;
+    var tempWorldX = this.worldX;
     if (this.game.rightArrow) {
 
         this.running = true;
@@ -54,7 +57,12 @@ RunBoy.prototype.update = function () {
             this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
             //this.boundingbox.x = this.boundingbox.x + 7;
         }
-        this.didICollide();
+        //this.didICollide();
+        //if (!this.canPass) {
+        //    this.worldX = tempWorldX;
+        //    this.x = tempX;
+        //    this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+        //}
     }
 
     if (this.game.leftArrow) {
@@ -73,9 +81,15 @@ RunBoy.prototype.update = function () {
         } else {
             this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
         }
-        this.didICollide();
-    }
 
+    }
+    this.didICollide();
+    if (!this.canPass) {
+        this.worldX = tempWorldX;
+        this.x = tempX;
+        this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    }
+    //console.log(this.canPass);
     if (this.running === false) {
         this.standing = true;
     }
@@ -157,11 +171,12 @@ RunBoy.prototype.draw = function (ctx) {
 
 RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
+    this.canPass = true;
     for (i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
         if (entity instanceof Block) {
-            //console.log("I'm a box");
-            console.log(this.boundingbox.collide(entity.boundingBox));
+            //console.log(this.boundingbox.collide(entity.boundingBox));
+            this.canPass = !this.boundingbox.collide(entity.boundingBox);
         }
     }
     

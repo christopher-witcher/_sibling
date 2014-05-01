@@ -67,10 +67,15 @@ RunBoy.prototype.update = function () {
             this.worldX += 7; 
         }
         this.didICollide();
-        if (!this.canPass && this.currentPlatform != null && this.currentPlatform.top < this.lastBottom) {
+        //console.log(this.currentPlatform === null);
+        if (!this.canPass && this.currentPlatform === null) {
+            
             this.worldX = tempWorldX;
             this.x = tempX;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+        }
+        else if (this.canPass) {//if I'm not colliding with anything I should be on anything.
+            this.currentPlatform = null;
         }
     }
 
@@ -100,7 +105,7 @@ RunBoy.prototype.update = function () {
         this.didICollide();
         //puts the bounding box back where it needs to be.
         this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-        if (!this.canPass && this.currentPlatform != null && this.currentPlatform.top < this.lastBottom) {
+        if (!this.canPass && (this.currentPlatform === null || this.currentPlatform.top < this.lastBottom)) {
             this.worldX = tempWorldX;
             this.x = tempX;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
@@ -180,7 +185,11 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumping = false;
                 this.boundingbox = new BoundingBox(this.boundingbox.x, 540, this.boundingbox.width, this.boundingbox.height);
             }
-
+            this.didICollide();
+            if (!this.canPass) {
+                this.jumpLeft.elapsedTime = 0;
+                this.jumping = false;
+            }
             
         }
  

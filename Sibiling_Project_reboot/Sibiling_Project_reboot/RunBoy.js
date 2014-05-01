@@ -68,15 +68,6 @@ RunBoy.prototype.update = function () {
         }
         this.didICollide();
         //console.log(this.currentPlatform === null);
-        if (!this.canPass && this.currentPlatform === null) {
-            
-            this.worldX = tempWorldX;
-            this.x = tempX;
-            this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-        }
-        else if (this.canPass) {//if I'm not colliding with anything I should be on anything.
-            this.currentPlatform = null;
-        }
     }
 
     if (this.game.leftArrow) {
@@ -104,14 +95,21 @@ RunBoy.prototype.update = function () {
         }
         this.didICollide();
         //puts the bounding box back where it needs to be.
-        this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-        if (!this.canPass && (this.currentPlatform === null || this.currentPlatform.top < this.lastBottom)) {
-            this.worldX = tempWorldX;
-            this.x = tempX;
-            this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+        if (!this.worldX <= 0) {
+            this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
-        
 
+    }
+
+    //If I can't pass and I have not current platform I can't move;
+    if (!this.canPass && this.currentPlatform === null) {
+        this.worldX = tempWorldX;
+        this.x = tempX;
+        this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    }
+    //If I can't pass then I must not have a current platform, so make sure current platform doesn't exist.
+    else if (this.canPass) {//if I'm not colliding with anything I should be on anything.
+        this.currentPlatform = null;
     }
     
     

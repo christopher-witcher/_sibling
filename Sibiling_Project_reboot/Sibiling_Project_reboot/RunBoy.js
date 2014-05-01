@@ -23,7 +23,9 @@ function RunBoy(game, canvasWidth, worldWidth) {
 
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
-   this.boundingbox = new BoundingBox(20, 540, 90, 140);
+    this.boundingbox = new BoundingBox(20, 540, 90, 140);
+    this.currentPlatform = null;//when its null I'm not currently on a platform.
+    this.lastBottom = this.boundingbox.bottom;//keeps track of where the bounding box's bottom was before it changed. should be when falling.
     
 
     // set the sprite's starting position on the canvas
@@ -55,20 +57,17 @@ RunBoy.prototype.update = function () {
             if (this.worldX + 110 <= this.worldWidth - 7) {
                 this.x += 7;
                 this.worldX += 7;
-                this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-                //this.boundingbox.x = this.worldX;
-                
+                this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height); 
             }
+
         } else if (this.worldX >= this.worldWidth) {
             this.worldX = this.worldWidth;
-            // do nothing, he's at the right edge of the world and canvas
+            // stops undate the world x when at the end of the world.
         } else {
-            this.worldX += 7; // need to fix case where Runboy keeps running at right edge (worldX should not increase)
-            //this.boundingbox = new BoundingBox(this.boundingbox.x + 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-            //this.boundingbox.x = this.boundingbox.x + 7;
+            this.worldX += 7; 
         }
         this.didICollide();
-        if (!this.canPass) {
+        if (!this.canPass && this.currentPlatform != null && this.currentPlatform.top < this.lastBottom) {
             this.worldX = tempWorldX;
             this.x = tempX;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
@@ -92,14 +91,16 @@ RunBoy.prototype.update = function () {
         } else if (this.x <= 0 || this.worldX <= 0) {
             this.worldX = 0;
             this.x = 0;
-            // do nothing, he's at the left edge of the world and canvas
+            // stop moving and update the x's if stuck at the edge.
         } else {
-            this.worldX -= 7; // need to fix case where Runboy keeps running at left edge (worldX should not decrease)
+            this.worldX -= 7;
+            //this will stop him from getting stuck when colliding.
             this.boundingbox = new BoundingBox(this.boundingbox.x - 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
         this.didICollide();
+        //puts the bounding box back where it needs to be.
         this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
-        if (!this.canPass) {
+        if (!this.canPass && this.currentPlatform != null && this.currentPlatform.top < this.lastBottom) {
             this.worldX = tempWorldX;
             this.x = tempX;
             this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
@@ -143,6 +144,7 @@ RunBoy.prototype.draw = function (ctx) {
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
             var temp = this.y - height / 2;
             //this.boundingbox.y = temp;
+            this.lastBottom = this.boundingbox.bottom;
             this.boundingbox = new BoundingBox(this.boundingbox.x, temp, this.boundingbox.width, this.boundingbox.height);
 
             if (this.jumpRight.isDone()) {
@@ -151,8 +153,15 @@ RunBoy.prototype.draw = function (ctx) {
                 //this.boundingbox.y = 540;
                 this.boundingbox = new BoundingBox(this.boundingbox.x, 540, this.boundingbox.width, this.boundingbox.height);
             }
+            this.didICollide();
+            if (!this.canPass) {
+                this.jumpLeft.elapsedTime = 0;
+                this.jumping = false;
+            }
         //running to the left.
         } else {
+            
+
             var duration = this.jumpLeft.elapsedTime + this.game.clockTick;
             if (duration > this.jumpLeft.totalTime / 2) duration = this.jumpLeft.totalTime - duration;
             duration = duration / this.jumpLeft.totalTime;
@@ -163,6 +172,7 @@ RunBoy.prototype.draw = function (ctx) {
             height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
             this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y - height / 2);
             var temp = this.y - height / 2;
+            this.lastBottom = this.boundingbox.bottom;
             this.boundingbox = new BoundingBox(this.boundingbox.x, temp, this.boundingbox.width, this.boundingbox.height);
 
             if (this.jumpLeft.isDone()) {
@@ -170,10 +180,10 @@ RunBoy.prototype.draw = function (ctx) {
                 this.jumping = false;
                 this.boundingbox = new BoundingBox(this.boundingbox.x, 540, this.boundingbox.width, this.boundingbox.height);
             }
+
             
         }
-        this.didICollide();
-        console.log(this.canPass);
+ 
     //control for running. can't run in both directions.
     } else if (this.running && (this.game.isLeftArrowUp === false || this.game.isRightArrowUp === false)) {
         //this.standing = false;
@@ -203,7 +213,12 @@ RunBoy.prototype.didICollide = function () {
         var entity = this.game.entities[i];
         if (entity instanceof Block) {
             //console.log(this.boundingbox.collide(entity.boundingBox));
-            this.canPass = !this.boundingbox.collide(entity.boundingBox);
+            //if (entity != this.currentPlatform) {
+                this.canPass = !this.boundingbox.collide(entity.boundingBox);
+                if (entity.boundingBox.top > this.lastBottom) {
+                    this.currentPlatform = entity;
+                }
+           // }
         }
     }
     

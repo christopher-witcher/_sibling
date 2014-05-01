@@ -91,12 +91,12 @@ RunBoy.prototype.update = function () {
         } else {
             this.worldX -= 7;
             //this will stop him from getting stuck when colliding.
-            this.boundingbox = new BoundingBox(this.boundingbox.x - 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+            this.boundingbox = new BoundingBox(this.boundingbox.x - 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
         this.didICollide();
         //puts the bounding box back where it needs to be.
         if (!this.worldX <= 0) {
-            this.boundingbox = new BoundingBox(this.boundingbox.x + 1, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+            this.boundingbox = new BoundingBox(this.boundingbox.x + 7, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
         }
 
     }
@@ -107,9 +107,10 @@ RunBoy.prototype.update = function () {
         this.x = tempX;
         this.boundingbox = new BoundingBox(this.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
     }
-    //If I can't pass then I must not have a current platform, so make sure current platform doesn't exist.
-    else if (this.canPass) {//if I'm not colliding with anything I should be on anything.
+    //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
+    else if (this.canPass) {
         this.currentPlatform = null;
+       // this.boundingbox = new BoundingBox(this.x, 540, this.boundingbox.width, this.boundingbox.height);
     }
     
     
@@ -214,18 +215,14 @@ RunBoy.prototype.draw = function (ctx) {
 }
 
 RunBoy.prototype.didICollide = function () {
-    //console.log("check if they collide");
     this.canPass = true;
     for (i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
         if (entity instanceof Block) {
-            //console.log(this.boundingbox.collide(entity.boundingBox));
-            //if (entity != this.currentPlatform) {
                 this.canPass = !this.boundingbox.collide(entity.boundingBox);
                 if (entity.boundingBox.top > this.lastBottom) {
                     this.currentPlatform = entity;
                 }
-           // }
         }
     }
     

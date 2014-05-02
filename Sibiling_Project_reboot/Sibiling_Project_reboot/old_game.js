@@ -366,36 +366,7 @@ Viewport.prototype.update = function () {
     this.rightX = (this.hero.worldX + 400) + this.height / 2;
 };
 
-//A class for the bounding box of collision detection.
-function BoundingBox(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
 
-    this.left = x;
-    this.top = y;
-    this.right = this.left + width;
-    this.bottom = this.top + height;
-}
-
-//checks if this bounding box collided with the other.
-BoundingBox.prototype.collide = function (oth) {
-    //console.log("I'm checking");
-    if (oth == null) {
-        return null;
-    }
-    //console.log("my right: " + this.right + " their left: " + oth.left);
-    //console.log(this.right > oth.left);
-   //console.log(this.left < oth.right);
-    //console.log(this.top < oth.bottom);
-    //console.log(this.bottom > oth.top);
-    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) {
-        return true;
-    }
-    //console.log("no collision");
-    return false;
-}
 
 /*
  * A simple object to test scrolling
@@ -444,13 +415,17 @@ function initialize() {
 
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
-        var block = new Block(gameEngine, canvasWidth);
+        //var block = new Block(gameEngine, canvasWidth);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
+        var line = new BoundingLine(gameEngine, 50, 200, 250, 300);
+        var theCrate = new Crate(gameEngine, 400, 575);
 
         gameEngine.addEntity(gameWorld);
-        gameEngine.addEntity(block);
+        //gameEngine.addEntity(block);
+        gameEngine.addEntity(line);
+        
         gameEngine.addEntity(boy);
-
+        gameEngine.addEntity(theCrate);
         var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
         gameEngine.setViewPort(viewPort);
 

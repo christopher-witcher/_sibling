@@ -4,17 +4,17 @@ heroSpriteSheet = "runboySprite.png";
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game, canvasWidth, worldWidth) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 300, 100, 150, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 300, 100, 150, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 100, 150, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 150, 100, 150, 0.01, 1, true, false);
 
-    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 100, 150, 0.008, 120, true, false);
-    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 150, 100, 150, 0.008, 120, true, false);
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.008, 120, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 150, 100, 150, 0.008, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 475, 114, 160, .0333, 45, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 650, 114, 160, 0.0333, 45, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 325, 114, 160, .0333, 45, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 485, 114, 160, 0.0333, 45, false);
 
-    this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 475, 114, 160, 0.033, 45, false);
-    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 650, 114, 160, 0.033, 45, false);
+    this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 325, 114, 160, 0.033, 45, false);
+    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 485, 114, 160, 0.033, 45, false);
 
     this.jumping = false;
     this.running = false;
@@ -218,11 +218,20 @@ RunBoy.prototype.didICollide = function () {
     this.canPass = true;
     for (i = 0; i < this.game.entities.length; i++) {
         var entity = this.game.entities[i];
-        if (entity instanceof Block) {
-                this.canPass = !this.boundingbox.collide(entity.boundingBox);
-                if (entity.boundingBox.top > this.lastBottom) {
-                    this.currentPlatform = entity;
-                }
+        //if (entity instanceof Block) {
+        //        this.canPass = !this.boundingbox.collide(entity.boundingBox);
+        //        if (entity.boundingBox.top > this.lastBottom) {
+        //            this.currentPlatform = entity;
+        //        }
+        //}
+
+        if (entity.hasOwnProperty('boundingbox')){
+            console.log('has Bounding Box');
+            this.canPass = !this.boundingbox.collide(entity.boundingbox);
+
+           if (entity.boundingbox.top > this.lastBottom) {
+               this.currentPlatform = entity;
+           }
         }
     }
     

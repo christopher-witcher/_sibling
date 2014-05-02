@@ -67,14 +67,16 @@
   <ItemGroup>
     <Content Include="Background.js" />
     <Content Include="blue_player.png" />
-    <Content Include="old_game.js" />
+    <Content Include="game.js" />
     <Content Include="obstacles.js" />
+    <Content Include="old_index - Copy.html" />
+    <Content Include="old_RunBoy - Copy.js" />
     <Content Include="runboySprite.png" />
     <Content Include="_game.js" />
     <Content Include="old_index.html" />
     <Content Include="neighBackground.png" />
     <Content Include="neighBackgroundext.png" />
-    <Content Include="old_RunBoy.js" />
+    <Content Include="RunBoy.js" />
     <Content Include="runBoy1.png" />
     <Content Include="Web.config" />
   </ItemGroup>

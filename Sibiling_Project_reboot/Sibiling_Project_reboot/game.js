@@ -32,7 +32,7 @@ AssetManager.prototype.queueDownload = function (path) {
 }
 
 AssetManager.prototype.isDone = function () {
-    return (this.downloadQueue.length == this.successCount + this.errorCount);
+    return (this.downloadQueue.length === this.successCount + this.errorCount);
 }
 AssetManager.prototype.downloadAll = function (callback) {
     if (this.downloadQueue.length === 0) window.setTimeout(callback, 100);
@@ -73,7 +73,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
-    
+
 }
 
 //Draws an image on the canvas
@@ -196,19 +196,6 @@ GameEngine.prototype.startInput = function () {
 
     var that = this;
 
-    this.ctx.canvas.addEventListener("click", function (e) {
-        that.click = getXandY(e);
-    }, false);
-
-    this.ctx.canvas.addEventListener("mousemove", function (e) {
-        that.mouse = getXandY(e);
-    }, false);
-
-    this.ctx.canvas.addEventListener("mousewheel", function (e) {
-        that.wheel = e;
-        e.preventDefault();
-    }, false);
-
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
         if (e.keyCode === 39) {
@@ -292,7 +279,7 @@ GameEngine.prototype.update = function () {
             this.entities.splice(i, 1);
         }
     }
-}
+};
 
 //What the games does during a loop of the game.
 GameEngine.prototype.loop = function () {
@@ -300,10 +287,7 @@ GameEngine.prototype.loop = function () {
     this.update();
     this.viewPort.update(); // update the viewPort with Runboy's new coordinates
     this.draw();
-    this.space = null;
-    this.click = null;
-    this.wheel = null;
-}
+};
 
 function Entity(game, x, y) {
     this.game = game;
@@ -315,7 +299,7 @@ function Entity(game, x, y) {
 }
 
 Entity.prototype.update = function () {
-}
+};
 
 Entity.prototype.draw = function (ctx) {
     if (this.game.showOutlines && this.radius) {
@@ -325,24 +309,7 @@ Entity.prototype.draw = function (ctx) {
         ctx.stroke();
         ctx.closePath();
     }
-}
-
-Entity.prototype.rotateAndCache = function (image, angle) {
-    var offscreenCanvas = document.createElement('canvas');
-    var size = Math.max(image.width, image.height);
-    offscreenCanvas.width = size;
-    offscreenCanvas.height = size;
-    var offscreenCtx = offscreenCanvas.getContext('2d');
-    offscreenCtx.save();
-    offscreenCtx.translate(size / 2, size / 2);
-    offscreenCtx.rotate(angle);
-    offscreenCtx.translate(0, 0);
-    offscreenCtx.drawImage(image, -(image.width / 2), -(image.height / 2));
-    offscreenCtx.restore();
-    //offscreenCtx.strokeStyle = "red";
-    //offscreenCtx.strokeRect(0,0,size,size);
-    return offscreenCanvas;
-}
+};
 
 /*
  * Tells the game engine which Entities should be drawn based on their proximity
@@ -382,12 +349,12 @@ function BoundingBox(x, y, width, height) {
 //checks if this bounding box collided with the other.
 BoundingBox.prototype.collide = function (oth) {
     //console.log("I'm checking");
-    if (oth == null) {
+    if (oth === null) {
         return null;
     }
     //console.log("my right: " + this.right + " their left: " + oth.left);
     //console.log(this.right > oth.left);
-   //console.log(this.left < oth.right);
+    //console.log(this.left < oth.right);
     //console.log(this.top < oth.bottom);
     //console.log(this.bottom > oth.top);
     if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) {
@@ -395,20 +362,20 @@ BoundingBox.prototype.collide = function (oth) {
     }
     //console.log("no collision");
     return false;
-}
+};
 
 /*
  * A simple object to test scrolling
  */
 function Block(game, canvasWidth) {
     this.game = game;
-    this.worldX = 875;
-    this.worldY = 520;
-    this.width = 275;
-    this.height = 145;
+    this.worldX = 1900;
+    this.worldY = 560;
+    this.width = 130;
+    this.height = 100;
     this.canvasWidth = canvasWidth;
 
-    this.boundingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
     // set the block's initial position in the world
     Entity.call(this, game, this.worldX, this.worldY);
 };
@@ -417,18 +384,33 @@ Block.prototype = new Entity();
 Block.prototype.constructor = Block;
 
 Block.prototype.update = function () {
-    this.boundingBox = new BoundingBox(this.x, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
 Block.prototype.draw = function (ctx) {
     ctx.fillStyle = "black";
-    ctx.fillRect(this.x, this.worldY, this.width, this.height);
+    ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
+/*
+ * A time for the game clock.
+ */
+function GameTimer(game) {
+    this.game = game;
+    this.time = 0;
+    this.startTime = Date.now();
+}
 
+GameTimer.prototype = new Entity();
+GameTimer.prototype.constructor = GameTimer;
+
+GameTimer.prototype.update = function () {
+    this.time = (Date.now() - this.startTime) / 1000;
+    document.getElementById("timer").innerHTML = this.time;
+};
 
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);
@@ -446,10 +428,12 @@ function initialize() {
         var gameWorld = new Background(gameEngine, canvasWidth);
         var block = new Block(gameEngine, canvasWidth);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
+        var timer = new GameTimer(gameEngine);
 
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(block);
         gameEngine.addEntity(boy);
+        gameEngine.addEntity(timer);
 
         var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
         gameEngine.setViewPort(viewPort);
@@ -458,4 +442,3 @@ function initialize() {
         gameEngine.start();
     });
 }
-

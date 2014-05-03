@@ -69,7 +69,6 @@
     <Content Include="blue_player.png" />
     <Content Include="game.js" />
     <Content Include="obstacles.js" />
-    <Content Include="old_index - Copy.html" />
     <Content Include="RunBoy.js" />
     <Content Include="runboySprite.png" />
     <Content Include="_game.js" />

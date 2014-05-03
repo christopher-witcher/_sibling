@@ -1,5 +1,4 @@
-﻿
-/*
+﻿/*
 var backImg = "neighBackgroundext.png";
 
 
@@ -25,8 +24,8 @@ Background.prototype.draw = function (ctx) {
 */
 
 /*
- * For having a blank background
- */
+* For having a blank background
+*/
 function Background(game, height) {
     this.width = 3000; //the width of the level or world
     this.height = height;

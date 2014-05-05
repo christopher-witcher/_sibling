@@ -27,12 +27,17 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.standing = true;
     this.canPass = true;
     this.height = 0;
+    this.baseHeight = 525;
 
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
     this.worldY = this.y;
     this.boundingbox = new BoundingBox(this.x, this.y, 90, 140);
+    //when its null I'm not currently on a platform.
+    this.currentPlatform = null;
+    //keeps track of where the bounding box's bottom was before it changed. should be when falling.
+    this.lastBottom = this.boundingbox.bottom;
 
 }
 
@@ -86,7 +91,19 @@ RunBoy.prototype.update = function () {
         }
         this.move();
         this.game.space = false; //stop Runboy from jumping continuously
-        this.boundingbox = new BoundingBox(this.x, this.y - this.height / 2, this.boundingbox.width, this.boundingbox.height);
+        this.lastBottom = this.boundingbox.bottom;
+        this.y = this.baseHeight - this.height / 2;
+        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
+        this.didICollide();
+        if (!this.canPass) {
+            if (direction) {
+                this.jumpRight.elapsedTime = 0;
+            }
+            else {
+                this.jumpLeft.elapsedTime = 0;
+            }
+            this.runningJump = false;
+        }
 
         /*
          * Standing and Jumping
@@ -110,7 +127,9 @@ RunBoy.prototype.update = function () {
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
             }
-            this.boundingbox = new BoundingBox(this.x + moveDistance, this.y - this.height / 2, this.boundingbox.width, this.boundingbox.height);
+            this.lastBottom = this.boundingbox.bottom;
+            this.y = this.baseHeight - this.height / 2;
+            this.boundingbox = new BoundingBox(this.x + moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
 
         } else { // Left
 
@@ -125,7 +144,9 @@ RunBoy.prototype.update = function () {
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
             }
-            this.boundingbox = new BoundingBox(this.x - moveDistance, this.y - this.height / 2, this.boundingbox.width, this.boundingbox.height);
+            this.lastBottom = this.boundingbox.bottom;
+            this.y = this.baseHeight - this.height / 2;
+            this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
         this.game.space = false; //stop Runboy from jumping continuously
 
@@ -140,11 +161,12 @@ RunBoy.prototype.update = function () {
         this.runningJump = false;
         var tempX = this.x;
         this.move();
-        if (this.x > tempX) {
+        this.lastBottom = this.boundingbox.bottom;
+        if (this.x > tempX) { 
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
-        } else {
+        } else {//for when the world x moves but running boy doesn't move?
             this.boundingbox = new BoundingBox(this.x + moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
-        }
+        }   
 
         /*
          * Running Left
@@ -157,9 +179,10 @@ RunBoy.prototype.update = function () {
         this.runningJump = false;
         var tempX = this.x;
         this.move();
+        this.lastBottom = this.boundingbox.bottom;
         if (this.x < tempX) {
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
-        } else {
+        } else {//for when the world x moves but running boy doesn't move?
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
 
@@ -168,15 +191,20 @@ RunBoy.prototype.update = function () {
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
-        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
 
     this.didICollide();
 
-    if (!this.canPass) {
+    if (!this.canPass && this.currentPlatform === null) {
         this.worldX = tempWorldX;
         this.x = tempX;
+        this.lastBottom = this.boundingbox.bottom;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
+    }
+        //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
+    else if (this.canPass) {
+        this.currentPlatform = null;
+        // this.boundingbox = new BoundingBox(this.x, 540, this.boundingbox.width, this.boundingbox.height);
     }
 
     Entity.prototype.update.call(this);
@@ -222,11 +250,11 @@ RunBoy.prototype.draw = function (ctx) {
 
         //jumping to the right.
         if (direction) {
-            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.height / 2);
+            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 
             //jumping to the left.
         } else {
-            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y - this.height / 2);
+            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
 
         // Running, can't run in both directions.
@@ -260,6 +288,7 @@ RunBoy.prototype.didICollide = function () {
         var entity = this.game.entities[i];
 
         if (entity instanceof Block) {
+            //prints out the two bounding boxes that are being compared onto the screen.
             document.getElementById("runX").innerHTML = this.x;
             document.getElementById("runWorldX").innerHTML = this.worldX;
 
@@ -274,6 +303,9 @@ RunBoy.prototype.didICollide = function () {
             document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
 
             this.canPass = !this.boundingbox.collide(entity.boundingBox);
+            if (entity.boundingBox.top > this.lastBottom) {
+                this.currentPlatform = entity;
+            }
         }
     }
 

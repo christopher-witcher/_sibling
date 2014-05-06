@@ -64,7 +64,7 @@ RunBoy.prototype.update = function () {
             this.baseHeight = this.y;
         }
         else {
-            this.y = this.y - 5;
+            this.y = this.y + .5;
         }
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
@@ -239,7 +239,6 @@ RunBoy.prototype.update = function () {
             this.falling = true;
         }
     }
-    console.log(this.falling);
    
     Entity.prototype.update.call(this);
 };
@@ -279,8 +278,18 @@ RunBoy.prototype.move = function () {
 
 RunBoy.prototype.draw = function (ctx) {
 
+    if (this.falling) {
+        //fall to the right.
+        if (direction) {
+            this.fallRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        }
+        //fall to the left.
+        else {
+            this.fallLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+        }
+    }
     // Jumping
-    if (this.jumping || this.runningJump) {
+    else if (this.jumping || this.runningJump) {
 
         //jumping to the right.
         if (direction) {

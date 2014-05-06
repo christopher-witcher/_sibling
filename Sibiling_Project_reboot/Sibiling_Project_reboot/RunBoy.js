@@ -2,6 +2,7 @@
 //The location of the sprite sheet
 heroSpriteSheet = "runboySprite.png";
 moveDistance = 7;
+startingHeight = 525;
 
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game, canvasWidth, worldWidth) {
@@ -19,21 +20,22 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 485, 114, 160, 0.033, 45, false);
 
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, 0, 525);
+    Entity.call(this, game, 0, startingHeight);
 
     this.jumping = false;
     this.running = false;
     this.runningJump = false;
     this.standing = true;
+    this.falling = false;
     this.canPass = true;
     this.height = 0;
-    this.baseHeight = 525;
+    this.baseHeight = startingHeight;
 
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
     this.worldY = this.y;
-    this.boundingbox = new BoundingBox(this.x, this.y, 90, 140);
+    this.boundingbox = new BoundingBox(this.x, this.y, 90, 145);
     //when its null I'm not currently on a platform.
     this.currentPlatform = null;
     //keeps track of where the bounding box's bottom was before it changed. should be when falling.
@@ -60,6 +62,7 @@ RunBoy.prototype.update = function () {
         this.jumping = false;
         this.running = false;
         this.standing = false;
+        var done = false;
 
         if (direction) { // Right
 
@@ -71,6 +74,7 @@ RunBoy.prototype.update = function () {
             this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
             if (this.jumpRight.isDone()) {
+                done = true;
                 this.jumpRight.elapsedTime = 0;
                 this.runningJump = false;
             }
@@ -86,6 +90,7 @@ RunBoy.prototype.update = function () {
             this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
             if (this.jumpLeft.isDone()) {
+                done = true;
                 this.jumpLeft.elapsedTime = 0;
                 this.runningJump = false;
             }
@@ -93,11 +98,15 @@ RunBoy.prototype.update = function () {
         this.move();
         this.game.space = false; //stop Runboy from jumping continuously
         this.lastBottom = this.boundingbox.bottom;
-        this.y = this.baseHeight - this.height / 2;
+        if (done) {
+            this.y = this.baseHeight;
+        }
+        else {
+            this.y = this.baseHeight - this.height / 2;
+        }
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         this.didICollide();
         if (!this.canPass) {
-            this.y = tempY;
             if (direction) {
                 this.jumpRight.elapsedTime = 0;
             }
@@ -126,12 +135,14 @@ RunBoy.prototype.update = function () {
             duration = duration / this.jumpRight.totalTime;
             this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
+            this.lastBottom = this.boundingbox.bottom;
+            this.y = this.baseHeight - this.height / 2;
+
             if (this.jumpRight.isDone()) {
+                this.y = this.baseHeight;
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
             }
-            this.lastBottom = this.boundingbox.bottom;
-            this.y = this.baseHeight - this.height / 2;
             this.boundingbox = new BoundingBox(this.x + moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
 
         } else { // Left
@@ -143,12 +154,14 @@ RunBoy.prototype.update = function () {
             duration = duration / this.jumpLeft.totalTime;
             this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
+            this.lastBottom = this.boundingbox.bottom;
+            this.y = this.baseHeight - this.height / 2;
+
             if (this.jumpLeft.isDone()) {
+                this.y = this.baseHeight;
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
             }
-            this.lastBottom = this.boundingbox.bottom;
-            this.y = this.baseHeight - this.height / 2;
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
         this.game.space = false; //stop Runboy from jumping continuously
@@ -194,6 +207,7 @@ RunBoy.prototype.update = function () {
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
+        //this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
 
     this.didICollide();
@@ -207,9 +221,12 @@ RunBoy.prototype.update = function () {
         //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
     else if (this.canPass) {
         this.currentPlatform = null;
-        // this.boundingbox = new BoundingBox(this.x, 540, this.boundingbox.width, this.boundingbox.height);
+        if (this.y != startingHeight && !this.jumping && !this.runningJump) {
+            this.falling = true;
+        }
     }
-
+    console.log(this.falling);
+   
     Entity.prototype.update.call(this);
 };
 

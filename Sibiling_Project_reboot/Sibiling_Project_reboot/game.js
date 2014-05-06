@@ -352,15 +352,11 @@ BoundingBox.prototype.collide = function (oth) {
     if (oth === null) {
         return null;
     }
-    //console.log("my right: " + this.right + " their left: " + oth.left);
-    //console.log(this.right > oth.left);
-    //console.log(this.left < oth.right);
-    //console.log(this.top < oth.bottom);
-    //console.log(this.bottom > oth.top);
+
     if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) {
         return true;
     }
-    //console.log("no collision");
+
     return false;
 };
 

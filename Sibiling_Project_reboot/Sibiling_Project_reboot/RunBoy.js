@@ -2,16 +2,16 @@
 //The location of the sprite sheet
 heroSpriteSheet = "runboySprite.png";
 moveDistance = 7;
-startingHeight = 525;
+startingHeight = 435;
 
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game, canvasWidth, worldWidth) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 0, 100, 150, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 150, 100, 150, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 12, 8, 100, 150, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 158, 100, 150, 0.01, 1, true, false);
 
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.008, 120, true, false);
-    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 150, 100, 150, 0.008, 120, true, false);
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.008, 120, true, false);
 
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 325, 114, 160, .0333, 45, false);
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 485, 114, 160, 0.0333, 45, false);

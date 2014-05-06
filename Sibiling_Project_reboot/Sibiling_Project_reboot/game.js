@@ -366,7 +366,7 @@ BoundingBox.prototype.collide = function (oth) {
 function Block(game, canvasWidth) {
     this.game = game;
     this.worldX = 1900;
-    this.worldY = 550;
+    this.worldY = 480;
     this.width = 200;
     this.height = 50;
     this.canvasWidth = canvasWidth;
@@ -404,9 +404,17 @@ GameTimer.prototype = new Entity();
 GameTimer.prototype.constructor = GameTimer;
 
 GameTimer.prototype.update = function () {
-    this.time = (Date.now() - this.startTime) / 1000;
-    document.getElementById("timer").innerHTML = this.time;
+    this.time = (Date.now() - this.startTime);
+    var formattedTime = convertTime(this.time);
+    document.getElementById("timer").innerHTML = formattedTime;
 };
+
+function convertTime(miliseconds) {
+    var totalSeconds = Math.floor(miliseconds / 1000);
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds - minutes * 60;
+    return minutes + ':' + seconds;
+}
 
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);

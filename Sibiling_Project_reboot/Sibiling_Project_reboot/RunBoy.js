@@ -50,6 +50,7 @@ RunBoy.prototype.update = function () {
     var maxHeight = 300;
     var tempX = this.x;
     var tempWorldX = this.worldX;
+    var tempY = this.y;
 
     /*
      * Running and Jumping
@@ -96,12 +97,14 @@ RunBoy.prototype.update = function () {
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         this.didICollide();
         if (!this.canPass) {
+            this.y = tempY;
             if (direction) {
                 this.jumpRight.elapsedTime = 0;
             }
             else {
                 this.jumpLeft.elapsedTime = 0;
             }
+            this.baseHeight = this.y;
             this.runningJump = false;
         }
 

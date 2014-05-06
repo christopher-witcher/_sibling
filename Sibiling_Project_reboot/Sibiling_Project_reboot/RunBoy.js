@@ -55,6 +55,20 @@ RunBoy.prototype.update = function () {
     var tempY = this.y;
 
     /*
+    * Falling
+    */
+    if (this.falling) {
+        if (this.y <= startingHeight) {
+            this.falling = false;
+            this.y = startingHeight;
+            this.baseHeight = this.y;
+        }
+        else {
+            this.y = this.y - 5;
+        }
+        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
+    }
+    /*
      * Running and Jumping
      */
     if ((this.game.space && (this.game.rightArrow || this.game.leftArrow)) || this.runningJump) {

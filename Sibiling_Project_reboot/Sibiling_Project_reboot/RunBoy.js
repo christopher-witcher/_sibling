@@ -326,13 +326,12 @@ RunBoy.prototype.draw = function (ctx) {
 RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
     this.canPass = true;
-    var index = 0;
     
-    //for (var i = 0; i < this.game.entities.length; i++) {
-    do{
-        var entity = this.game.entities[index];
+    for (var i = 0; i < this.game.entities.length; i++) {
 
-        if (entity.hasOwnProperty('boundingBox')) {
+        var entity = this.game.entities[i];
+        if (this.canPass && entity.hasOwnProperty('boundingBox')) {
+            
             //prints out the two bounding boxes that are being compared onto the screen.
             document.getElementById("runX").innerHTML = this.x;
             document.getElementById("runWorldX").innerHTML = this.worldX;
@@ -353,7 +352,6 @@ RunBoy.prototype.didICollide = function () {
                 this.currentPlatform = entity;
             }
         }
-            index++;
-    }while(this.canPass && index < this.game.entities.length);
+    }
 
 }

@@ -13,14 +13,14 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.008, 120, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.008, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 325, 114, 160, .0333, 45, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 485, 114, 160, 0.0333, 45, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .0133, 89, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, 0.0333, 45, false);
 
     this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 325, 114, 160, 0.033, 45, false);
     this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 450, 485, 114, 160, 0.033, 45, false);
 
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, 0, startingHeight);
+    Entity.call(this, game, 0, 10);
 
     this.jumping = false;
     this.running = false;
@@ -54,7 +54,7 @@ RunBoy.prototype.update = function () {
     var tempWorldX = this.worldX;
     var tempY = this.y;
 
-    /*
+   /*
     * Falling
     */
     if (this.falling) {
@@ -64,10 +64,11 @@ RunBoy.prototype.update = function () {
             this.baseHeight = this.y;
         }
         else {
-            this.y = this.y + .5;
+            this.y = this.y + .2;
         }
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
+
     /*
      * Running and Jumping
      */
@@ -77,9 +78,10 @@ RunBoy.prototype.update = function () {
         this.running = false;
         this.standing = false;
         var done = false;
+        this.game.addListeners = false; // de-activate keydown Listeners while jumping
 
         if (direction) { // Right
-
+            
             var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
             if (duration > this.jumpRight.totalTime / 2) {
                 duration = this.jumpRight.totalTime - duration;
@@ -91,6 +93,7 @@ RunBoy.prototype.update = function () {
                 done = true;
                 this.jumpRight.elapsedTime = 0;
                 this.runningJump = false;
+                this.game.addListeners = true; // activate addListeners
             }
 
         } else { // Left
@@ -107,6 +110,7 @@ RunBoy.prototype.update = function () {
                 done = true;
                 this.jumpLeft.elapsedTime = 0;
                 this.runningJump = false;
+                this.game.addListeners = true; // activate addListeners
             }
         }
         this.move();
@@ -139,9 +143,13 @@ RunBoy.prototype.update = function () {
         this.runningJump = false;
         this.running = false;
         this.standing = false;
+        this.game.isRightArrowUp = true;
+        this.game.isLeftArrowUp = true;
+        this.game.rightArrow = false;
+        this.game.leftArrow = false;
+        this.game.addListeners = false; // de-activate keydown Listeners while jumping
 
         if (direction) { // Right
-
             var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
             if (duration > this.jumpRight.totalTime / 2) {
                 duration = this.jumpRight.totalTime - duration;
@@ -156,8 +164,9 @@ RunBoy.prototype.update = function () {
                 this.y = this.baseHeight;
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
+                this.game.addListeners = true; // activate Listeners
             }
-            this.boundingbox = new BoundingBox(this.x + moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
+            this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
 
         } else { // Left
 
@@ -175,6 +184,7 @@ RunBoy.prototype.update = function () {
                 this.y = this.baseHeight;
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
+                this.game.addListeners = true; // activate Listeners
             }
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
@@ -183,8 +193,8 @@ RunBoy.prototype.update = function () {
         /*
          * Running Right
          */
-    } else if (this.game.rightArrow && !this.game.space) {
-
+    } else if (this.game.rightArrow) {
+        this.game.addListeners = true;  // activate Listeners...allows jumping immediately after landing while still running
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -201,8 +211,8 @@ RunBoy.prototype.update = function () {
         /*
          * Running Left
          */
-    } else if (this.game.leftArrow && !this.game.space) {
-
+    } else if (this.game.leftArrow) {
+        this.game.addListeners = true; // activate Listeners...allows jumping immediately after landing while still running
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -221,7 +231,8 @@ RunBoy.prototype.update = function () {
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
-        //this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
+        this.boundingbox = new BoundingBox(this.x, this.y, 80, this.boundingbox.height);
+        this.game.addListeners = true; // activate Listeners...handles cases where jumping doesn't finish
     }
 
     this.didICollide();
@@ -250,7 +261,8 @@ RunBoy.prototype.move = function () {
     var canvasMidpoint = this.canvasWidth / 2;
 
     if (direction) {
-        if ((this.worldX < canvasMidpoint) || ((this.worldX >= this.worldWidth - canvasMidpoint) && (this.x + 90 <= this.canvasWidth - moveDistance))) {
+        if ((this.worldX < canvasMidpoint) || ((this.worldX >= this.worldWidth - canvasMidpoint) &&
+            (this.x + 90 <= this.canvasWidth - moveDistance))) {
             this.x += moveDistance;
             this.worldX += moveDistance;
 

@@ -149,7 +149,7 @@ function GameEngine() {
     this.rightLimit = null;
     this.canvasWidth = canvasWidth;
     this.viewPort = null;
-
+    this.addListeners = true;
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -178,7 +178,7 @@ GameEngine.prototype.start = function () {
     })();
 }
 
-//Sets up listeners for input from the user.
+//Sets up addListeners for input from the user.
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
 
@@ -196,8 +196,7 @@ GameEngine.prototype.startInput = function () {
 
     var that = this;
 
-
-    this.ctx.canvas.addEventListener("keydown", function (e) {
+    this.keyDown = function (e) {
         if (e.keyCode === 39) {
             that.rightArrow = true;
             that.isRightArrowUp = false;
@@ -214,7 +213,9 @@ GameEngine.prototype.startInput = function () {
             that.space = true;
         }
         e.preventDefault();
-    }, false);
+    }
+
+    this.ctx.canvas.addEventListener("keydown", this.keyDown, false);
 
     this.ctx.canvas.addEventListener("keyup", function (e) {
         if (e.keyCode === 39) {
@@ -259,6 +260,15 @@ GameEngine.prototype.draw = function (drawCallback) {
 Update all entities
 */
 GameEngine.prototype.update = function () {
+
+    // add or remove keydown addListeners depending on whether Runboy is currently jumping
+    if (this.addListeners) {
+        this.ctx.canvas.addEventListener("keydown", this.keyDown, false);
+    } else {
+        this.ctx.canvas.removeEventListener("keydown", this.keyDown, false);
+    }
+
+
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -365,7 +375,7 @@ BoundingBox.prototype.collide = function (oth) {
 */
 function Block(game, canvasWidth) {
     this.game = game;
-    this.worldX = 1900;
+    this.worldX = 300;
     this.worldY = 480;
     this.width = 200;
     this.height = 50;

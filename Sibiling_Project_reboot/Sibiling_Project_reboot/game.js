@@ -443,7 +443,7 @@ function initialize() {
         var block = new Block(gameEngine, canvasWidth);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
-        var firstCrate = new Crate(gameEngine, 2200, 525, canvasWidth);
+        var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
         gameEngine.addEntity(block);
@@ -461,14 +461,14 @@ function initialize() {
 
 
 
-function Crate(game, the_x, the_y, canvasWidth) {
+function Platform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight) {
     this.game = game;
     this.worldX = the_x;
     this.worldY = the_y;
-    this.width = 50;
-    this.height = 50;
+    this.width = frameWidth;
+    this.height = frameHeight;
     this.canvasWidth = canvasWidth;
-    this.drawCrate = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 5000, 50, 50, 0.01, 1, true);
+    this.drawPlatform = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, this.width, this.height, 0.01, 1, true);
     this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
     
     
@@ -476,17 +476,17 @@ function Crate(game, the_x, the_y, canvasWidth) {
     //this.game.addEntity(this);
 }
 
-Crate.prototype = new Entity();
-Crate.prototype.constructor = Crate;
+Platform.prototype = new Entity();
+Platform.prototype.constructor = Platform;
 
-Crate.prototype.update = function () {
+Platform.prototype.update = function () {
     this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
-Crate.prototype.draw = function (ctx) {
+Platform.prototype.draw = function (ctx) {
     ctx.lineWidth = 5;
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
-    this.drawCrate.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+    this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };

@@ -371,6 +371,15 @@ BoundingBox.prototype.collide = function (oth) {
     return false;
 };
 
+function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
+    this.game = game;
+    this.worldX = x;
+    this.worldY = y;
+    //sprite information goes here.
+    this.width = frameWidth;
+    this.height = frameHeight;
+}
+
 /*
 * A simple object to test scrolling
 */

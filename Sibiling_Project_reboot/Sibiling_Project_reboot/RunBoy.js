@@ -1,5 +1,4 @@
-﻿
-//The location of the sprite sheet
+﻿//The location of the sprite sheet
 heroSpriteSheet = "runboySprite.png";
 moveDistance = 7;
 startingHeight = 435;

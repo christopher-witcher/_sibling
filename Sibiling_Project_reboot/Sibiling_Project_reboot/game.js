@@ -440,13 +440,15 @@ function initialize() {
 
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
-        var block = new Block(gameEngine, canvasWidth);
+        //var block = new Block(gameEngine, canvasWidth);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
         var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
+        var sectionA = leftCrateSteps(gameEngine, 650, 380, 4);
+        var sectionB = rightCrateSteps(gameEngine, 300, 380, 4);
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
-        gameEngine.addEntity(block);
+        //gameEngine.addEntity(block);
         
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
@@ -485,8 +487,37 @@ Platform.prototype.update = function () {
 };
 
 Platform.prototype.draw = function (ctx) {
-    ctx.lineWidth = 5;
+    
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
     this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+};
+
+var leftCrateSteps = function (game, x, y, height) {
+    var size = 50;
+    for (var i = 1; i <= height; i++) {
+        for (var j = 1; j <= i; j++) {
+            var tempX = (j - 1) * size + x;
+            var tempY = (i - 1) * size + y;
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+    }
+};
+
+var rightCrateSteps = function (game, x, y, height) {
+    var size = 50;
+    var start = 1;
+    for (var j = height; j >= 1; j--) {
+        
+        for (var i = start; i <= height; i++) {
+
+            var tempX = (i - 1) * size + x;
+            var tempY = (j - 1) * size + y;
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+        
+        start++;
+    }
 };

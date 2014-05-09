@@ -57,16 +57,18 @@ RunBoy.prototype.update = function () {
     /*
      * Falling
      */
-    if (this.falling) {
-        if (this.y <= startingHeight) {
-            this.falling = false;
+    if (this.currentPlatform === null && this.y < startingHeight && !this.runningJump && !this.jumping) {
+        this.falling = true;
+        var prevY = this.y;
+        this.y = this.y + moveDistance;
+        this.move();
+
+        if (this.y > startingHeight) {
             this.y = startingHeight;
+            this.falling = false;
+            this.standing = true;
             this.baseHeight = this.y;
         }
-        else {
-            this.y = this.y + .2;
-        }
-        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
 
     /*
@@ -367,6 +369,15 @@ RunBoy.prototype.didICollide = function () {
 
             if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
                 this.currentPlatform = entity;
+
+                // He landed on a platform while falling
+                if (this.falling) {
+                    this.falling = false;
+                    this.standing = true;
+                    this.jumping = false;
+                    this.runningJump = false;
+                    this.baseHeight = this.y
+                }
             }
         }
     }

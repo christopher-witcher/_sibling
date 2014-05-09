@@ -150,7 +150,7 @@ function GameEngine() {
     this.rightLimit = null;
     this.canvasWidth = canvasWidth;
     this.viewPort = null;
-
+    this.addListeners = true;
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -179,7 +179,7 @@ GameEngine.prototype.start = function () {
     })();
 }
 
-//Sets up listeners for input from the user.
+//Sets up addListeners for input from the user.
 GameEngine.prototype.startInput = function () {
     console.log('Starting input');
 
@@ -197,8 +197,7 @@ GameEngine.prototype.startInput = function () {
 
     var that = this;
 
-
-    this.ctx.canvas.addEventListener("keydown", function (e) {
+    this.keyDown = function (e) {
         if (e.keyCode === 39) {
             that.rightArrow = true;
             that.isRightArrowUp = false;
@@ -215,7 +214,9 @@ GameEngine.prototype.startInput = function () {
             that.space = true;
         }
         e.preventDefault();
-    }, false);
+    }
+
+    this.ctx.canvas.addEventListener("keydown", this.keyDown, false);
 
     this.ctx.canvas.addEventListener("keyup", function (e) {
         if (e.keyCode === 39) {
@@ -260,6 +261,15 @@ GameEngine.prototype.draw = function (drawCallback) {
 Update all entities
 */
 GameEngine.prototype.update = function () {
+
+    // add or remove keydown addListeners depending on whether Runboy is currently jumping
+    if (this.addListeners) {
+        this.ctx.canvas.addEventListener("keydown", this.keyDown, false);
+    } else {
+        this.ctx.canvas.removeEventListener("keydown", this.keyDown, false);
+    }
+
+
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -349,7 +359,7 @@ function BoundingBox(x, y, width, height) {
 
 //checks if this bounding box collided with the other.
 BoundingBox.prototype.collide = function (oth) {
-    //console.log("I'm checking");
+
     if (oth === null) {
         return null;
     }
@@ -364,13 +374,12 @@ BoundingBox.prototype.collide = function (oth) {
 /*
 * A simple object to test scrolling
 */
-function Block(game, canvasWidth) {
+function Block(game, x, y, width, height) {
     this.game = game;
-    this.worldX = 1900;
-    this.worldY = 480;
-    this.width = 200;
-    this.height = 50;
-    this.canvasWidth = canvasWidth;
+    this.worldX = x;
+    this.worldY = y;
+    this.width = width;
+    this.height = height;
 
     this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
     // set the block's initial position in the world
@@ -431,14 +440,26 @@ function initialize() {
 
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
-        var block = new Block(gameEngine, canvasWidth);
+
+        var block = new Block(gameEngine, 1500, 480, 200, 50);
+        var block2 = new Block(gameEngine, 1900, 380, 200, 50);
+        var block3 = new Block(gameEngine, 2300, 280, 200, 50);
+        var block4 = new Block(gameEngine, 2800, 180, 200, 50);
+
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
-        var firstCrate = new Crate(gameEngine, 2200, 525, canvasWidth);
+        var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
+        var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
+        var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
+
         gameEngine.addEntity(block);
-        
+        gameEngine.addEntity(block2);
+        gameEngine.addEntity(block3);
+        gameEngine.addEntity(block4);
+
+
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
 
@@ -452,32 +473,61 @@ function initialize() {
 
 
 
-function Crate(game, the_x, the_y, canvasWidth) {
+function Platform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight) {
     this.game = game;
     this.worldX = the_x;
     this.worldY = the_y;
-    this.width = 50;
-    this.height = 50;
+    this.width = frameWidth;
+    this.height = frameHeight;
     this.canvasWidth = canvasWidth;
-    this.drawCrate = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 5000, 50, 50, 0.01, 1, true);
+    this.drawPlatform = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, this.width, this.height, 0.01, 1, true);
     this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
-    
-    
+
+
     Entity.call(this, game, this.worldX, this.worldY);
     //this.game.addEntity(this);
 }
 
-Crate.prototype = new Entity();
-Crate.prototype.constructor = Crate;
+Platform.prototype = new Entity();
+Platform.prototype.constructor = Platform;
 
-Crate.prototype.update = function () {
+Platform.prototype.update = function () {
     this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
-Crate.prototype.draw = function (ctx) {
-    ctx.lineWidth = 5;
+Platform.prototype.draw = function (ctx) {
+
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
-    this.drawCrate.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+    this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+};
+
+var leftCrateSteps = function (game, x, y, height) {
+    var size = 50;
+    for (var i = 1; i <= height; i++) {
+        for (var j = 1; j <= i; j++) {
+            var tempX = (j - 1) * size + x;
+            var tempY = (i - 1) * size + y;
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+    }
+};
+
+var rightCrateSteps = function (game, x, y, height) {
+    var size = 50;
+    var start = 1;
+    for (var j = height; j >= 1; j--) {
+
+        for (var i = start; i <= height; i++) {
+
+            var tempX = (i - 1) * size + x;
+            var tempY = (j - 1) * size + y;
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+
+        start++;
+    }
 };

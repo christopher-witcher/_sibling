@@ -81,7 +81,6 @@ RunBoy.prototype.update = function () {
         this.running = false;
         this.standing = false;
         var done = false;
-        this.game.addListeners = false; // de-activate keydown Listeners while jumping
 
         if (direction) { // Right
 
@@ -96,7 +95,6 @@ RunBoy.prototype.update = function () {
                 done = true;
                 this.jumpRight.elapsedTime = 0;
                 this.runningJump = false;
-                this.game.addListeners = true; // activate addListeners
             }
 
         } else { // Left
@@ -113,9 +111,9 @@ RunBoy.prototype.update = function () {
                 done = true;
                 this.jumpLeft.elapsedTime = 0;
                 this.runningJump = false;
-                this.game.addListeners = true; // activate addListeners
             }
         }
+
         this.move();
         this.game.space = false; //stop Runboy from jumping continuously
         this.lastBottom = this.boundingbox.bottom;
@@ -127,20 +125,24 @@ RunBoy.prototype.update = function () {
         }
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         this.didICollide();
+
         if (!this.canPass) {
             if (direction) {
                 this.jumpRight.elapsedTime = 0;
+                this.x = this.x - moveDistance;
             }
             else {
                 this.jumpLeft.elapsedTime = 0;
+                this.x = this.x + moveDistance;
             }
             this.baseHeight = this.y;
             this.runningJump = false;
+            this.y = this.y + moveDistance;
         }
 
-        /*
-         * Standing and Jumping
-         */
+/*
+* Standing and Jumping
+*/
     } else if ((this.game.space && this.standing) || this.jumping) {
         this.jumping = true;
         this.runningJump = false;
@@ -150,7 +152,6 @@ RunBoy.prototype.update = function () {
         this.game.isLeftArrowUp = true;
         this.game.rightArrow = false;
         this.game.leftArrow = false;
-        this.game.addListeners = false; // de-activate keydown Listeners while jumping
 
         if (direction) { // Right
             var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
@@ -167,8 +168,8 @@ RunBoy.prototype.update = function () {
                 this.y = this.baseHeight;
                 this.jumpRight.elapsedTime = 0;
                 this.jumping = false;
-                this.game.addListeners = true; // activate Listeners
             }
+
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
             this.didICollide();
             if (!this.canPass) {
@@ -193,8 +194,8 @@ RunBoy.prototype.update = function () {
                 this.y = this.baseHeight;
                 this.jumpLeft.elapsedTime = 0;
                 this.jumping = false;
-                this.game.addListeners = true; // activate Listeners
             }
+
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
             this.didICollide();
             if (!this.canPass) {
@@ -210,7 +211,6 @@ RunBoy.prototype.update = function () {
          * Running Right
          */
     } else if (this.game.rightArrow) {
-        this.game.addListeners = true;  // activate Listeners...allows jumping immediately after landing while still running
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -228,7 +228,6 @@ RunBoy.prototype.update = function () {
          * Running Left
          */
     } else if (this.game.leftArrow) {
-        this.game.addListeners = true; // activate Listeners...allows jumping immediately after landing while still running
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -248,7 +247,6 @@ RunBoy.prototype.update = function () {
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
         this.boundingbox = new BoundingBox(this.x, this.y, 80, this.boundingbox.height);
-        this.game.addListeners = true; // activate Listeners...handles cases where jumping doesn't finish
     }
 
     this.didICollide();
@@ -265,6 +263,13 @@ RunBoy.prototype.update = function () {
         if (this.y != startingHeight && !this.jumping && !this.runningJump) {
             this.falling = true;
         }
+    }
+
+    // de-activate keydown Listeners while jumping or falling, otherwise activate them
+    if (this.falling || this.jumping || this.runningJump) {
+        this.game.addListeners = false; 
+    } else {
+        this.game.addListeners = true;
     }
 
     Entity.prototype.update.call(this);
@@ -379,7 +384,7 @@ RunBoy.prototype.didICollide = function () {
 
             this.canPass = !this.boundingbox.collide(entity.boundingBox);
 
-            if (entity.boundingBox.top > this.lastBottom) {
+            if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
                 this.currentPlatform = entity;
 
                 // He landed on a platform while falling

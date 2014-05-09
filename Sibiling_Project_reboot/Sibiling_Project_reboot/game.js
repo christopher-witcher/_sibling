@@ -363,7 +363,7 @@ BoundingBox.prototype.collide = function (oth) {
         return null;
     }
 
-    if (this.right > oth.left && this.left < oth.right && this.top < oth.bottom && this.bottom > oth.top) {
+    if (this.right >= oth.left && this.left <= oth.right && this.top <= oth.bottom && this.bottom >= oth.top) {
         return true;
     }
 

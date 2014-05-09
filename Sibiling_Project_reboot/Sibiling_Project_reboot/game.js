@@ -373,13 +373,12 @@ BoundingBox.prototype.collide = function (oth) {
 /*
 * A simple object to test scrolling
 */
-function Block(game, canvasWidth) {
+function Block(game, x, y, width, height) {
     this.game = game;
-    this.worldX = 300;
-    this.worldY = 480;
-    this.width = 200;
-    this.height = 50;
-    this.canvasWidth = canvasWidth;
+    this.worldX = x;
+    this.worldY = y;
+    this.width = width;
+    this.height = height;
 
     this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
     // set the block's initial position in the world
@@ -440,15 +439,25 @@ function initialize() {
 
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
-        //var block = new Block(gameEngine, canvasWidth);
+
+        var block = new Block(gameEngine, 1500, 480, 200, 50);
+        var block2 = new Block(gameEngine, 1900, 380, 200, 50);
+        var block3 = new Block(gameEngine, 2300, 280, 200, 50);
+        var block4 = new Block(gameEngine, 2800, 180, 200, 50);
+
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
         var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
-        var sectionA = leftCrateSteps(gameEngine, 650, 380, 4);
-        var sectionB = rightCrateSteps(gameEngine, 300, 380, 4);
+        var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
+        var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
-        //gameEngine.addEntity(block);
+
+        gameEngine.addEntity(block);
+        gameEngine.addEntity(block2);
+        gameEngine.addEntity(block3);
+        gameEngine.addEntity(block4);
+
         
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);

@@ -57,20 +57,17 @@ RunBoy.prototype.update = function () {
     /*
      * Falling
      */
-    if (this.currentPlatform === null && this.y < startingHeight && !this.runningJump && !this.jumping) {
-        this.falling = true;
-        var prevY = this.y;
-        this.y = this.y + moveDistance;
-        this.move();
-
-        if (this.y > startingHeight) {
-            this.y = startingHeight;
+    if (this.falling) {
+        if (this.y <= startingHeight) {
             this.falling = false;
-            this.standing = true;
+            this.y = startingHeight;
             this.baseHeight = this.y;
         }
+        else {
+            this.y = this.y + .2;
+        }
+        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
-
 
     /*
      * Running and Jumping
@@ -140,9 +137,9 @@ RunBoy.prototype.update = function () {
             this.y = this.y + moveDistance;
         }
 
-/*
-* Standing and Jumping
-*/
+        /*
+         * Standing and Jumping
+         */
     } else if ((this.game.space && this.standing) || this.jumping) {
         this.jumping = true;
         this.runningJump = false;
@@ -171,12 +168,6 @@ RunBoy.prototype.update = function () {
             }
 
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
-            this.didICollide();
-            if (!this.canPass) {
-                this.jumpRight.elapsedTime = 0;
-                this.jumping = false;
-                this.y = this.y + moveDistance;
-            }
 
         } else { // Left
 
@@ -197,13 +188,6 @@ RunBoy.prototype.update = function () {
             }
 
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
-            this.didICollide();
-            if (!this.canPass) {
-                this.jumpLeft.elapsedTime = 0;
-                this.jumping = false;
-                this.y = this.y + moveDistance;
-            }
-
         }
         this.game.space = false; //stop Runboy from jumping continuously
 
@@ -368,9 +352,6 @@ RunBoy.prototype.didICollide = function () {
             //prints out the two bounding boxes that are being compared onto the screen.
             document.getElementById("runX").innerHTML = this.x;
             document.getElementById("runWorldX").innerHTML = this.worldX;
-            document.getElementById("runY").innerHTML = this.y;
-            document.getElementById("runWorldY").innerHTML = this.worldY;
-
 
             document.getElementById("runLeft").innerHTML = this.boundingbox.left;
             document.getElementById("runRight").innerHTML = this.boundingbox.right;
@@ -386,15 +367,6 @@ RunBoy.prototype.didICollide = function () {
 
             if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
                 this.currentPlatform = entity;
-
-                // He landed on a platform while falling
-                if (this.falling) {
-                    this.falling = false;
-                    this.standing = true;
-                    this.jumping = false;
-                    this.runningJump = false;
-                    this.baseHeight = this.y
-                }
             }
         }
     }

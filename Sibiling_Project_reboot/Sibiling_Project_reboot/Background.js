@@ -40,5 +40,6 @@ Background.prototype.update = function () {
     Entity.prototype.update.call(this);
 };
 
-Background.prototype.draw = function () {
+Background.prototype.draw = function (ctx) {
+    
 };

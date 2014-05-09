@@ -34,6 +34,7 @@ AssetManager.prototype.queueDownload = function (path) {
 AssetManager.prototype.isDone = function () {
     return (this.downloadQueue.length === this.successCount + this.errorCount);
 }
+//loads all the image files.
 AssetManager.prototype.downloadAll = function (callback) {
     if (this.downloadQueue.length === 0) window.setTimeout(callback, 100);
     for (var i = 0; i < this.downloadQueue.length; i++) {

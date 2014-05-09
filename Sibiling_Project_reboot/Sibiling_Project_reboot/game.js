@@ -5,6 +5,7 @@ var backImg = "neighBackgroundext.png";
 var gameEngine;
 var canvasWidth = 1250;
 var canvasHeight = 700;
+var boardPieces = [];
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -444,8 +445,10 @@ function initialize() {
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
         var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
-        var sectionA = leftCrateSteps(gameEngine, 650, 380, 4);
-        var sectionB = rightCrateSteps(gameEngine, 300, 380, 4);
+        /*var sectionA = leftCrateSteps(gameEngine, 650, 380, 4);
+        var sectionB = rightCrateSteps(gameEngine, 300, 380, 4);*/
+        boardPieces[0](300, gameEngine);
+        
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
         //gameEngine.addEntity(block);
@@ -520,4 +523,27 @@ var rightCrateSteps = function (game, x, y, height) {
         
         start++;
     }
+};
+
+var rectPlatform = function (game, x, y, width, height) {
+    var size = 50;
+    for (var i = 0; i < height; i++) {
+        for (var j = 0; j < width; j++) {
+            var tempX = j * size + x;
+            var tempY = i * size + y;
+
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+    }
+
+
+};
+
+boardPieces[0] = function (startX, game) {
+    var sectionE = rectPlatform(game, startX, 350, 4, 1);
+    var sectionC = rectPlatform(gameEngine, startX + 300, 500, 4, 1);
+    var sectionD = rectPlatform(gameEngine, startX + 400, 200, 4, 1);
+    var tallCrates = rectPlatform(gameEngine, startX + 850, 150, 3, 8);
+    var sectionF = rectPlatform(gameEngine, startX + 1250, 150, 8, 1);
 };

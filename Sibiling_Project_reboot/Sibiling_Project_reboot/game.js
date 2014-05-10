@@ -483,11 +483,11 @@ function initialize() {
 
         var item = new Item(gameEngine, 1550, 430, 10, 0, 0, 50, 50);
 
-        var block = new Block(gameEngine, 1500, 480, 200, 50);
-       /* var block = new Block(gameEngine, 1500, 480, 200, 50);
-        var block2 = new Block(gameEngine, 1900, 380, 200, 50);
-        var block3 = new Block(gameEngine, 2300, 280, 200, 50);
-        var block4 = new Block(gameEngine, 2800, 180, 200, 50);*/
+        //var block = new Block(gameEngine, 1500, 480, 200, 50);
+        //var block = new Block(gameEngine, 1500, 480, 200, 50);
+        //var block2 = new Block(gameEngine, 1900, 380, 200, 50);
+        //var block3 = new Block(gameEngine, 2300, 280, 200, 50);
+        //var block4 = new Block(gameEngine, 2800, 180, 200, 50);
 
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
@@ -497,9 +497,9 @@ function initialize() {
         gameEngine.addEntity(gameWorld);
       /*  gameEngine.addEntity(firstCrate);
 
-        gameEngine.addEntity(item);
+        gameEngine.addEntity(item);*/
 
-        gameEngine.addEntity(block);
+        /*gameEngine.addEntity(block);
         gameEngine.addEntity(block2);
         gameEngine.addEntity(block3);
         gameEngine.addEntity(block4);*/

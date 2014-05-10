@@ -349,8 +349,13 @@ RunBoy.prototype.didICollide = function () {
 
         var entity = this.game.entities[i];
         var result = this.boundingbox.collide(entity.boundingBox);
-        if (result && entity instanceof Item) {
+        if (result && !entity.removeFromWorld && entity instanceof Item) {
             entity.removeFromWorld = true;
+            //console.log(entity.points);
+            //console.log(this.game.score);
+            console.log("here");
+            this.game.score += entity.points;
+            document.getElementById("score").innerHTML = this.game.score;
         }
         else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 

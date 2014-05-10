@@ -151,6 +151,7 @@ function GameEngine() {
     this.canvasWidth = canvasWidth;
     this.viewPort = null;
     this.addListeners = true;
+    this.score = 0;
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -166,6 +167,7 @@ GameEngine.prototype.init = function (ctx) {
     this.timer = new Timer();
     this.LeftLimit = 0;
     this.rightLimit = 1450;
+    document.getElementById("score").innerHTML = this.score;
     console.log('game initialized');
 }
 
@@ -478,7 +480,7 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
-        var item = new Item(gameEngine, 1550, 430, 0, 0, 0, 50, 50);
+        var item = new Item(gameEngine, 1550, 430, 10, 0, 0, 50, 50);
 
         var block = new Block(gameEngine, 1500, 480, 200, 50);
         var block2 = new Block(gameEngine, 1900, 380, 200, 50);

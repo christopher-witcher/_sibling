@@ -495,9 +495,9 @@ function initialize() {
         /*var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
-      /*  gameEngine.addEntity(firstCrate);
+      /*  gameEngine.addEntity(firstCrate);*/
 
-        gameEngine.addEntity(item);*/
+        gameEngine.addEntity(item);
 
         /*gameEngine.addEntity(block);
         gameEngine.addEntity(block2);
@@ -588,6 +588,8 @@ var rectPlatform = function (game, x, y, width, height) {
             game.addEntity(crate);
         }
     }
+    var item = new Item(game, x + 75, y - 60, 10, 0, 0, 50, 50);
+    game.addEntity(item);
 
 
 };

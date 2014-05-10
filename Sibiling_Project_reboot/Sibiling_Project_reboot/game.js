@@ -378,6 +378,24 @@ function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
     //sprite information goes here.
     this.width = frameWidth;
     this.height = frameHeight;
+    this.boundingBox = newBoundingBox(this.worldX, this.worldY, this.width, this.height);
+
+    Entity.call(this, game, this.worldX, this.worldY);
+}
+
+Item.prototype = new Entity();
+Item.prototype.constructor = Item;
+
+Item.prototype.update = function () {
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    Entity.prototype.update.call(this);
+}
+
+Item.prototype.draw = function (ctx) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 }
 
 /*

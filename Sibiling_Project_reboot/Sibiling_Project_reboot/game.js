@@ -371,6 +371,9 @@ BoundingBox.prototype.collide = function (oth) {
     return false;
 };
 
+/*
+* An item that the character can interact with in the world.
+*/
 function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
     this.game = game;
     this.worldX = x;
@@ -378,25 +381,31 @@ function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
     //sprite information goes here.
     this.width = frameWidth;
     this.height = frameHeight;
-    this.boundingBox = newBoundingBox(this.worldX, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
 
     Entity.call(this, game, this.worldX, this.worldY);
-}
+};
 
 Item.prototype = new Entity();
 Item.prototype.constructor = Item;
 
+/*
+* updates the item.
+*/
 Item.prototype.update = function () {
     this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
-}
+};
 
+/*
+* draws the item 
+*/
 Item.prototype.draw = function (ctx) {
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "purple";
     ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
-}
+};
 
 /*
 * A simple object to test scrolling
@@ -468,6 +477,8 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
+        var item = new Item(gameEngine, 1550, 430, 0, 0, 50, 50);
+
         var block = new Block(gameEngine, 1500, 480, 200, 50);
         var block2 = new Block(gameEngine, 1900, 380, 200, 50);
         var block3 = new Block(gameEngine, 2300, 280, 200, 50);
@@ -480,6 +491,8 @@ function initialize() {
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(firstCrate);
+
+        gameEngine.addEntity(item);
 
         gameEngine.addEntity(block);
         gameEngine.addEntity(block2);

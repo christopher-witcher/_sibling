@@ -58,7 +58,7 @@ RunBoy.prototype.update = function () {
      */
     if (this.currentPlatform === null && this.y < startingHeight && !this.runningJump && !this.jumping) {
         this.falling = true;
-        var prevY = this.y;
+        //var prevY = this.y;
         this.y = this.y + moveDistance;
         this.move();
 

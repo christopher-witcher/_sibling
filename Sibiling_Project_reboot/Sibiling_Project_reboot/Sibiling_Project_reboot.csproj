@@ -67,6 +67,7 @@
   <ItemGroup>
     <Content Include="Background.js" />
     <Content Include="blue_player.png" />
+    <Content Include="Enemy.js" />
     <Content Include="game.js" />
     <Content Include="obstacles.js" />
     <Content Include="RunBoy.js" />

@@ -152,6 +152,7 @@ function GameEngine() {
     this.canvasWidth = canvasWidth;
     this.viewPort = null;
     this.addListeners = true;
+    this.score = 0;
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -167,6 +168,7 @@ GameEngine.prototype.init = function (ctx) {
     this.timer = new Timer();
     this.LeftLimit = 0;
     this.rightLimit = 1450;
+    document.getElementById("score").innerHTML = this.score;
     console.log('game initialized');
 }
 
@@ -361,7 +363,7 @@ function BoundingBox(x, y, width, height) {
 //checks if this bounding box collided with the other.
 BoundingBox.prototype.collide = function (oth) {
 
-    if (oth === null) {
+    if (oth == null) { //DO NOT CHANGE TO ===
         return null;
     }
 
@@ -372,32 +374,42 @@ BoundingBox.prototype.collide = function (oth) {
     return false;
 };
 
-function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
+/*
+* An item that the character can interact with in the world.
+*/
+function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.game = game;
     this.worldX = x;
     this.worldY = y;
+    this.points = point;
     //sprite information goes here.
     this.width = frameWidth;
     this.height = frameHeight;
-    this.boundingBox = newBoundingBox(this.worldX, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
 
     Entity.call(this, game, this.worldX, this.worldY);
-}
+};
 
 Item.prototype = new Entity();
 Item.prototype.constructor = Item;
 
+/*
+* updates the item.
+*/
 Item.prototype.update = function () {
     this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
-}
+};
 
+/*
+* draws the item 
+*/
 Item.prototype.draw = function (ctx) {
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "purple";
     ctx.fillRect(this.x, this.y, this.width, this.height);
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
-}
+};
 
 /*
 * A simple object to test scrolling
@@ -469,6 +481,9 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
+        var item = new Item(gameEngine, 1550, 430, 10, 0, 0, 50, 50);
+
+        var block = new Block(gameEngine, 1500, 480, 200, 50);
        /* var block = new Block(gameEngine, 1500, 480, 200, 50);
         var block2 = new Block(gameEngine, 1900, 380, 200, 50);
         var block3 = new Block(gameEngine, 2300, 280, 200, 50);
@@ -481,6 +496,8 @@ function initialize() {
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
       /*  gameEngine.addEntity(firstCrate);
+
+        gameEngine.addEntity(item);
 
         gameEngine.addEntity(block);
         gameEngine.addEntity(block2);

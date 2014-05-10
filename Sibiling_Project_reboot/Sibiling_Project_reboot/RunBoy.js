@@ -58,7 +58,7 @@ RunBoy.prototype.update = function () {
      */
     if (this.currentPlatform === null && this.y < startingHeight && !this.runningJump && !this.jumping) {
         this.falling = true;
-        var prevY = this.y;
+        //var prevY = this.y;
         this.y = this.y + moveDistance;
         this.move();
 
@@ -348,7 +348,16 @@ RunBoy.prototype.didICollide = function () {
     for (var i = 0; i < this.game.entities.length; i++) {
 
         var entity = this.game.entities[i];
-        if (this.canPass && entity.hasOwnProperty('boundingBox')) {
+        var result = this.boundingbox.collide(entity.boundingBox);
+        if (result && !entity.removeFromWorld && entity instanceof Item) {
+            entity.removeFromWorld = true;
+            //console.log(entity.points);
+            //console.log(this.game.score);
+            console.log("here");
+            this.game.score += entity.points;
+            document.getElementById("score").innerHTML = this.game.score;
+        }
+        else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 
             //prints out the two bounding boxes that are being compared onto the screen.
             document.getElementById("runX").innerHTML = this.x;
@@ -364,7 +373,7 @@ RunBoy.prototype.didICollide = function () {
             document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
             document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
 
-            this.canPass = !this.boundingbox.collide(entity.boundingBox);
+            this.canPass = !result;
 
             if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
                 this.currentPlatform = entity;

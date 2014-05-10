@@ -360,7 +360,7 @@ function BoundingBox(x, y, width, height) {
 //checks if this bounding box collided with the other.
 BoundingBox.prototype.collide = function (oth) {
 
-    if (oth === null) {
+    if (oth == null) { //DO NOT CHANGE TO ===
         return null;
     }
 
@@ -374,10 +374,11 @@ BoundingBox.prototype.collide = function (oth) {
 /*
 * An item that the character can interact with in the world.
 */
-function Item(game, x, y, clipX, clipY, frameWidth, frameHeight) {
+function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.game = game;
     this.worldX = x;
     this.worldY = y;
+    this.points = point;
     //sprite information goes here.
     this.width = frameWidth;
     this.height = frameHeight;
@@ -477,7 +478,7 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
-        var item = new Item(gameEngine, 1550, 430, 0, 0, 50, 50);
+        var item = new Item(gameEngine, 1550, 430, 0, 0, 0, 50, 50);
 
         var block = new Block(gameEngine, 1500, 480, 200, 50);
         var block2 = new Block(gameEngine, 1900, 380, 200, 50);

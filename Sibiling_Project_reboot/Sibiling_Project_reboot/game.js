@@ -5,6 +5,7 @@ var backImg = "neighBackgroundext.png";
 var gameEngine;
 var canvasWidth = 1250;
 var canvasHeight = 700;
+var boardPieces = [];
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -468,24 +469,24 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
-        var block = new Block(gameEngine, 1500, 480, 200, 50);
+       /* var block = new Block(gameEngine, 1500, 480, 200, 50);
         var block2 = new Block(gameEngine, 1900, 380, 200, 50);
         var block3 = new Block(gameEngine, 2300, 280, 200, 50);
-        var block4 = new Block(gameEngine, 2800, 180, 200, 50);
+        var block4 = new Block(gameEngine, 2800, 180, 200, 50);*/
 
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var timer = new GameTimer(gameEngine);
         var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
-        var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
-        var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);
+        /*var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
+        var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
-        gameEngine.addEntity(firstCrate);
+      /*  gameEngine.addEntity(firstCrate);
 
         gameEngine.addEntity(block);
         gameEngine.addEntity(block2);
         gameEngine.addEntity(block3);
-        gameEngine.addEntity(block4);
-
+        gameEngine.addEntity(block4);*/
+        boardPieces[0](650, gameEngine);
 
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
@@ -557,4 +558,27 @@ var rightCrateSteps = function (game, x, y, height) {
 
         start++;
     }
+};
+
+var rectPlatform = function (game, x, y, width, height) {
+    var size = 50;
+    for (var i = 0; i < height; i++) {
+        for (var j = 0; j < width; j++) {
+            var tempX = j * size + x;
+            var tempY = i * size + y;
+
+            var crate = new Platform(game, tempX, tempY, canvasWidth, 0, 5000, size, size);
+            game.addEntity(crate);
+        }
+    }
+
+
+};
+
+boardPieces[0] = function (startX, game) {
+    var levelOne = rectPlatform(game, startX, 534, 4, 1);
+    var levelTwo = rectPlatform(gameEngine, startX + 450, 415, 4, 1);
+    var levelThree = rectPlatform(gameEngine, startX + 775, 296, 4, 1);
+    var tallCrates = rectPlatform(gameEngine, startX + 1180, 150, 4, 5);
+    var sectionF = rectPlatform(gameEngine, startX + 1680, 150, 8, 1);
 };

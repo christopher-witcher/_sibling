@@ -34,7 +34,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.worldWidth = worldWidth;
     this.worldX = this.x;
     this.worldY = this.y;
-    this.boundingbox = new BoundingBox(this.x, this.y, 90, 145);
+    this.boundingbox = new BoundingBox(this.x, this.y, 90, 145); //145
     //when its null I'm not currently on a platform.
     this.currentPlatform = null;
     //keeps track of where the bounding box's bottom was before it changed. should be when falling.

@@ -351,11 +351,11 @@ RunBoy.prototype.didICollide = function () {
         var result = this.boundingbox.collide(entity.boundingBox);
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             entity.removeFromWorld = true;
-            //console.log(entity.points);
-            //console.log(this.game.score);
-            console.log("here");
             this.game.score += entity.points;
             document.getElementById("score").innerHTML = this.game.score;
+        }
+        else if (result && entity instanceof FinishLine) {
+            console.log("ran through finish line");
         }
         else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 

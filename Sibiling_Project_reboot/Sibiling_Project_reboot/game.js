@@ -411,6 +411,33 @@ Item.prototype.draw = function (ctx) {
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
+function FinishLine(game, gameWidth) {
+    this.game = game;
+    //console.log(gameWidth);
+    this.x = gameWidth;
+    this.y = 435;
+    this.width = 15;
+    this.height = 150;
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+
+    Entity.call(this, game, this.x, this.y);
+}
+
+FinishLine.prototype = new Entity();
+FinishLine.prototype.constructor = FinishLine;
+
+FinishLine.prototype.update = function () {
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    Entity.prototype.update.call(this);
+};
+
+FinishLine.prototype.draw = function (ctx) {
+    ctx.fillStyle = "purple";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+};
+
 /*
 * A simple object to test scrolling
 */
@@ -481,7 +508,8 @@ function initialize() {
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
 
-        var item = new Item(gameEngine, 1550, 430, 10, 0, 0, 50, 50);
+        var line = new FinishLine(gameEngine, gameWorld.width);
+
 
         //var block = new Block(gameEngine, 1500, 480, 200, 50);
         //var block = new Block(gameEngine, 1500, 480, 200, 50);
@@ -495,9 +523,9 @@ function initialize() {
         /*var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
+        gameEngine.addEntity(line);
       /*  gameEngine.addEntity(firstCrate);*/
 
-        gameEngine.addEntity(item);
 
         /*gameEngine.addEntity(block);
         gameEngine.addEntity(block2);

@@ -383,6 +383,7 @@ function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.worldY = y;
     this.points = point;
     //sprite information goes here.
+    this.drawItem = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, frameWidth, frameHeight, 0.01, 1, true);
     this.width = frameWidth;
     this.height = frameHeight;
     this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
@@ -405,10 +406,11 @@ Item.prototype.update = function () {
 * draws the item 
 */
 Item.prototype.draw = function (ctx) {
-    ctx.fillStyle = "purple";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.fillStyle = "purple";
+    //ctx.fillRect(this.x, this.y, this.width, this.height);
+    this.drawItem.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0.25);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 function FinishLine(game, gameWidth) {
@@ -524,7 +526,7 @@ function initialize() {
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(line);
-      /*  gameEngine.addEntity(firstCrate);*/
+        /*  gameEngine.addEntity(firstCrate);*/
 
 
         /*gameEngine.addEntity(block);
@@ -532,7 +534,8 @@ function initialize() {
         gameEngine.addEntity(block3);
         gameEngine.addEntity(block4);*/
         var nextWidth = boardPieces[0](650, gameEngine);
-        nextWidth = boardPieces[1](nextWidth+=500, gameEngine);
+        nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
+        
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
 
@@ -579,12 +582,18 @@ Platform.prototype.draw = function (ctx) {
 var leftCrateSteps = function (game, x, y, height) {
     var size = 50;
     for (var i = 1; i <= height; i++) {
+        var tempX;
+        var tempY;
         for (var j = 1; j <= i; j++) {
-            var tempX = (j - 1) * size + x;
-            var tempY = (i - 1) * size + y;
+            tempX = (j - 1) * size + x;
+            tempY = (i - 1) * size + y;
             var crate = new Platform(game, tempX, tempY, canvasWidth, 1450, 4900, size, size);
             game.addEntity(crate);
         }
+        var current = Math.floor(Math.random() * gameItems.length)
+        var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
+            gameItems[current].frameWidth, gameItems[current].frameHeight);
+        game.addEntity(item);
     }
 };
 
@@ -592,14 +601,23 @@ var rightCrateSteps = function (game, x, y, height) {
     var size = 50;
     var start = 1;
     for (var j = height; j >= 1; j--) {
-
+        var tempX;
+        var tempY;
         for (var i = start; i <= height; i++) {
-
-            var tempX = (i - 1) * size + x;
-            var tempY = (j - 1) * size + y;
+            tempX = (i - 1) * size + x;
+            tempY = (j - 1) * size + y;
+            if (i === start) {
+                var current = Math.floor(Math.random() * gameItems.length)
+                var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX,
+                    gameItems[current].clipY, gameItems[current].frameWidth, gameItems[current].frameHeight);
+                game.addEntity(item);
+            }
+            
             var crate = new Platform(game, tempX, tempY, canvasWidth, 1450, 4900, size, size);
             game.addEntity(crate);
         }
+
+
 
         start++;
     }
@@ -614,10 +632,16 @@ var rectPlatform = function (game, x, y, width, height) {
 
             var crate = new Platform(game, tempX, tempY, canvasWidth, 1450, 4900, size, size);
             game.addEntity(crate);
+            if (i === 0) {
+                var current = Math.floor(Math.random() * gameItems.length)
+                var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
+                    gameItems[current].frameWidth, gameItems[current].frameHeight);
+                game.addEntity(item);
+            }
         }
     }
-    var item = new Item(game, x + 75, y - 60, 10, 0, 0, 50, 50);
-    game.addEntity(item);
+    //var item = new Item(game, x + 75, y - 60, 10, 0, 0, 50, 50);
+    //game.addEntity(item);
 
 
 };
@@ -634,6 +658,63 @@ boardPieces[0] = function (startX, game) {
 
 boardPieces[1] = function (startX, game) {
     var stairsOne = rightCrateSteps(game, startX, 380, 4);
+    var platTwo = rectPlatform(game, startX += 200, 380, 4, 4);
+    var stairsThree = leftCrateSteps(game, startX += 200, 380, 4);
 
     return startX + 500;
 };
+
+/******************
+* All items to be used in game engine
+*
+**********************/
+
+var gameItems = [];
+
+gameItems[0] = {
+    clipX: 2315,
+    clipY: 4755,
+    frameWidth: 2475 - 2315,
+    frameHeight: 4895 - 4755,
+    points: 20
+};
+
+gameItems[1] = {
+    clipX: 2500,
+    clipY: 4770,
+    frameWidth: 2580 - 2500,
+    frameHeight: 4890 - 4770,
+    points: 20
+};
+
+gameItems[2] = {
+    clipX: 2700,
+    clipY: 4720,
+    frameWidth: 2790 - 2700,
+    frameHeight: 4900 - 4720,
+    points: 30
+};
+
+gameItems[3] = {
+    clipX: 2820,
+    clipY: 4750,
+    frameWidth: 2905 - 2820,
+    frameHeight: 4905 - 4750,
+    points: 30
+};
+
+//gameItems[4]
+
+//gameItems[5]
+
+//gameItems[6]
+
+//gameItems[7]
+
+//gameItems[8]
+
+//gameItems[9]
+
+//gameItems[10]
+
+//gameItems[11]

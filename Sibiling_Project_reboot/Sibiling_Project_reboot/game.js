@@ -238,7 +238,7 @@ GameEngine.prototype.startInput = function () {
 
 //Adds and entity to the game engine.
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity');
+    //console.log('added entity');
     this.entities.push(entity);
 }
 
@@ -512,6 +512,7 @@ function initialize() {
         var gameWorld = new Background(gameEngine, canvasWidth);
 
         var line = new FinishLine(gameEngine, gameWorld.width);
+        var enemy = new Enemy(gameEngine, 100, 435);
 
 
         //var block = new Block(gameEngine, 1500, 480, 200, 50);
@@ -527,6 +528,7 @@ function initialize() {
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(line);
+        gameEngine.addEntity(enemy);
         /*  gameEngine.addEntity(firstCrate);*/
 
 

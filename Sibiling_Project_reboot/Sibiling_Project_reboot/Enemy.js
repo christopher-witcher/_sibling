@@ -1,6 +1,7 @@
 ﻿//The location of the sprite sheet
 
-moveDistance = 7;
+enemyMoveDistance = 3;
+maxMove = 100;
 
 //Sets up different animation of runboy and initializes the controls
 function Enemy(game, startingX, startingY) {
@@ -8,17 +9,16 @@ function Enemy(game, startingX, startingY) {
     //Animations for the enemy.
 
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, 0, startingHeight);
+    Entity.call(this, game, startingX, startingY);
 
     this.canPass = true;
     this.height = 0;
     this.baseHeight = startingHeight;
 
-    this.worldX = startingX;
-    this.worldY = startingY;
     this.myDirection = true;
+    this.moveCount = 0;
 
-    this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145); //145
+    this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145); 
 
 }
 
@@ -27,14 +27,21 @@ Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
     
+    if (this.moveCount > maxMove) {
+        this.myDirection = !this.myDirection;
+        this.moveCount = 0;
+    }
     if (this.myDirection) {
-        this.worldX + moveDistance;
+        this.worldX = this.worldX + enemyMoveDistance;
+        this.moveCount++;
     }
     else {
-        this.worldX - moveDistance;
+        this.worldX = this.worldX - enemyMoveDistance;
+        this.moveCount++;
     }
 
     Entity.prototype.update.call(this);
+    this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145);
 };
 
 
@@ -49,7 +56,7 @@ Enemy.prototype.draw = function (ctx) {
         //the animation for the left direction.
     }
 
-    ctx.strokeStyle = "purple";
+    ctx.strokeStyle = "green";
     ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 };
 

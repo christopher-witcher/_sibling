@@ -337,8 +337,8 @@ RunBoy.prototype.draw = function (ctx) {
         }
     }
 
-    ctx.strokeStyle = "purple";
-    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    //ctx.strokeStyle = "purple";
+    //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 };
 
 RunBoy.prototype.didICollide = function () {
@@ -356,6 +356,9 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof FinishLine) {
             console.log("ran through finish line");
+        }
+        else if (result && entity instanceof Enemy) {
+            console.log("ran into and enemy");
         }
         else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 

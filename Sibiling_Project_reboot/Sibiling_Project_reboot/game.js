@@ -386,7 +386,7 @@ function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.drawItem = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, frameWidth, frameHeight, 0.01, 1, true);
     this.width = frameWidth;
     this.height = frameHeight;
-    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width - 60, this.height - 90);
 
     Entity.call(this, game, this.worldX, this.worldY);
 };
@@ -398,7 +398,7 @@ Item.prototype.constructor = Item;
 * updates the item.
 */
 Item.prototype.update = function () {
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.x, this.y, this.boundingBox.width, this.boundingBox.height);
     Entity.prototype.update.call(this);
 };
 
@@ -409,8 +409,8 @@ Item.prototype.draw = function (ctx) {
     //ctx.fillStyle = "purple";
     //ctx.fillRect(this.x, this.y, this.width, this.height);
     this.drawItem.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0.25);
-    //ctx.strokeStyle = "red";
-    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 function FinishLine(game, gameWidth) {
@@ -459,7 +459,7 @@ Block.prototype = new Entity();
 Block.prototype.constructor = Block;
 
 Block.prototype.update = function () {
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
@@ -598,7 +598,7 @@ var leftCrateSteps = function (game, x, y, height) {
 };
 
 var rightCrateSteps = function (game, x, y, height) {
-    var size = 50;
+    var size = 50;http://localhost:12641/neighBackgroundext.png
     var start = 1;
     for (var j = height; j >= 1; j--) {
         var tempX;

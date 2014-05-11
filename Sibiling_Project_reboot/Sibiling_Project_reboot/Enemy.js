@@ -27,16 +27,21 @@ Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
     
-
+    if (this.myDirection) {
+        this.worldX + moveDistance;
+    }
+    else {
+        this.worldX - moveDistance;
+    }
 
     Entity.prototype.update.call(this);
 };
 
 
-RunBoy.prototype.draw = function (ctx) {
+Enemy.prototype.draw = function (ctx) {
 
     //walking right
-    if (direction) {
+    if (this.myDirection) {
         //the animation for the right direction.
     }
     //walking left

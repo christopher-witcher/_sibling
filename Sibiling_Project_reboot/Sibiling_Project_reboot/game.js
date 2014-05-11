@@ -386,7 +386,8 @@ function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.drawItem = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, frameWidth, frameHeight, 0.01, 1, true);
     this.width = frameWidth;
     this.height = frameHeight;
-    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width - 60, this.height - 90);
+    //made both width and height 50 because  the frameWidtha and framHeight are way to large.
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, 50, 50); 
 
     Entity.call(this, game, this.worldX, this.worldY);
 };

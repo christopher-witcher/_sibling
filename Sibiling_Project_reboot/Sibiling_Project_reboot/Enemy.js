@@ -1,15 +1,32 @@
 ﻿//The location of the sprite sheet
+var enemyList = [];
+
+enemyList[0] = {
+    runRightX: 100,
+    runRightY: 1050,
+    runLeftX: 100,
+    runLeftY: 1200
+};
+
+enemyList[1] = {};
+
+enemyList[2] = {};
 
 enemyMoveDistance = 3;
 maxMove = 100;
 
 //Sets up different animation of runboy and initializes the controls
 function Enemy(game, startingX, startingY) {
+    this.currentEnemy = 0;
 
     //Animations for the enemy.
+    this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY, 100, 150,
+        0.008, 120, true, false);
 
+    this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runLeftX, enemyList[this.currentEnemy].runLeftY, 100, 150,
+        0.008, 120, true, false);
     // set the sprite's starting position on the canvas
-    Entity.call(this, game, startingX, startingY);
+    
 
     this.canPass = true;
     this.height = 0;
@@ -19,7 +36,7 @@ function Enemy(game, startingX, startingY) {
     this.moveCount = 0;
 
     this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145); 
-
+    Entity.call(this, game, startingX, startingY);
 }
 
 Enemy.prototype = new Entity();
@@ -49,11 +66,11 @@ Enemy.prototype.draw = function (ctx) {
 
     //walking right
     if (this.myDirection) {
-        //the animation for the right direction.
+        this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     }
     //walking left
     else {
-        //the animation for the left direction.
+        this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
     }
 
     ctx.strokeStyle = "green";

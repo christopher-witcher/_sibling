@@ -512,7 +512,7 @@ function initialize() {
         var gameWorld = new Background(gameEngine, canvasWidth);
 
         var line = new FinishLine(gameEngine, gameWorld.width);
-        var enemy = new Enemy(gameEngine, 100, 435);
+        //var enemy = new Enemy(gameEngine, 100, 435);
 
 
         //var block = new Block(gameEngine, 1500, 480, 200, 50);
@@ -528,7 +528,7 @@ function initialize() {
         var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
         gameEngine.addEntity(gameWorld);
         gameEngine.addEntity(line);
-        gameEngine.addEntity(enemy);
+        //gameEngine.addEntity(enemy);
         /*  gameEngine.addEntity(firstCrate);*/
 
 
@@ -537,7 +537,7 @@ function initialize() {
         gameEngine.addEntity(block3);
         gameEngine.addEntity(block4);*/
         var nextWidth = boardPieces[0](650, gameEngine);
-        //nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
+        nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
         //boardPieces[2](650, gameEngine);
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
@@ -669,10 +669,10 @@ boardPieces[0] = function (startX, game) {
     var levelThree = rectPlatform(gameEngine, startX + 775, 296, 4, 1);
     var tallCrates = rectPlatform(gameEngine, startX + 1180, 150, 4, 5);
     var sectionF = rectPlatform(gameEngine, startX + 1680, 150, 8, 1);
-    var sectWidth = 8 * 50 + startX + 1680
-
-    spacerSection(game, sectWidth += 250, 415, 4,2);
-
+    var sectWidth = 8 * 50 + startX + 1680;
+    var zeroEnemy = new Enemy(game, startX + 650, 429);
+    //spacerSection(game, sectWidth += 250, 415, 4,2);
+    game.addEntity(zeroEnemy);
     return sectWidth;
 };
 
@@ -731,9 +731,9 @@ gameItems[3] = {
 
 gameItems[4] = {
     clipX: 2905,
-    clipY: 3005,
+    clipY: 4745,
     frameWidth: 3045 - 2905,
-    frameHeight: 4910 - 3005,
+    frameHeight: 4910 - 4745,
     points: 40
 };
 

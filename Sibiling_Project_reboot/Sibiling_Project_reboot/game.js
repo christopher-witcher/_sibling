@@ -535,8 +535,8 @@ function initialize() {
         gameEngine.addEntity(block3);
         gameEngine.addEntity(block4);*/
         var nextWidth = boardPieces[0](650, gameEngine);
-        nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
-        
+        //nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
+        //boardPieces[2](650, gameEngine);
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
 
@@ -599,7 +599,7 @@ var leftCrateSteps = function (game, x, y, height) {
 };
 
 var rightCrateSteps = function (game, x, y, height) {
-    var size = 50;http://localhost:12641/neighBackgroundext.png
+    var size = 50;
     var start = 1;
     for (var j = height; j >= 1; j--) {
         var tempX;
@@ -608,7 +608,7 @@ var rightCrateSteps = function (game, x, y, height) {
             tempX = (i - 1) * size + x;
             tempY = (j - 1) * size + y;
             if (i === start) {
-                var current = Math.floor(Math.random() * gameItems.length)
+                var current = Math.floor(Math.random() * gameItems.length);
                 var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX,
                     gameItems[current].clipY, gameItems[current].frameWidth, gameItems[current].frameHeight);
                 game.addEntity(item);
@@ -647,14 +647,31 @@ var rectPlatform = function (game, x, y, width, height) {
 
 };
 
+var spacerSection = function (game, x, y, width, height) {
+    for (var i = 0; i < height; i++) {
+        for (var j = 0; j < width; j++) {
+            var tempX = j * size + x;
+            var tempY = i * size + y;
+            var current = Math.floor(Math.random() * gameItems.length)
+            var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
+                gameItems[current].frameWidth, gameItems[current].frameHeight);
+            game.addEntity(item);
+
+        }
+    }
+};
+
 boardPieces[0] = function (startX, game) {
     var levelOne = rectPlatform(game, startX, 534, 4, 1);
     var levelTwo = rectPlatform(gameEngine, startX + 450, 415, 4, 1);
     var levelThree = rectPlatform(gameEngine, startX + 775, 296, 4, 1);
     var tallCrates = rectPlatform(gameEngine, startX + 1180, 150, 4, 5);
     var sectionF = rectPlatform(gameEngine, startX + 1680, 150, 8, 1);
+    var sectWidth = 8 * 50 + startX + 1680
 
-    return 8 * 50 + startX + 1680;
+    spacerSection(game, sectWidth += 250, 415, 4,2);
+
+    return sectWidth;
 };
 
 boardPieces[1] = function (startX, game) {
@@ -663,6 +680,12 @@ boardPieces[1] = function (startX, game) {
     var stairsThree = leftCrateSteps(game, startX += 200, 380, 4);
 
     return startX + 500;
+};
+
+boardPieces[2] = function (startX, game) {
+    var levelOne = rectPlatform(game, startX, 484, 4, 2);
+
+
 };
 
 /******************
@@ -704,7 +727,13 @@ gameItems[3] = {
     points: 30
 };
 
-//gameItems[4]
+gameItems[4] = {
+    clipX: 2905,
+    clipY: 3005,
+    frameWidth: 3045 - 2905,
+    frameHeight: 4910 - 3005,
+    points: 40
+};
 
 //gameItems[5]
 

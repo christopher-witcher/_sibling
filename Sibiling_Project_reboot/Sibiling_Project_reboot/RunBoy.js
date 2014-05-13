@@ -40,6 +40,10 @@ function RunBoy(game, canvasWidth, worldWidth) {
     //keeps track of where the bounding box's bottom was before it changed. should be when falling.
     this.lastBottom = this.boundingbox.bottom;
 
+    //stores character's rewindStack
+    this.myRewindStack = new RewindStack();
+    this.game = game;
+    
 }
 
 RunBoy.prototype = new Entity();
@@ -300,10 +304,14 @@ RunBoy.prototype.draw = function (ctx) {
         //fall to the right.
         if (direction) {
             this.fallRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.fallRight.x, this.fallRight.y, this.fallRight.clipX, this.fallRight.clipY,
+                this.fallRight.frameWidth, this.fallRight.frameHeight, this.game, canvasWidth);
         }
             //fall to the left.
         else {
             this.fallLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.fallLeft.x, this.fallLeft.y, this.fallLeft.clipX, this.fallLeft.clipY,
+                this.fallLeft.frameWidth, this.fallLeft.frameHeight, this.game, canvasWidth);
         }
     }
         // Jumping
@@ -312,10 +320,14 @@ RunBoy.prototype.draw = function (ctx) {
         //jumping to the right.
         if (direction) {
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
-
+            this.myRewindStack.add(this.jumpRight.x, this.jumpRight.y, this.jumpRight.clipX, this.jumpRight.clipY,
+                this.jumpRight.frameWidth, this.jumpRight.frameHeight, this.game, canvasWidth);
+            
             //jumping to the left.
         } else {
             this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.jumpLeft.x, this.jumpLeft.y, this.jumpLeft.clipX, this.jumpLeft.clipY,
+                this.jumpLeft.frameWidth, this.jumpLeft.frameHeight, this.game, canvasWidth);
         }
 
         // Running, can't run in both directions.
@@ -323,8 +335,13 @@ RunBoy.prototype.draw = function (ctx) {
 
         if (direction) {
             this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.runRight.x, this.runRight.y, this.runRight.clipX, this.runRight.clipY,
+                this.runRight.frameWidth, this.runRight.frameHeight, this.game, canvasWidth);
+
         } else {
             this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.runLeft.x, this.runLeft.y, this.runLeft.clipX, this.runLeft.clipY,
+                this.runLeft.frameWidth, this.runLeft.frameHeight, this.game, canvasWidth);
         }
 
         // Standing
@@ -332,8 +349,13 @@ RunBoy.prototype.draw = function (ctx) {
 
         if (direction) {
             this.rightStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.rightStanding.x, this.rightStanding.y, this.rightStanding.clipX, this.rightStanding.clipY,
+                this.rightStanding.frameWidth, this.rightStanding.frameHeight, this.game, canvasWidth);
         } else {
             this.leftStanding.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.myRewindStack.add(this.leftStanding.x, this.leftStanding.y, this.leftStanding.clipX, this.leftStanding.clipY,
+                this.leftStanding.frameWidth, this.leftStanding.frameHeight, this.game, canvasWidth);
+
         }
     }
 
@@ -376,6 +398,7 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");
+            this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
         else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
@@ -398,3 +421,57 @@ RunBoy.prototype.didICollide = function () {
     }
 
 }
+
+RunBoy.prototype.rewindMe = function () {
+    this.myRewindStack.rewind(this.game);
+}
+
+/****************************************
+* Rewind Functionallity in this section.*
+*****************************************/
+
+function RewindStack() {
+    this.stack = [];
+
+
+};
+
+RewindStack.prototype.add = function (x, y, clipX, clipY, frameWidth, frameHeight, game, canvasWidth, worldWidth) {
+    
+    var currentFrame = new RewindFrame(x, y, clipX, clipY, frameWidth, frameHeight, game, canvasWidth, worldWidth);
+    if (this.stack.length >= 300) {
+        this.stack.slice(0, 1);
+    }
+
+    this.stack.push(currentFrame);
+};
+
+RewindStack.prototype.rewind = function (game) {
+
+    while (this.stack.length > 0) {
+        var current = this.stack.pop();
+        game.addEntity(current);
+        current.draw();
+        //current.removeFromWorld = true;
+    }
+
+};
+
+function RewindFrame(x, y, clipX, clipY, frameWidth, frameHeight, game, canvasWidth){ // worldWidth) {
+    this.game = game;
+    //console.log("Rewind X: " + x + ", Rewind Y: " + y);
+    this.myRewindFrame = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, frameWidth, frameHeight, 0.008, 1, false, false);
+    Entity.call(this, game, x, y);
+};
+
+
+RewindFrame.prototype = new Entity();
+RewindFrame.prototype.constructor = RewindFrame;
+
+RewindFrame.prototype.update = function () {
+
+};
+
+RewindFrame.prototype.draw = function (ctx) {
+    this.myRewindFrame.drawFrame(this.game.clockTick, ctx, this.x, this.y)
+};

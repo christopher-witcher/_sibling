@@ -6,6 +6,7 @@ var gameEngine;
 var canvasWidth = 1250;
 var canvasHeight = 700;
 var boardPieces = [];
+var rewindFrame;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -75,8 +76,10 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
-
+    
 }
+
+
 
 //Draws an image on the canvas
 Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
@@ -100,15 +103,20 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
         vindex++;
     }
 
-    var locX = x;
-    var locY = y;
+    this.locX = x;
+    this.locY = y;
     var offset = vindex === 0 ? this.startX : 0;
+    this.clipX = index * this.frameWidth + offset;
+    this.clipY = vindex * this.frameHeight + this.startY;
+   
+    
     ctx.drawImage(this.spriteSheet,
                   index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
                   this.frameWidth, this.frameHeight,
-                  locX, locY,
+                  this.locX, this.locY,
                   this.frameWidth * scaleBy,
                   this.frameHeight * scaleBy);
+    
 }
 
 //
@@ -538,6 +546,7 @@ function initialize() {
         gameEngine.addEntity(block4);*/
         var nextWidth = boardPieces[0](650, gameEngine);
         nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
+        nextWidth = boardPieces[3](nextWidth += 500, gameEngine);
         //boardPieces[2](650, gameEngine);
         gameEngine.addEntity(boy);
         gameEngine.addEntity(timer);
@@ -689,6 +698,15 @@ boardPieces[2] = function (startX, game) {
 
 
 };
+
+boardPieces[3] = function (startX, game) {
+    var sectOne = rightCrateSteps(game, startX, 475, 2);
+    var sectTwo = rectPlatform(game, startX += 100, 475, 3, 2);
+    var sectFour = rectPlatform(game, startX += 300, 350, 4, 1);
+    var sectThree = new Platform(game, startX += 350, 225, canvasWidth, 1565, 4650, 265, 350);
+    game.addEntity(sectThree);
+};
+
 
 /******************
 * All items to be used in game engine

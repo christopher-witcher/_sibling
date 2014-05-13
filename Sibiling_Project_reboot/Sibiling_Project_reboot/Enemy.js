@@ -26,7 +26,6 @@ function Enemy(game, startingX, startingY) {
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runLeftX, enemyList[this.currentEnemy].runLeftY, 100, 150,
         0.008, 120, true, false);
     // set the sprite's starting position on the canvas
-    
 
     this.canPass = true;
     this.height = 0;
@@ -35,7 +34,7 @@ function Enemy(game, startingX, startingY) {
     this.myDirection = true;
     this.moveCount = 0;
 
-    this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145); 
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, 90, 145);
     Entity.call(this, game, startingX, startingY);
 }
 
@@ -56,9 +55,8 @@ Enemy.prototype.update = function () {
         this.worldX = this.worldX - enemyMoveDistance;
         this.moveCount++;
     }
-
+    this.boundingBox = new BoundingBox(this.x, this.y, 90, 145);
     Entity.prototype.update.call(this);
-    this.boundingbox = new BoundingBox(this.worldX, this.worldY, 90, 145);
 };
 
 
@@ -74,17 +72,17 @@ Enemy.prototype.draw = function (ctx) {
     }
 
     ctx.strokeStyle = "green";
-    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
-Enemy.prototype.didICollide = function () {
+Enemy.prototype.didICollide = function () {boundingBox
     //console.log("check if they collide");
     this.canPass = true;
 
     for (var i = 0; i < this.game.entities.length; i++) {
 
         var entity = this.game.entities[i];
-        var result = this.boundingbox.collide(entity.boundingBox);
+        var result = this.boundingBox.collide(entity.boundingBox);
 
         if (this.canPass && entity.hasOwnProperty('boundingBox')) {
             this.canPass = !result;

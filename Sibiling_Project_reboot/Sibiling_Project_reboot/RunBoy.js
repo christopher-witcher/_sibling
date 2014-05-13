@@ -349,19 +349,8 @@ RunBoy.prototype.didICollide = function () {
 
         var entity = this.game.entities[i];
         var result = this.boundingbox.collide(entity.boundingBox);
-        if (result && !entity.removeFromWorld && entity instanceof Item) {
-            entity.removeFromWorld = true;
-            this.game.score += entity.points;
-            document.getElementById("score").innerHTML = this.game.score;
-        }
-        else if (result && entity instanceof FinishLine) {
-            console.log("ran through finish line");
-        }
-        else if (result && entity instanceof Enemy) {
-            console.log("ran into and enemy");
-        }
-        else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 
+        if (entity instanceof Enemy) {
             //prints out the two bounding boxes that are being compared onto the screen.
             document.getElementById("runX").innerHTML = this.x;
             document.getElementById("runWorldX").innerHTML = this.worldX;
@@ -375,6 +364,21 @@ RunBoy.prototype.didICollide = function () {
             document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
             document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
             document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
+        }
+
+        if (result && !entity.removeFromWorld && entity instanceof Item) {
+            entity.removeFromWorld = true;
+            this.game.score += entity.points;
+            document.getElementById("score").innerHTML = this.game.score;
+        }
+        else if (result && entity instanceof FinishLine) {
+            console.log("ran through finish line");
+        }
+        else if (result && entity instanceof Enemy) {
+            console.log("ran into a enemy");
+            //console.log(entity.boundingbox.x);
+        }
+        else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
 
             this.canPass = !result;
 

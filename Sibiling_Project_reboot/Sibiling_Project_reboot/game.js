@@ -77,9 +77,8 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.loop = loop;
     this.reverse = reverse;
     
+    
 }
-
-
 
 //Draws an image on the canvas
 Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
@@ -126,6 +125,68 @@ Animation.prototype.currentFrame = function () {
 
 Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
+}
+
+function RewindAnimation(spriteSheet, rewindStack, frameDuration) {
+    this.spriteSheet = spriteSheet;
+    this.myRewindStack = rewindStack;
+    this.frames = this.myRewindStack.length;
+    this.totalTime = frameDuration * this.frames;
+    this.elapsedTime = 0;
+}
+RewindAnimation.prototype.startTime = 0;
+RewindAnimation.prototype.endTime = 1;
+RewindAnimation.prototype.drawFrame = function (tick, ctx, scaleBy) {
+    //this.elapsedTime += tick;
+
+    //if(this.isDone()){
+    //    output = true;
+    //}
+
+    
+    var current;
+    // var count = 0;
+    if(this.endTime === 1){
+        this.endTime += tick;
+    }
+    if (this.startTime <= this.endTime) {
+        if (this.myRewindStack.length > 0 && this.isDone() === false) {
+            current = this.myRewindStack.pop();
+
+            //if (count === 300) {
+            ctx.drawImage(this.spriteSheet,
+                      current.clipX, current.clipY, current.frameWidth, current.frameHeight,
+                      current.x, current.y, current.frameWidth, current.frameHeight);
+            output = false;
+            count = 0;
+            this.startTime += 0.8;
+            //if (this.elapsedTime >= 30) {
+            //    break;
+            //}
+            //} else {
+            //count++;
+            //}
+
+        } 
+
+    }else {
+            this.startTime = 0;
+            this.endTime = 1;
+        }
+
+   //this.elapsedTime = 0;
+
+   return { x: current.x, y: current.y };
+    
+
+}
+
+RewindAnimation.prototype.currentFrame = function() {
+    return Math.floor(this.elapsedTime / this.frameDuration);
+}
+
+RewindAnimation.prototype.isDone = function () {
+    return this.elapsedTime >= this.totalTime;
 }
 
 //Intializes the timer for the game.

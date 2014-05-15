@@ -448,10 +448,11 @@ function FinishLine(game, gameWidth) {
     this.game = game;
     //console.log(gameWidth);
     this.x = gameWidth;
-    this.y = 435;
-    this.width = 15;
-    this.height = 150;
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.y = 125;
+    this.width = 394;
+    this.height = 446;
+    this.finishLineAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.066, 30, true, false);
+    //this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
 
     Entity.call(this, game, this.x, this.y);
 }
@@ -460,15 +461,16 @@ FinishLine.prototype = new Entity();
 FinishLine.prototype.constructor = FinishLine;
 
 FinishLine.prototype.update = function () {
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    //this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
 FinishLine.prototype.draw = function (ctx) {
-    ctx.fillStyle = "purple";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.fillStyle = "purple";
+    //ctx.fillRect(this.x, this.y, this.width, this.height);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(, this.boundingBox.width, this.boundingBox.height);
+    this.finishLineAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };
 
 /*

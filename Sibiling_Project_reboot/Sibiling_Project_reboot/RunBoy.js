@@ -57,9 +57,7 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
     if (this.rewinding === true) {
-        if (this.myRewindStack.length <= 0) {
-            this.rewinding = false;
-        }
+        
         return;
     }
     var maxHeight = 300;

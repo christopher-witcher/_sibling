@@ -76,8 +76,8 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
-    
-    
+
+
 }
 
 //Draws an image on the canvas
@@ -107,15 +107,15 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     var offset = vindex === 0 ? this.startX : 0;
     this.clipX = index * this.frameWidth + offset;
     this.clipY = vindex * this.frameHeight + this.startY;
-   
-    
+
+
     ctx.drawImage(this.spriteSheet,
                   index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
                   this.frameWidth, this.frameHeight,
                   this.locX, this.locY,
                   this.frameWidth * scaleBy,
                   this.frameHeight * scaleBy);
-    
+
 }
 
 //
@@ -127,66 +127,27 @@ Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
 }
 
-function RewindAnimation(spriteSheet, rewindStack, frameDuration) {
+function RewindAnimation(spriteSheet, rewindStack) {
     this.spriteSheet = spriteSheet;
     this.myRewindStack = rewindStack;
-    this.frames = this.myRewindStack.length;
-    this.totalTime = frameDuration * this.frames;
-    this.elapsedTime = 0;
+    this.previousFrame = null;
 }
-RewindAnimation.prototype.startTime = 0;
-RewindAnimation.prototype.endTime = 1;
+
 RewindAnimation.prototype.drawFrame = function (tick, ctx, scaleBy) {
-    //this.elapsedTime += tick;
+         
+    if (this.myRewindStack.length > 0) {
+        var current = this.myRewindStack.pop();
 
-    //if(this.isDone()){
-    //    output = true;
-    //}
-
-    
-    var current;
-    // var count = 0;
-    if(this.endTime === 1){
-        this.endTime += tick;
+        ctx.drawImage(this.spriteSheet,
+                         current.clipX, current.clipY, current.frameWidth, current.frameHeight,
+                         current.canvasX, current.canvasY, current.frameWidth, current.frameHeight);
+        this.previousFrame = current;
+        return current;
     }
-    if (this.startTime <= this.endTime) {
-        if (this.myRewindStack.length > 0 && this.isDone() === false) {
-            current = this.myRewindStack.pop();
+       
+    return this.previousFrame;
 
-            //if (count === 300) {
-            ctx.drawImage(this.spriteSheet,
-                      current.clipX, current.clipY, current.frameWidth, current.frameHeight,
-                      current.x, current.y, current.frameWidth, current.frameHeight);
-            output = false;
-            count = 0;
-            this.startTime += 0.8;
-            //if (this.elapsedTime >= 30) {
-            //    break;
-            //}
-            //} else {
-            //count++;
-            //}
 
-        } 
-
-    }else {
-            this.startTime = 0;
-            this.endTime = 1;
-        }
-
-   //this.elapsedTime = 0;
-
-   return { x: current.x, y: current.y };
-    
-
-}
-
-RewindAnimation.prototype.currentFrame = function() {
-    return Math.floor(this.elapsedTime / this.frameDuration);
-}
-
-RewindAnimation.prototype.isDone = function () {
-    return this.elapsedTime >= this.totalTime;
 }
 
 //Intializes the timer for the game.
@@ -456,7 +417,7 @@ function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.width = frameWidth;
     this.height = frameHeight;
     //made both width and height 50 because  the frameWidtha and framHeight are way to large.
-    this.boundingBox = new BoundingBox(this.worldX, this.worldY, 50, 50); 
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, 50, 50);
 
     Entity.call(this, game, this.worldX, this.worldY);
 };
@@ -685,7 +646,7 @@ var rightCrateSteps = function (game, x, y, height) {
                     gameItems[current].clipY, gameItems[current].frameWidth, gameItems[current].frameHeight);
                 game.addEntity(item);
             }
-            
+
             var crate = new Platform(game, tempX, tempY, canvasWidth, 1450, 4900, size, size);
             game.addEntity(crate);
         }

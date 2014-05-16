@@ -577,7 +577,7 @@ function convertTime(miliseconds) {
     var minutes = Math.floor(totalSeconds / 60);
     var seconds = totalSeconds - minutes * 60;
     if (seconds === 0) {
-        seconds = "00";
+        seconds = "0" + seconds;
     } else if (seconds % 10 === seconds) {
         seconds = "0" + seconds;
     }

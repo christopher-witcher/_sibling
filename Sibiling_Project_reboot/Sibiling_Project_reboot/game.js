@@ -7,6 +7,7 @@ var canvasWidth = 1250;
 var canvasHeight = 700;
 var boardPieces = [];
 var rewindFrame;
+gameEngine = null;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -195,7 +196,7 @@ GameEngine.prototype.init = function (ctx) {
     this.surfaceWidth = this.ctx.canvas.width;
     this.surfaceHeight = this.ctx.canvas.height;
     this.startInput();
-    this.timer = new Timer();
+    //this.timer = new Timer();
     this.LeftLimit = 0;
     this.rightLimit = 1450;
     document.getElementById("score").innerHTML = this.score;
@@ -206,6 +207,7 @@ GameEngine.prototype.init = function (ctx) {
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
+    this.timer = new Timer();
     (function gameLoop() {
         that.loop();
         requestAnimFrame(gameLoop, that.ctx.canvas);
@@ -218,17 +220,45 @@ GameEngine.prototype.startInput = function () {
 
     var getXandY = function (e) {
         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
-        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-
-        if (x < 1024) {
-            x = Math.floor(x / 32);
-            y = Math.floor(y / 32);
-        }
+        var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top + 23; //canvas top is 23 pixels from top
 
         return { x: x, y: y };
     }
 
     var that = this;
+
+    this.ctx.canvas.addEventListener("click", function (e) {
+        that.click = getXandY(e);
+ 
+        GetButtonCoordinates();
+
+        function GetButtonCoordinates() {
+            var button = document.getElementById("startButton");
+            var p = GetScreenCoordinates(button);
+
+            if (that.click.x > p.x && that.click.x < p.x + button.offsetWidth &&
+                that.click.y > p.y && that.click.y < p.y + button.offsetHeight) {
+
+                
+                //button.setAttribute("hidden", true);
+                ////button.setAttribute("disabled", true);
+                //this.gameEngine.start();
+            }
+        }
+    }, false);
+
+    this.ctx.canvas.addEventListener("mousemove", function (e) {
+        that.mouse = getXandY(e);
+    }, false);
+
+    this.ctx.canvas.addEventListener("mouseleave", function (e) {
+        that.mouse = null;
+    }, false);
+
+    this.ctx.canvas.addEventListener("mousewheel", function (e) {
+        that.wheel = e;
+        e.preventDefault();
+    }, false);
 
     this.keyDown = function (e) {
         if (e.keyCode === 39) {
@@ -265,6 +295,27 @@ GameEngine.prototype.startInput = function () {
 
     console.log('Input started');
 }
+
+/*
+* Gets the x and y coordinates of an HTML object.
+*/
+function GetScreenCoordinates(obj) {
+    var p = {};
+    p.x = obj.offsetLeft;
+    p.y = obj.offsetTop;
+    while (obj.offsetParent) {
+        p.x = p.x + obj.offsetParent.offsetLeft;
+        p.y = p.y + obj.offsetParent.offsetTop;
+        if (obj == document.getElementsByTagName("body")[0]) {
+            break;
+        }
+        else {
+            obj = obj.offsetParent;
+        }
+    }
+    return p;
+};
+
 
 //Adds and entity to the game engine.
 GameEngine.prototype.addEntity = function (entity) {
@@ -520,10 +571,29 @@ GameTimer.prototype.update = function () {
 };
 
 function convertTime(miliseconds) {
-    var totalSeconds = Math.floor(miliseconds / 1000);
+    var totalSeconds = 120 - Math.floor(miliseconds / 1000);
     var minutes = Math.floor(totalSeconds / 60);
     var seconds = totalSeconds - minutes * 60;
+    if (seconds === 0) {
+        seconds = "00";
+    } else if (seconds % 10 === seconds) {
+        seconds = "0" + seconds;
+    }
     return minutes + ':' + seconds;
+}
+
+/*
+* Starts the game. This function is called by the HTML button called "startButton".
+*/
+function startGame() {
+    var button = document.getElementById("startButton");
+    button.parentNode.removeChild(button);
+    var title = document.getElementById("gameTitle");
+    title.parentNode.removeChild(title);
+    gameEngine.start();
+    gameEngine.ctx.canvas.focus();
+    var timer = new GameTimer(gameEngine);
+    gameEngine.addEntity(timer);
 }
 
 var ASSET_MANAGER = new AssetManager();
@@ -540,44 +610,21 @@ function initialize() {
 
         gameEngine = new GameEngine();
         var gameWorld = new Background(gameEngine, canvasWidth);
-
         var line = new FinishLine(gameEngine, gameWorld.width);
-        //var enemy = new Enemy(gameEngine, 100, 435);
-
-
-        //var block = new Block(gameEngine, 1500, 480, 200, 50);
-        //var block = new Block(gameEngine, 1500, 480, 200, 50);
-        //var block2 = new Block(gameEngine, 1900, 380, 200, 50);
-        //var block3 = new Block(gameEngine, 2300, 280, 200, 50);
-        //var block4 = new Block(gameEngine, 2800, 180, 200, 50);
-
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
-        var timer = new GameTimer(gameEngine);
-        //var firstCrate = new Platform(gameEngine, 2200, 525, canvasWidth, 0, 5000, 50, 50);
-        /*var sectionA = leftCrateSteps(gameEngine, 3250, 380, 4);
-        var sectionB = rightCrateSteps(gameEngine, 3050, 380, 4);*/
-        gameEngine.addEntity(gameWorld);
-        gameEngine.addEntity(line);
-        //gameEngine.addEntity(enemy);
-        /*  gameEngine.addEntity(firstCrate);*/
 
-
-        /*gameEngine.addEntity(block);
-        gameEngine.addEntity(block2);
-        gameEngine.addEntity(block3);
-        gameEngine.addEntity(block4);*/
         var nextWidth = boardPieces[0](650, gameEngine);
         nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
         nextWidth = boardPieces[3](nextWidth += 500, gameEngine);
-        //boardPieces[2](650, gameEngine);
+
+        gameEngine.addEntity(gameWorld);
+        gameEngine.addEntity(line);
         gameEngine.addEntity(boy);
-        gameEngine.addEntity(timer);
 
         var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
         gameEngine.setViewPort(viewPort);
 
         gameEngine.init(ctx);
-        gameEngine.start();
     });
 }
 

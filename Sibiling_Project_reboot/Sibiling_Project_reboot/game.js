@@ -455,6 +455,12 @@ BoundingBox.prototype.collide = function (oth) {
     return false;
 };
 
+BoundingBox.prototype.equals = function (oth) {
+
+    return this.x === oth.x && this.y === oth.y && this.width === oth.width && this.height === oth.height;
+
+}
+
 /*
 * An item that the character can interact with in the world.
 */

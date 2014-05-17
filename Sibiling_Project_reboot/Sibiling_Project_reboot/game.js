@@ -727,7 +727,7 @@ boardPieces[3] = function (startX, game) {
     var sectOne = rightCrateSteps(game, startX, 475, 2);
     var sectTwo = rectPlatform(game, startX += 100, 475, 3, 2);
     var sectFour = rectPlatform(game, startX += 300, 350, 4, 1);
-    var sectThree = new Platform(game, startX += 350, 225, canvasWidth, 1565, 4650, 265, 350);
+    var sectThree = new Platform(game, startX += 350, 470, canvasWidth, 1200, 4700, 175, 118);
     game.addEntity(sectThree);
 };
 

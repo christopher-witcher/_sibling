@@ -57,7 +57,7 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
     if (this.rewinding === true) {
-        
+
         return;
     }
     var maxHeight = 300;
@@ -264,7 +264,7 @@ RunBoy.prototype.update = function () {
 
     // de-activate keydown Listeners while jumping or falling, otherwise activate them
     if (this.falling || this.jumping || this.runningJump) {
-        this.game.addListeners = false; 
+        this.game.addListeners = false;
     } else {
         this.game.addListeners = true;
     }
@@ -406,6 +406,7 @@ RunBoy.prototype.draw = function (ctx) {
 RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
     this.canPass = true;
+    this.landed = false;
 
     for (var i = 0; i < this.game.entities.length; i++) {
 
@@ -438,15 +439,15 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");
-            this.rewindMe();
+            //this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
-        else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
-
-            this.canPass = !result; //if changing make sure top < lastbottom
-
-            if (entity.boundingBox.top > this.lastBottom && !this.canPass) { //put in separate if state and change landed.
+        //else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
+        else if (result && entity instanceof Platform) {
+            //check if I landed on a platform first
+            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
+                this.landed = result;
 
                 // He landed on a platform while falling
                 if (this.falling) {
@@ -456,6 +457,9 @@ RunBoy.prototype.didICollide = function () {
                     this.runningJump = false;
                     this.baseHeight = this.y;
                 }
+            }
+            else if (this.canPass) {
+                this.canPass = !result; //if changing make sure top < lastbottom
             }
         }
     }

@@ -29,9 +29,9 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.standing = true;
     this.falling = false;
     this.canPass = true;
+    this.landed = false;
     this.height = 0;
     this.baseHeight = startingHeight;
-
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
@@ -441,11 +441,11 @@ RunBoy.prototype.didICollide = function () {
             this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
-        else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
+        else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
 
-            this.canPass = !result;
+            this.canPass = !result; //if changing make sure top < lastbottom
 
-            if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
+            if (entity.boundingBox.top > this.lastBottom && !this.canPass) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
 
                 // He landed on a platform while falling

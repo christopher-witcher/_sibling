@@ -20,13 +20,16 @@
     <div style="position: absolute; left: 5px; top: 43px; z-index: 0;">RunBoy BoundingBox - Left: <span id="runLeft"></span>, Right: <span id="runRight"></span>, Top: <span id="runTop"></span>, Bottom: <span id="runBottom"></span></div>
     <div style="position: absolute; left: 5px; top: 58px; z-index: 0;">Block BoundingBox - Left: <span id="blockLeft"></span>, Right: <span id="blockRight"></span>, Top: <span id="blockTop"></span>, Bottom: <span id="blockBottom"></span></div>
     
-    <div id="gameTitle" style="position: absolute; left: 250px; top: 120px; z-index: 0; font-size: 65px; color: #D0F8FF; text-shadow: 0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF; ">
-        The Adventures of RunBoy!<br />
-    </div>
-    <div style="position: absolute; left: 530px; top: 275px; z-index: 0;">
-        <input id="startButton" type="button" value="Start Game" style="display: inline-block; width: 200px; border: 3px double #D0F8FF;" onclick="startGame();" />
+    <div id="startDisplay">
+
+        <div id="gameTitle" style="position: absolute; left: 250px; top: 120px; z-index: 0; font-size: 65px; color: red; text-shadow: 0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF; ">
+            The Adventures of RunBoy!<br />
+        </div>
+        <div style="position: absolute; left: 530px; top: 275px; z-index: 0;">
+            <input id="startButton" type="button" value="Start Game" style="display: inline-block; width: 200px; border: 1px solid red; background-color: #A5F1FF; color: red; font-size: 150%; border-radius: 5px; " onclick="startGame();" />
+        </div>
     </div>
 
-    
+
 </body>
 </html>

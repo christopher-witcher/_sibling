@@ -430,10 +430,14 @@ RunBoy.prototype.didICollide = function () {
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             entity.removeFromWorld = true;
             this.game.score += entity.points;
+            this.game.numItems++;
             document.getElementById("score").innerHTML = this.game.score;
         }
         else if (result && entity instanceof FinishLine) {
             console.log("ran through finish line");
+            endGame();
+            this.removeFromWorld = true;
+            entity.removeFromWorld = true;
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");

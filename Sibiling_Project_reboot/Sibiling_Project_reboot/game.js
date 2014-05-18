@@ -614,19 +614,19 @@ function initialize() {
         var gameWorld = new Background(gameEngine, canvasWidth);
         var line = new FinishLine(gameEngine, gameWorld.width);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
-
+        
         var nextWidth = boardPieces[0](650, gameEngine);
         nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
         nextWidth = boardPieces[3](nextWidth += 500, gameEngine);
-
-        gameEngine.addEntity(gameWorld);
+        
         gameEngine.addEntity(line);
         gameEngine.addEntity(boy);
-
+        
         var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
         gameEngine.setViewPort(viewPort);
 
         gameEngine.init(ctx);
+        gameEngine.addEntity(gameWorld);
     });
 }
 

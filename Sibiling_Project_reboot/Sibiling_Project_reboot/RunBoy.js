@@ -256,7 +256,7 @@ RunBoy.prototype.update = function () {
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
         //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
-    else if (this.canPass) {
+    else if (this.canPass && !this.landed) {
         this.currentPlatform = null;
     }
 

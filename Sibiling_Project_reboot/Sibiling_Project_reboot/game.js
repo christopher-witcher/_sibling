@@ -10,7 +10,6 @@ var rewindFrame;
 
 sdParentNode = null;
 startDisplay = null;
-
 gameEngine = null;
 timer = null;
 
@@ -367,7 +366,7 @@ GameEngine.prototype.update = function () {
 
         // check to see if time has run out
         if (entity instanceof GameTimer) {
-            if (entity.time < 0) {
+            if (Number(entity.time) > 120000) {
                 endGame();
             }
         }
@@ -610,21 +609,16 @@ function convertTime(miliseconds) {
     return minutes + ':' + seconds;
 }
 
-function getSeconds(miliseconds) {
-    var totalSeconds = Math.floor(miliseconds / 1000);
-    var totalSeconds = Math.floor(miliseconds / 1000);
-
-    return totalSeconds;
-}
-
 /*
 * Starts the game. This function is called by the HTML button called "startButton".
 */
 function startGame() {
-    sdParentNode = document.getElementById("startDisplay").parentNode;
-    startDisplay = document.getElementById("startDisplay");
-    sdParentNode.removeChild(startDisplay);
 
+    if (document.getElementById("startDisplay")) {
+        sdParentNode = document.getElementById("startDisplay").parentNode;
+        startDisplay = document.getElementById("startDisplay");
+        sdParentNode.removeChild(startDisplay);
+    }
     gameEngine.start();
     gameEngine.ctx.canvas.focus();
     timer = new GameTimer(gameEngine);
@@ -688,6 +682,11 @@ function endGame() {
     resetButton.style.borderRadius = "5px";
     resetButton.onclick = function () { location.reload() };
     document.body.appendChild(resetButton);
+
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.game.entities[i];
+        entity.removeFromWorld = true;
+    }
 };
 
 var ASSET_MANAGER = new AssetManager();
@@ -695,14 +694,15 @@ ASSET_MANAGER.queueDownload(backImg);
 ASSET_MANAGER.queueDownload(heroSpriteSheet);
 window.onload = initialize;
 function initialize() {
+
     ASSET_MANAGER.downloadAll(function () {
 
         var canvas = document.getElementById('world');
         canvas.setAttribute("tabindex", 0);
         canvas.focus();
         var ctx = canvas.getContext('2d');
-
         gameEngine = new GameEngine();
+        
         var gameWorld = new Background(gameEngine, canvasWidth);
         var line = new FinishLine(gameEngine, gameWorld.width);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);

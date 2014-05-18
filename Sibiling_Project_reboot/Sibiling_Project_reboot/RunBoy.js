@@ -436,8 +436,6 @@ RunBoy.prototype.didICollide = function () {
         else if (result && entity instanceof FinishLine) {
             console.log("ran through finish line");
             endGame();
-            this.removeFromWorld = true;
-            entity.removeFromWorld = true;
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");

@@ -29,9 +29,9 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.standing = true;
     this.falling = false;
     this.canPass = true;
+    this.landed = false;
     this.height = 0;
     this.baseHeight = startingHeight;
-
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
@@ -47,7 +47,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.rewinding = false;
     this.game = game;
     this.lastFrame = null;
-    
+
 }
 
 RunBoy.prototype = new Entity();
@@ -57,7 +57,7 @@ RunBoy.prototype.constructor = RunBoy;
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
     if (this.rewinding === true) {
-        
+
         return;
     }
     var maxHeight = 300;
@@ -68,7 +68,8 @@ RunBoy.prototype.update = function () {
     /*
      * Falling
      */
-    if (this.currentPlatform === null && this.y < startingHeight && !this.runningJump && !this.jumping) {
+    if (this.currentPlatform === null && this.y !== startingHeight && !this.runningJump && !this.jumping) {
+        console.log("here");
         this.falling = true;
         //var prevY = this.y;
         this.y = this.y + moveDistance;
@@ -126,17 +127,15 @@ RunBoy.prototype.update = function () {
 
         this.move();
         this.game.space = false; //stop Runboy from jumping continuously
-        this.lastBottom = this.boundingbox.bottom;
         if (done) {
             this.y = this.baseHeight;
         }
         else {
             this.y = this.baseHeight - this.height / 2;
         }
-        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         this.didICollide();
 
-        if (!this.canPass) {
+        if (this.landed) {
             if (direction) {
                 this.jumpRight.elapsedTime = 0;
                 this.x = this.x - moveDistance;
@@ -147,8 +146,10 @@ RunBoy.prototype.update = function () {
             }
             this.baseHeight = this.y;
             this.runningJump = false;
-            this.y = this.y + moveDistance;
+            this.y = tempY;
         }
+        this.lastBottom = this.boundingbox.bottom;
+        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
 
         /*
          * Standing and Jumping
@@ -255,16 +256,13 @@ RunBoy.prototype.update = function () {
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
         //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
-    else if (this.canPass) {
+    else if (this.canPass && !this.landed) {
         this.currentPlatform = null;
-        if (this.y != startingHeight && !this.jumping && !this.runningJump) {
-            this.falling = true;
-        }
     }
 
     // de-activate keydown Listeners while jumping or falling, otherwise activate them
     if (this.falling || this.jumping || this.runningJump) {
-        this.game.addListeners = false; 
+        this.game.addListeners = false;
     } else {
         this.game.addListeners = true;
     }
@@ -320,9 +318,9 @@ RunBoy.prototype.moveRewind = function () {
     } else { // he's in the middle of the canvas facing left
         this.worldX = this.lastFrame.worldX;
     }
-    
-   this.y = this.lastFrame.worldY;
-   
+
+    this.y = this.lastFrame.worldY;
+
     //this.worldY = this.lastFrame.worldY;
 }
 
@@ -330,17 +328,17 @@ RunBoy.prototype.draw = function (ctx) {
     if (this.rewinding === true) {
         var canvasMidpoint = this.canvasWidth / 2;
         if (this.myRewindStack.length === 0) {
-            
+
             this.rewinding = false;
             return;
         }
         this.lastFrame = this.rewindFrame.drawFrame(this.game.clockTick, ctx);
         this.moveRewind();
-        
-        
-        
+
+
+
         //}
-    }else if (this.falling) {
+    } else if (this.falling) {
         //fall to the right.
         if (direction) {
             this.fallRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
@@ -362,7 +360,7 @@ RunBoy.prototype.draw = function (ctx) {
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
             this.addRewindFrame(this.jumpRight.clipX, this.jumpRight.clipY,
                 this.jumpRight.frameWidth, this.jumpRight.frameHeight);
-            
+
             //jumping to the left.
         } else {
             this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
@@ -406,6 +404,7 @@ RunBoy.prototype.draw = function (ctx) {
 RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
     this.canPass = true;
+    this.landed = false;
 
     for (var i = 0; i < this.game.entities.length; i++) {
 
@@ -438,15 +437,15 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");
-            this.rewindMe();
+            //this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
-        else if (this.canPass && entity.hasOwnProperty('boundingBox')) {
-
-            this.canPass = !result;
-
-            if (entity.boundingBox.top > this.lastBottom && this.canPass === false) {
+            //else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
+        else if (result && entity instanceof Platform) {
+            //check if I landed on a platform first
+            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
+                this.landed = result;
 
                 // He landed on a platform while falling
                 if (this.falling) {
@@ -456,6 +455,9 @@ RunBoy.prototype.didICollide = function () {
                     this.runningJump = false;
                     this.baseHeight = this.y;
                 }
+            }
+            else if (this.canPass) {
+                this.canPass = !result; //if changing make sure top < lastbottom
             }
         }
     }
@@ -481,6 +483,5 @@ RunBoy.prototype.addRewindFrame = function (clipX, clipY, frameWidth, frameHeigh
     };
     this.lastFrame = current;
     this.myRewindStack.push(current);
-    
-}
 
+}

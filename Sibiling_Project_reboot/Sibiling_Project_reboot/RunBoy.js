@@ -434,15 +434,11 @@ RunBoy.prototype.didICollide = function () {
             document.getElementById("score").innerHTML = this.game.score;
         }
         else if (result && entity instanceof FinishLine) {
-            console.log("ran through finish line");
             endGame();
         }
         else if (result && entity instanceof Enemy) {
-            console.log("ran into a enemy");
-            //this.rewindMe();
-            //console.log(entity.boundingbox.x);
+            this.rewindMe();
         }
-            //else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
         else if (result && entity instanceof Platform) {
             //check if I landed on a platform first
             if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.

@@ -7,7 +7,11 @@ var canvasWidth = 1250;
 var canvasHeight = 700;
 var boardPieces = [];
 var rewindFrame;
+
+sdParentNode = null;
+startDisplay = null;
 gameEngine = null;
+timer = null;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -208,6 +212,7 @@ function GameEngine() {
     this.viewPort = null;
     this.addListeners = true;
     this.score = 0;
+    this.numItems = 0;
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -383,6 +388,13 @@ GameEngine.prototype.update = function () {
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
 
+        // check to see if time has run out
+        if (entity instanceof GameTimer) {
+            if (Number(entity.time) > 120000) {
+                endGame();
+            }
+        }
+
         // Update all entities' x value except Runboy
         if (!(entity instanceof RunBoy)) {
             entity.x = canvasWidth + (entity.worldX - this.viewPort.rightX);
@@ -546,12 +558,16 @@ Item.prototype.draw = function (ctx) {
 function FinishLine(game, gameWidth) {
     this.game = game;
     //console.log(gameWidth);
+    //this.x = gameWidth;
+    //this.y = 125;
+    //this.width = 394;
+    //this.height = 446;
     this.x = gameWidth;
-    this.y = 125;
-    this.width = 394;
-    this.height = 446;
-    this.finishLineAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.066, 30, true, false);
-    //this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.y = 420;
+    this.width = 20;
+    this.height = 200;
+    //this.finishLineAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.066, 30, true, false);
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
 
     Entity.call(this, game, this.x, this.y);
 }
@@ -560,16 +576,16 @@ FinishLine.prototype = new Entity();
 FinishLine.prototype.constructor = FinishLine;
 
 FinishLine.prototype.update = function () {
-    //this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
 FinishLine.prototype.draw = function (ctx) {
-    //ctx.fillStyle = "purple";
-    //ctx.fillRect(this.x, this.y, this.width, this.height);
-    //ctx.strokeStyle = "red";
-    //ctx.strokeRect(, this.boundingBox.width, this.boundingBox.height);
-    this.finishLineAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+    ctx.fillStyle = "white";
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.strokeStyle = "red";
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //this.finishLineAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };
 
 /*
@@ -609,15 +625,18 @@ function GameTimer(game) {
     this.game = game;
     this.time = 0;
     this.startTime = Date.now();
+    this.stopped = false;
 }
 
 GameTimer.prototype = new Entity();
 GameTimer.prototype.constructor = GameTimer;
 
 GameTimer.prototype.update = function () {
-    this.time = (Date.now() - this.startTime);
-    var formattedTime = convertTime(this.time);
-    document.getElementById("timer").innerHTML = formattedTime;
+    if (!this.stopped) { 
+        this.time = (Date.now() - this.startTime);
+        var formattedTime = convertTime(this.time);
+        document.getElementById("timer").innerHTML = formattedTime;
+    }
 };
 
 function convertTime(miliseconds) {
@@ -636,29 +655,96 @@ function convertTime(miliseconds) {
 * Starts the game. This function is called by the HTML button called "startButton".
 */
 function startGame() {
-    var button = document.getElementById("startButton");
-    button.parentNode.removeChild(button);
-    var title = document.getElementById("gameTitle");
-    title.parentNode.removeChild(title);
+
+    if (document.getElementById("startDisplay")) {
+        sdParentNode = document.getElementById("startDisplay").parentNode;
+        startDisplay = document.getElementById("startDisplay");
+        sdParentNode.removeChild(startDisplay);
+    }
     gameEngine.start();
     gameEngine.ctx.canvas.focus();
-    var timer = new GameTimer(gameEngine);
+    timer = new GameTimer(gameEngine);
     gameEngine.addEntity(timer);
-}
+};
+
+function endGame() {
+    timer.stopped = true;
+    var timeLeft = timer.time;
+    var timeBonus = Math.ceil((120000 - Number(timeLeft)) / 1000) * 10;
+
+    var element = document.createElement('div');
+    element.id = "endDisplay";
+    document.body.appendChild(element);
+    element.appendChild(document.createTextNode("Game Over"));
+    element.style.position = "absolute";
+    element.style.left = "500px";
+    element.style.top = "130px";
+    element.style.fontSize = "65px";
+    //element.style.color = "#D0F8FF";
+    element.style.color = "red";
+    element.style.textShadow = "0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF";
+
+    var element2 = document.createElement('ul');
+    element2.id = "list";
+    document.body.appendChild(element2);
+    element2.style.position = "absolute";
+    element2.style.left = "500px";
+    element2.style.top = "270px";
+    element2.style.fontSize = "25px";
+    //element2.style.color = "#D0F8FF";
+    element2.style.color = "red";
+    element2.style.textShadow = "0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF";
+
+    var elem3 = document.createElement('li');
+    elem3.appendChild(document.createTextNode("Score: " + (gameEngine.score + timeBonus)));
+
+    var elem4 = document.createElement('li');
+    elem4.appendChild(document.createTextNode("Items Collected: " + gameEngine.numItems));
+
+    var elem5 = document.createElement('li');
+    elem5.appendChild(document.createTextNode("Time Bonus: " + timeBonus));
+
+    element2.appendChild(elem3);
+    element2.appendChild(elem4);
+    element2.appendChild(elem5);
+
+    var resetButton = document.createElement('input');
+    resetButton.id = "rb";
+    resetButton.type = "button";
+    resetButton.value = "Play Again";
+    resetButton.style.position = "absolute";
+    resetButton.style.left = "540px";
+    resetButton.style.top = "470px";
+    resetButton.style.display = "inline-block";
+    resetButton.style.width = "200px";
+    resetButton.style.border = "1px solid red";
+    resetButton.style.backgroundColor = "#A5F1FF";
+    resetButton.style.fontSize = "150%";
+    resetButton.style.color = "red";
+    resetButton.style.borderRadius = "5px";
+    resetButton.onclick = function () { location.reload() };
+    document.body.appendChild(resetButton);
+
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var entity = this.game.entities[i];
+        entity.removeFromWorld = true;
+    }
+};
 
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);
 ASSET_MANAGER.queueDownload(heroSpriteSheet);
 window.onload = initialize;
 function initialize() {
+
     ASSET_MANAGER.downloadAll(function () {
 
         var canvas = document.getElementById('world');
         canvas.setAttribute("tabindex", 0);
         canvas.focus();
         var ctx = canvas.getContext('2d');
-
         gameEngine = new GameEngine();
+        
         var gameWorld = new Background(gameEngine, canvasWidth);
         var line = new FinishLine(gameEngine, gameWorld.width);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);

@@ -132,6 +132,8 @@ function RewindAnimation(spriteSheet, rewindStack) {
     this.spriteSheet = spriteSheet;
     this.myRewindStack = rewindStack;
     this.previousFrame = null;
+    this.currentLineInterval = 0;
+    this.movingUp = true;
 }
 
 RewindAnimation.prototype.drawFrame = function (tick, ctx, scaleBy) {
@@ -143,8 +145,30 @@ RewindAnimation.prototype.drawFrame = function (tick, ctx, scaleBy) {
                          current.clipX, current.clipY, current.frameWidth, current.frameHeight,
                          current.canvasX, current.canvasY, current.frameWidth, current.frameHeight);
         this.previousFrame = current;
+       ctx.drawImage(this.spriteSheet, 5565, 4550, 302, 310, 625, 250, 302*.33, 310*.33)
+        
+        for (var i = 1; i <= 10; i++) {
+            if (this.currentLineInterval < 10 && this.movingUp) {
+            this.currentLineInterval += 1;
+        } else if (this.currentLineInterval >= 10 && this.movingUp) {
+            this.movingUp = false;
+            this.currentLineInterval -= 1;
+        } else if (this.currentLineInterval > -10 && !this.movingUp) {
+            this.currentLineInterval -= 1;
+        } else {
+            this.movingUp = true;
+            this.currentLineInterval += 1;
+        }
+            ctx.strokeStyle = "#000";
+            ctx.beginPath();
+            ctx.moveTo(0, i*70 + this.currentLineInterval);
+            ctx.lineTo(canvasWidth, i*70 + this.currentLineInterval);
+            ctx.stroke();
+        }
+
         return current;
     }
+
        
     return this.previousFrame;
 
@@ -464,7 +488,7 @@ BoundingBox.prototype.equals = function (oth) {
 /*
 * An item that the character can interact with in the world.
 */
-function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
+function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight, scale) {
     this.game = game;
     this.worldX = x;
     this.worldY = y;
@@ -473,10 +497,15 @@ function Item(game, x, y, point, clipX, clipY, frameWidth, frameHeight) {
     this.drawItem = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, frameWidth, frameHeight, 0.01, 1, true);
     this.width = frameWidth;
     this.height = frameHeight;
+    this.scaleBy = scale;
+    this.limitIndex = Math.floor((Math.random() * 15) + 7);
+    this.movingUp = true;
     //made both width and height 50 because  the frameWidtha and framHeight are way to large.
-    this.boundingBox = new BoundingBox(this.worldX, this.worldY, 50, 50);
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width * scale, this.height * scale);
 
     Entity.call(this, game, this.worldX, this.worldY);
+    this.upperLimit = this.y - this.limitIndex;
+    this.lowerLimit = this.y + this.limitIndex;
 };
 
 Item.prototype = new Entity();
@@ -486,7 +515,20 @@ Item.prototype.constructor = Item;
 * updates the item.
 */
 Item.prototype.update = function () {
+    if (this.movingUp && this.y > this.upperLimit) {
+        this.y -= 1;
+    } else if (this.movingUp && this.y <= this.upperLimit) {
+        this.y += 1;
+        this.movingUp = false;
+    } else if (!this.movingUp && this.y < this.lowerLimit) {
+        this.y += 1;
+    } else if(!this.movingUp && this.y >= this.lowerLimit) {
+        this.y -= 1;
+        this.movingUp = true;
+    }
+
     this.boundingBox = new BoundingBox(this.x, this.y, this.boundingBox.width, this.boundingBox.height);
+
     Entity.prototype.update.call(this);
 };
 
@@ -496,7 +538,7 @@ Item.prototype.update = function () {
 Item.prototype.draw = function (ctx) {
     //ctx.fillStyle = "purple";
     //ctx.fillRect(this.x, this.y, this.width, this.height);
-    this.drawItem.drawFrame(this.game.clockTick, ctx, this.x, this.y, 0.25);
+    this.drawItem.drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scaleBy);
     ctx.strokeStyle = "red";
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
@@ -620,10 +662,11 @@ function initialize() {
         var gameWorld = new Background(gameEngine, canvasWidth);
         var line = new FinishLine(gameEngine, gameWorld.width);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
-        
-        var nextWidth = boardPieces[0](650, gameEngine);
-        nextWidth = boardPieces[1](nextWidth += 500, gameEngine);
-        nextWidth = boardPieces[3](nextWidth += 500, gameEngine);
+        var nextWidth = 700;
+        for(var i = 0; i < boardPieces.length; i++){
+            nextWidth = boardPieces[i](nextWidth, gameEngine);
+            nextWidth += 500;
+        }
         
         gameEngine.addEntity(line);
         gameEngine.addEntity(boy);
@@ -681,7 +724,7 @@ var leftCrateSteps = function (game, x, y, height) {
         }
         var current = Math.floor(Math.random() * gameItems.length)
         var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
-            gameItems[current].frameWidth, gameItems[current].frameHeight);
+            gameItems[current].frameWidth, gameItems[current].frameHeight, 0.3);
         game.addEntity(item);
     }
 };
@@ -698,7 +741,7 @@ var rightCrateSteps = function (game, x, y, height) {
             if (i === start) {
                 var current = Math.floor(Math.random() * gameItems.length);
                 var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX,
-                    gameItems[current].clipY, gameItems[current].frameWidth, gameItems[current].frameHeight);
+                    gameItems[current].clipY, gameItems[current].frameWidth, gameItems[current].frameHeight, 0.3);
                 game.addEntity(item);
             }
 
@@ -712,7 +755,7 @@ var rightCrateSteps = function (game, x, y, height) {
     }
 };
 
-var rectPlatform = function (game, x, y, width, height) {
+var rectPlatform = function (game, x, y, width, height, createItems) {
     var size = 50;
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
@@ -721,10 +764,10 @@ var rectPlatform = function (game, x, y, width, height) {
 
             var crate = new Platform(game, tempX, tempY, canvasWidth, 1450, 4900, size, size);
             game.addEntity(crate);
-            if (i === 0) {
+            if (i === 0 && createItems) {
                 var current = Math.floor(Math.random() * gameItems.length)
                 var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
-                    gameItems[current].frameWidth, gameItems[current].frameHeight);
+                    gameItems[current].frameWidth, gameItems[current].frameHeight, 0.3);
                 game.addEntity(item);
             }
         }
@@ -750,38 +793,68 @@ var spacerSection = function (game, x, y, width, height) {
 };
 
 boardPieces[0] = function (startX, game) {
-    var levelOne = rectPlatform(game, startX, 534, 4, 1);
-    var levelTwo = rectPlatform(gameEngine, startX + 450, 415, 4, 1);
-    var levelThree = rectPlatform(gameEngine, startX + 775, 296, 4, 1);
-    var tallCrates = rectPlatform(gameEngine, startX + 1180, 150, 4, 5);
-    var sectionF = rectPlatform(gameEngine, startX + 1680, 150, 8, 1);
+    var zeroEnemy = new Enemy(game, startX + 650, 435);
+
+    var levelOne = rectPlatform(game, startX, 534, 4, 1, true);
+    var levelTwo = rectPlatform(gameEngine, startX += 450, 415, 4, 1, true);
+    var levelThree = rectPlatform(gameEngine, startX += 375, 296, 4, 1,true);
+    var tallCrates = rectPlatform(gameEngine, startX += 455, 150, 4, 5, true);
+    var sectionF = rectPlatform(gameEngine, startX += 500, 150, 8, 1, true);
     var sectWidth = 8 * 50 + startX + 1680;
-    var zeroEnemy = new Enemy(game, startX + 650, 429);
+    
     //spacerSection(game, sectWidth += 250, 415, 4,2);
     game.addEntity(zeroEnemy);
-    return sectWidth;
+    return startX;
 };
 
 boardPieces[1] = function (startX, game) {
     var stairsOne = rightCrateSteps(game, startX, 380, 4);
-    var platTwo = rectPlatform(game, startX += 200, 380, 4, 4);
+    var platTwo = rectPlatform(game, startX += 200, 380, 4, 4, true);
     var stairsThree = leftCrateSteps(game, startX += 200, 380, 4);
 
-    return startX + 500;
+    return startX;
 };
 
 boardPieces[2] = function (startX, game) {
-    var levelOne = rectPlatform(game, startX, 484, 4, 2);
-
-
+    var levelOne = rectPlatform(game, startX - 425, 184, 8, 1, true);
+    var levelTwo = rectPlatform(game, startX += 200, 484, 4, 2, true);
+    var levelThree = rectPlatform(game, startX += 50, 209, 4, 1, true);
+    return startX;
 };
 
 boardPieces[3] = function (startX, game) {
     var sectOne = rightCrateSteps(game, startX, 475, 2);
-    var sectTwo = rectPlatform(game, startX += 100, 475, 3, 2);
-    var sectFour = rectPlatform(game, startX += 300, 350, 4, 1);
-    var sectThree = new Platform(game, startX += 350, 470, canvasWidth, 1200, 4700, 175, 118);
+    var sectTwo = rectPlatform(game, startX += 100, 475, 3, 2, true);
+    var sectFour = rectPlatform(game, startX += 300, 350, 4, 1, true);
+    var enemyFive = new Enemy(game, startX - 50, 435);
+    var sectThree = new Platform(game, startX += 350, 455, canvasWidth, 1200, 4700, 175, 118);
     game.addEntity(sectThree);
+    game.addEntity(enemyFive);
+
+    return startX;
+};
+
+boardPieces[4] = function (startX, game) {
+    
+    var sectTwo = rectPlatform(game, startX, 150, 1, 4, false);
+    var sectOne = rectPlatform(game, startX, 300, 4, 1, false);
+    var sectThree = rectPlatform(game, startX += 350, 425, 4, 1, true);
+    var sectFour = rectPlatform(game, startX += 100, 175, 5, 1, true);
+    var sectFivea = new Platform(game, startX += 500, 158, canvasWidth, 20, 4505, 248, 422);
+    game.addEntity(sectFivea);
+    var sectFiveb = new Platform(game, startX += 250, 171, canvasWidth, 275, 4518, 187, 409);
+    game.addEntity(sectFiveb);
+    var sectSix = rectPlatform(game, startX += 189, 275, 8, 1);
+    var enemySeven = new Enemy(game, startX, 125);
+    game.addEntity(enemySeven);
+    var specialItem = new Item(game, startX + 150, 400, 250, 2600, 4750, 82, 148, 0.8);
+    game.addEntity(specialItem);
+    var sectEight = rectPlatform(game, startX += 350, 325, 1, 2);
+    var enemyNine = new Enemy(game, startX += 50, startingHeight);
+    game.addEntity(enemyNine);
+
+
+    return startX;
 };
 
 

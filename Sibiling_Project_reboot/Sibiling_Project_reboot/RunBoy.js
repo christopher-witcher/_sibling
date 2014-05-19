@@ -12,11 +12,11 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.011, 120, true, false);
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.011, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .0333, 45, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .0333, 45, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .02, 89, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .019754, 89, false);
 
-    this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 8456, 336, 114, 160, 0.033, 1, true);
-    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 8456, 496, 114, 160, 0.033, 1, true);
+    this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 336, 114, 160, 0.01, 1, true);
+    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 160, 0.01, 1, true);
 
     this.rewindFrame = null;
 
@@ -437,7 +437,7 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");
-            //this.rewindMe();
+            this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
             //else if (this.canPass && entity.hasOwnProperty('boundingBox')) { //check if platform
@@ -455,14 +455,16 @@ RunBoy.prototype.didICollide = function () {
                     this.runningJump = false;
                     this.baseHeight = this.y;
                 }
+                
+            }else if (this.canPass){
+                this.canPass = !result;
             }
-            else if (this.canPass) {
-                this.canPass = !result; //if changing make sure top < lastbottom
-            }
+      
         }
     }
-
 }
+
+
 
 RunBoy.prototype.rewindMe = function () {
     //this.spriteSheet = ;

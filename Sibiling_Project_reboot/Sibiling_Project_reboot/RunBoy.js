@@ -47,6 +47,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.currentPlatform = null;
     //keeps track of where the bounding box's bottom was before it changed. should be when falling.
     this.lastBottom = this.boundingbox.bottom;
+    this.lastTop = this.boundingbox.top;
 
     //stores character's rewindStack
     this.myRewindStack = [];
@@ -94,6 +95,7 @@ RunBoy.prototype.update = function () {
             this.baseHeight = this.y;
         }
         this.lastBottom = this.boundingbox.bottom;
+        this.lastTop = this.boundingbox.top;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
 
     }
@@ -164,6 +166,7 @@ RunBoy.prototype.update = function () {
             this.y = tempY;
         }
         this.lastBottom = this.boundingbox.bottom;
+        this.lastTop = this.boundingbox.top;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
 
         /*
@@ -208,6 +211,7 @@ RunBoy.prototype.update = function () {
             this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
             this.lastBottom = this.boundingbox.bottom;
+            this.lastTop = this.boundingbox.top;
             this.y = this.baseHeight - this.height / 2;
 
             if (this.jumpLeft.isDone()) {
@@ -218,6 +222,21 @@ RunBoy.prototype.update = function () {
 
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
+
+        if (this.landed) {
+            if (direction) {
+                this.jumpRight.elapsedTime = 0;
+                this.x = this.x - moveDistance;
+            }
+            else {
+                this.jumpLeft.elapsedTime = 0;
+                this.x = this.x + moveDistance;
+            }
+            this.baseHeight = this.y;
+            this.jumping = false;
+            this.y = tempY;
+        }
+
         this.game.space = false; //stop Runboy from jumping continuously
 
         /*
@@ -231,6 +250,7 @@ RunBoy.prototype.update = function () {
         var tempX = this.x;
         this.move();
         this.lastBottom = this.boundingbox.bottom;
+        this.lastTop = this.boundingbox.top;
         if (this.x > tempX) {
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         } else {//for when the world x moves but running boy doesn't move?
@@ -248,6 +268,7 @@ RunBoy.prototype.update = function () {
         var tempX = this.x;
         this.move();
         this.lastBottom = this.boundingbox.bottom;
+        this.lastTop = this.boundingbox.top;
         if (this.x < tempX) {
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
         } else {//for when the world x moves but running boy doesn't move?
@@ -427,8 +448,8 @@ RunBoy.prototype.draw = function (ctx) {
         }
     }
 
-    ctx.strokeStyle = "purple";
-    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    //ctx.strokeStyle = "purple";
+    //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 };
 
 RunBoy.prototype.didICollide = function () {
@@ -482,7 +503,7 @@ RunBoy.prototype.didICollide = function () {
 
             this.collission = true;
             //check if I landed on a platform first
-            if ((entity.boundingBox.top > this.lastBottom && !this.landed)) { //put in separate if state and change landed.
+            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 
@@ -495,7 +516,11 @@ RunBoy.prototype.didICollide = function () {
                     this.baseHeight = this.y;
                 }
                 
-            } else if (this.canPass && (this.currentPlatform == null || entity.y < this.currentPlatform.y)) {
+            }
+            else if (entity.boundingBox.bottom < this.lastTop && !this.landed) {
+                this.landed = result;
+            }
+            else if (this.canPass && (this.currentPlatform == null || entity.y < this.currentPlatform.y)) {
                 this.canPass = !result;
             }
       

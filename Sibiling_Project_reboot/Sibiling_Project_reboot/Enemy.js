@@ -118,8 +118,8 @@ Enemy.prototype.draw = function (ctx) {
         this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
     }
 
-    ctx.strokeStyle = "green";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.strokeStyle = "green";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 Enemy.prototype.didICollide = function () {boundingBox

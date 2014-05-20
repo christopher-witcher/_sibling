@@ -81,6 +81,7 @@ function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDu
     this.elapsedTime = 0;
     this.loop = loop;
     this.reverse = reverse;
+    this.completed = false;
 
 
 }
@@ -92,8 +93,10 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     if (this.loop) {
         if (this.isDone()) {
             this.elapsedTime = 0;
+            this.completed = true;
         }
     } else if (this.isDone()) {
+        this.completed = true;
         return;
     }
     var index = this.reverse ? this.frames - this.currentFrame() - 1 : this.currentFrame();
@@ -213,11 +216,18 @@ function GameEngine() {
     this.addListeners = true;
     this.score = 0;
     this.numItems = 0;
+    this.running = true;
+    this.finishLineCompleted = false;
+    this.runInsideComplete = false;
+    this.closeDoorCompleted = false;
+    
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
     this.viewPort = viewPort;
 };
+
+GameEngine.prototype.running = true;
 
 //Intilizes the game engine. Sets up things to start the game.
 GameEngine.prototype.init = function (ctx) {
@@ -356,13 +366,17 @@ GameEngine.prototype.addEntity = function (entity) {
 GameEngine.prototype.draw = function (drawCallback) {
     this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height);
     this.ctx.save();
-    for (var i = 0; i < this.entities.length; i++) {
+    if (this.running === true) {
+        for (var i = 0; i < this.entities.length; i++) {
 
-        // Only draw an entity if it is within the Viewport
-        if (this.entities[i].worldX > this.viewPort.leftX && this.entities[i].worldX < this.viewPort.rightX) {
-            this.entities[i].draw(this.ctx);
+            // Only draw an entity if it is within the Viewport
+            if (this.entities[i].worldX > this.viewPort.leftX && this.entities[i].worldX < this.viewPort.rightX) {
+                this.entities[i].draw(this.ctx);
+            }
+
         }
-
+    } else {
+        finishLine.draw(this.ctx);
     }
     if (drawCallback) {
         drawCallback(this);
@@ -382,7 +396,6 @@ GameEngine.prototype.update = function () {
         this.ctx.canvas.removeEventListener("keydown", this.keyDown, false);
     }
 
-
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -391,7 +404,7 @@ GameEngine.prototype.update = function () {
         // check to see if time has run out
         if (entity instanceof GameTimer) {
             if (Number(entity.time) > 120000) {
-                endGame();
+                this.endGame();
             }
         }
 
@@ -555,37 +568,72 @@ Item.prototype.draw = function (ctx) {
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
-function FinishLine(game, gameWidth) {
-    this.game = game;
+function FinishLine(game, gameWidth, ctx) {
+   // this.game = game;
+    this.ctx = ctx;
     //console.log(gameWidth);
     //this.x = gameWidth;
     //this.y = 125;
     //this.width = 394;
     //this.height = 446;
     this.x = gameWidth;
-    this.y = 420;
+    this.y = 100;
     this.width = 20;
     this.height = 200;
-    //this.finishLineAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.066, 30, true, false);
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    this.boundingBoxOffSetX = 294;
+    this.boundingBoxOffSetY = 225;
+    this.runUpStairsCompleted = false;
+    this.doorClosed = false;
+    this.finishLineAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.076, 30, false, false);
+    this.finishLineDoorOpen = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3000, 394, 446, 0.01, 1, true, false);
+    this.runInsideAnimation = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 3500, 60, 180, 0.011, 120, false, false);
 
+    this.boundingBox = new BoundingBox(this.x + this.boundingBoxOffSetX, this.y + +this.boundingBoxOffSetY, this.width, this.height + 75);
+    this.runInsideCounter = 0;
+    this.doorClosingCounter = 0;
+    this.finishLineCompleted = false;
     Entity.call(this, game, this.x, this.y);
 }
 
 FinishLine.prototype = new Entity();
 FinishLine.prototype.constructor = FinishLine;
 
+FinishLine.prototype.isCompleted = function () {
+    return this.finishLineCompleted;
+}
+
 FinishLine.prototype.update = function () {
-    this.boundingBox = new BoundingBox(this.x, this.y, this.width, this.height);
+    if (this.game.running === false && this.game.runInsideComplete === false) {
+        return;
+    }
+    this.boundingBox = new BoundingBox(this.x + this.boundingBoxOffSetX, this.y + this.boundingBoxOffSetY, this.width, this.height);
     Entity.prototype.update.call(this);
 };
 
-FinishLine.prototype.draw = function (ctx) {
-    ctx.fillStyle = "white";
-    ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
-    //this.finishLineAnimation.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+FinishLine.prototype.draw = function (ctx, game) {
+    //ctx.fillStyle = "white";
+    //ctx.fillRect(this.x, this.y, this.width, this.height);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    if (this.game.running === true) {
+        this.finishLineDoorOpen.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+    } else if (this.game.running === false && this.runInsideAnimation.completed === false) {
+        var canvasX = this.x + this.boundingBoxOffSetX;
+        var canvasY = this.y + this.boundingBoxOffSetY;
+        this.finishLineDoorOpen.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        this.runInsideAnimation.drawFrame(this.game.clockTick, this.ctx, this.x + 250,
+            this.y + 313);
+        this.runUpStairsCompleted = this.runInsideAnimation.completed;
+        console.log("running inside");
+    } else if (this.game.running === false && this.runUpStairsCompleted === true && this.doorClosed === false) {
+        this.finishLineAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
+        this.doorClosed = this.finishLineAnimation.completed;
+    } else if (this.game.running === false) {
+        
+        this.game.endGame();
+    }
+   
+    
 };
 
 /*
@@ -667,9 +715,15 @@ function startGame() {
     gameEngine.addEntity(timer);
 };
 
-function endGame() {
+GameEngine.prototype.isRunning = function () {
+    return this.running;
+};
+
+GameEngine.prototype.endGame = function() {
+    this.running = false;
     timer.stopped = true;
     var timeLeft = timer.time;
+
     var timeBonus = Math.ceil((120000 - Number(timeLeft)) / 1000) * 10;
 
     var element = document.createElement('div');
@@ -726,7 +780,7 @@ function endGame() {
     document.body.appendChild(resetButton);
 
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.game.entities[i];
+        var entity = this.entities[i];
         entity.removeFromWorld = true;
     }
 };
@@ -746,15 +800,21 @@ function initialize() {
         gameEngine = new GameEngine();
         
         var gameWorld = new Background(gameEngine, canvasWidth);
-        var line = new FinishLine(gameEngine, gameWorld.width);
+        this.finishLine = new FinishLine(gameEngine, gameWorld.width, ctx);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         var nextWidth = 700;
         for(var i = 0; i < boardPieces.length; i++){
             nextWidth = boardPieces[i](nextWidth, gameEngine);
             nextWidth += 500;
         }
-        
-        gameEngine.addEntity(line);
+        nextWidth -= 200;
+        nextWidth += spacerSection(gameEngine, nextWidth, 375, 12, 3);
+        nextWidth += rectPlatform(gameEngine, nextWidth, 450, 5, 1, true);
+        nextWidth += 200;
+        nextWidth += rectPlatform(gameEngine, nextWidth, 350, 5, 1, true);
+        var lastEnemy = new Enemy(gameEngine, nextWidth, 435);
+        gameEngine.addEntity(lastEnemy);
+        gameEngine.addEntity(this.finishLine);
         gameEngine.addEntity(boy);
         
         var viewPort = new Viewport(boy, canvasWidth, canvas.height, gameWorld.width, gameWorld.height);
@@ -861,21 +921,24 @@ var rectPlatform = function (game, x, y, width, height, createItems) {
     //var item = new Item(game, x + 75, y - 60, 10, 0, 0, 50, 50);
     //game.addEntity(item);
 
-
+    return width * size;
 };
 
 var spacerSection = function (game, x, y, width, height) {
+    var size = 50;
     for (var i = 0; i < height; i++) {
         for (var j = 0; j < width; j++) {
             var tempX = j * size + x;
             var tempY = i * size + y;
             var current = Math.floor(Math.random() * gameItems.length)
             var item = new Item(game, tempX, tempY - 60, gameItems[current].points, gameItems[current].clipX, gameItems[current].clipY,
-                gameItems[current].frameWidth, gameItems[current].frameHeight);
+                gameItems[current].frameWidth, gameItems[current].frameHeight,0.3);
             game.addEntity(item);
 
         }
     }
+
+    return width * size;
 };
 
 boardPieces[0] = function (startX, game) {
@@ -909,11 +972,11 @@ boardPieces[2] = function (startX, game) {
 };
 
 boardPieces[3] = function (startX, game) {
-    var sectOne = rightCrateSteps(game, startX, 475, 2);
-    var sectTwo = rectPlatform(game, startX += 100, 475, 3, 2, true);
+    var sectOne = rightCrateSteps(game, startX+=50, 425, 3);
+    var sectTwo = rectPlatform(game, startX += 150, 425, 2, 3, true);
     var sectFour = rectPlatform(game, startX += 300, 350, 4, 1, true);
     var enemyFive = new Enemy(game, startX - 50, 435);
-    var sectThree = new Platform(game, startX += 350, 455, canvasWidth, 1200, 4700, 175, 118);
+    var sectThree = new Platform(game, startX += 400, 455, canvasWidth, 1200, 4700, 175, 118);
     game.addEntity(sectThree);
     game.addEntity(enemyFive);
 
@@ -937,6 +1000,8 @@ boardPieces[4] = function (startX, game) {
     game.addEntity(specialItem);
     var sectEight = rectPlatform(game, startX += 350, 325, 1, 2);
     var enemyNine = new Enemy(game, startX += 50, startingHeight);
+    var sectTen = rectPlatform(game, startX += 250, 350, 4, 1);
+
     game.addEntity(enemyNine);
 
 

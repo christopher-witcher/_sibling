@@ -10,6 +10,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 158, 100, 150, 0.01, 1, true, false);
 
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.011, 120, true, false);
+   
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.011, 120, true, false);
 
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .02, 89, false);
@@ -17,11 +18,13 @@ function RunBoy(game, canvasWidth, worldWidth) {
 
     this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 336, 114, 160, 0.01, 1, true);
     this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 160, 0.01, 1, true);
-
+    //End of Game Animation
+    
     this.rewindFrame = null;
 
     // set the sprite's starting position on the canvas
     Entity.call(this, game, 0, startingHeight);
+    //Entity.call(this, game, canvasWidth / 2, startingHeight);
 
     this.jumping = false;
     this.running = false;
@@ -35,6 +38,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
+    //this.worldX = 8100;
     this.worldY = this.y;
     this.boundingbox = new BoundingBox(this.x, this.y, 90, 145); //145
     //when its null I'm not currently on a platform.
@@ -56,6 +60,10 @@ RunBoy.prototype.constructor = RunBoy;
 //The update method for run boy
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
+    if (this.game.running === false) {
+        return;
+    }
+
     if (this.rewinding === true) {
 
         return;
@@ -325,6 +333,10 @@ RunBoy.prototype.moveRewind = function () {
 }
 
 RunBoy.prototype.draw = function (ctx) {
+    if (this.game.running === false) {
+        return;
+    }
+
     if (this.rewinding === true) {
         var canvasMidpoint = this.canvasWidth / 2;
         if (this.myRewindStack.length === 0) {
@@ -403,6 +415,10 @@ RunBoy.prototype.draw = function (ctx) {
 
 RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
+    //if (this.game.running === false) {
+    //    this.game.endGame();
+    //    return;
+    //}
     this.canPass = true;
     this.landed = false;
 
@@ -434,7 +450,7 @@ RunBoy.prototype.didICollide = function () {
             document.getElementById("score").innerHTML = this.game.score;
         }
         else if (result && entity instanceof FinishLine) {
-            endGame();
+            this.game.running = false;
         }
         else if (result && entity instanceof Enemy) {
             console.log("ran into a enemy");

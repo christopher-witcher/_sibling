@@ -59,7 +59,7 @@ var globalCurrentEnemy = 0;
 //Sets up different animation of runboy and initializes the controls
 function Enemy(game, startingX, startingY) {
     //this.currentEnemy = Math.floor(Math.random() * enemyList.length);
-    if (globalCurrentEnemy === 2) {
+    if (globalCurrentEnemy >= 2) {
         globalCurrentEnemy = 0;
     } else {
         globalCurrentEnemy += 1;

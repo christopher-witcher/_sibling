@@ -13,8 +13,8 @@ function RunBoy(game, canvasWidth, worldWidth) {
    
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.011, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .02, 89, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .019754, 89, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .015, 89, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .015, 89, false);
 
     this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 336, 114, 160, 0.01, 1, true);
     this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 160, 0.01, 1, true);
@@ -66,8 +66,10 @@ RunBoy.prototype.update = function () {
         return;
     }
 
-    if (this.rewinding === true) {
+    if (this.rewinding === true && this.myRewindStack === 1) {
 
+        return;
+    } else if (this.rewinding === true) {
         return;
     }
     var maxHeight = 300;
@@ -330,11 +332,22 @@ RunBoy.prototype.moveRewind = function () {
 
     } else { // he's in the middle of the canvas facing left
         this.worldX = this.lastFrame.worldX;
+        //this.x = this.lastFrame.worldX;
     }
 
-    this.y = this.lastFrame.worldY;
+    this.y = this.lastFrame.canvasY;
+    
 
-    //this.worldY = this.lastFrame.worldY;
+    //if (this.myRewindStack.length === 1) {
+    //    this.boundingbox = new BoundingBox(this.rewindFrame.x, this.rewindFrame.y,
+    //        this.rewindFrame.width, this.rewindFrame.height);
+    //}
+    direction = this.rewindFrame.direction;
+    this.falling = this.rewindFrame.falling;
+    this.jumping = this.rewindFrame.jumping;
+    this.runningJump = this.rewindFrame.runningJump;
+    this.currentPlatform = this.rewindFrame.currentPlatform;
+    this.worldY = this.lastFrame.worldY;
 }
 
 RunBoy.prototype.draw = function (ctx) {
@@ -351,7 +364,7 @@ RunBoy.prototype.draw = function (ctx) {
         }
         this.lastFrame = this.rewindFrame.drawFrame(this.game.clockTick, ctx);
         this.moveRewind();
-
+        
 
 
         //}
@@ -506,8 +519,11 @@ RunBoy.prototype.addRewindFrame = function (clipX, clipY, frameWidth, frameHeigh
     var finalIndex = this.myRewindStack.length - 1;
     var last = this.myRewindStack[finalIndex];
     var current = {
-        canvasX: this.x, canvasY: this.y, worldX: this.worldX, worldY: this.worldY, clipX: clipX, clipY: clipY,
-        frameWidth: frameWidth, frameHeight: frameHeight
+        canvasX: Math.floor(this.x), canvasY: Math.floor(this.y), worldX: Math.floor(this.worldX), worldY: Math.floor(this.worldY),
+        clipX: clipX, clipY: clipY,
+        frameWidth: frameWidth, frameHeight: frameHeight, direction: direction ? true : false, falling: this.falling,
+        jumping: this.jumping, runningJump: this.runningJump, running: this.running, boundingbox: this.boundingbox, 
+        currentPlatform: this.currentPlatform
     };
     this.lastFrame = current;
     this.myRewindStack.push(current);

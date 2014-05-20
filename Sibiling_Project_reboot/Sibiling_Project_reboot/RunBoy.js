@@ -414,8 +414,8 @@ RunBoy.prototype.draw = function (ctx) {
         }
     }
 
-    ctx.strokeStyle = "purple";
-    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    //ctx.strokeStyle = "purple";
+    //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 };
 
 RunBoy.prototype.didICollide = function () {
@@ -469,7 +469,7 @@ RunBoy.prototype.didICollide = function () {
 
             this.collission = true;
             //check if I landed on a platform first
-            if ((entity.boundingBox.top > this.lastBottom && !this.landed)) { //put in separate if state and change landed.
+            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 

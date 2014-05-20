@@ -564,8 +564,8 @@ Item.prototype.draw = function (ctx) {
     //ctx.fillStyle = "purple";
     //ctx.fillRect(this.x, this.y, this.width, this.height);
     this.drawItem.drawFrame(this.game.clockTick, ctx, this.x, this.y, this.scaleBy);
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 function FinishLine(game, gameWidth, ctx) {
@@ -662,8 +662,8 @@ Block.prototype.update = function () {
 Block.prototype.draw = function (ctx) {
     ctx.fillStyle = "black";
     ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 /*
@@ -852,8 +852,8 @@ Platform.prototype.update = function () {
 
 Platform.prototype.draw = function (ctx) {
 
-    ctx.strokeStyle = "red";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.strokeStyle = "red";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
     this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };
 

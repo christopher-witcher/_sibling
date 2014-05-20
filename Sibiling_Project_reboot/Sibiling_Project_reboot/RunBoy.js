@@ -30,6 +30,8 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.falling = false;
     this.canPass = true;
     this.landed = false;
+    this.collission = false;
+
     this.height = 0;
     this.baseHeight = startingHeight;
     this.canvasWidth = canvasWidth;
@@ -81,6 +83,9 @@ RunBoy.prototype.update = function () {
             this.standing = true;
             this.baseHeight = this.y;
         }
+        this.lastBottom = this.boundingbox.bottom;
+        this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
+
     }
 
     /*
@@ -249,14 +254,14 @@ RunBoy.prototype.update = function () {
 
     this.didICollide();
 
-    if (!this.canPass && this.currentPlatform === null) {
+    if (!this.canPass) {
         this.worldX = tempWorldX;
         this.x = tempX;
-        this.lastBottom = this.boundingbox.bottom;
+        //this.lastBottom = this.boundingbox.bottom;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
         //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
-    else if (this.canPass && !this.landed) {
+    else if (!this.collission) {
         this.currentPlatform = null;
     }
 
@@ -405,27 +410,14 @@ RunBoy.prototype.didICollide = function () {
     //console.log("check if they collide");
     this.canPass = true;
     this.landed = false;
+    this.collission = false;
 
     for (var i = 0; i < this.game.entities.length; i++) {
 
         var entity = this.game.entities[i];
         var result = this.boundingbox.collide(entity.boundingBox);
 
-        if (entity instanceof Enemy) {
-            //prints out the two bounding boxes that are being compared onto the screen.
-            document.getElementById("runX").innerHTML = this.x;
-            document.getElementById("runWorldX").innerHTML = this.worldX;
-
-            document.getElementById("runLeft").innerHTML = this.boundingbox.left;
-            document.getElementById("runRight").innerHTML = this.boundingbox.right;
-            document.getElementById("runTop").innerHTML = this.boundingbox.top;
-            document.getElementById("runBottom").innerHTML = this.boundingbox.bottom;
-
-            document.getElementById("blockLeft").innerHTML = entity.boundingBox.left;
-            document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
-            document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
-            document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
-        }
+        
 
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             entity.removeFromWorld = true;
@@ -442,8 +434,26 @@ RunBoy.prototype.didICollide = function () {
             //console.log(entity.boundingbox.x);
         }
         else if (result && entity instanceof Platform) {
+
+            if (entity instanceof Platform) {
+                //prints out the two bounding boxes that are being compared onto the screen.
+                document.getElementById("runX").innerHTML = this.x;
+                document.getElementById("runWorldX").innerHTML = this.worldX;
+
+                document.getElementById("runLeft").innerHTML = this.boundingbox.left;
+                document.getElementById("runRight").innerHTML = this.boundingbox.right;
+                document.getElementById("runTop").innerHTML = this.boundingbox.top;
+                document.getElementById("runBottom").innerHTML = this.boundingbox.bottom;
+
+                document.getElementById("blockLeft").innerHTML = entity.boundingBox.left;
+                document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
+                document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
+                document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
+            }
+
+            this.collission = true;
             //check if I landed on a platform first
-            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
+            if ((entity.boundingBox.top > this.lastBottom && !this.landed)) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 
@@ -456,7 +466,7 @@ RunBoy.prototype.didICollide = function () {
                     this.baseHeight = this.y;
                 }
                 
-            }else if (this.canPass){
+            } else if (this.canPass && (this.currentPlatform == null || entity.y < this.currentPlatform.y)) {
                 this.canPass = !result;
             }
       

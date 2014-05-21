@@ -485,22 +485,6 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Platform) {
 
-            if (entity instanceof Platform) {
-                //prints out the two bounding boxes that are being compared onto the screen.
-                document.getElementById("runX").innerHTML = this.x;
-                document.getElementById("runWorldX").innerHTML = this.worldX;
-
-                document.getElementById("runLeft").innerHTML = this.boundingbox.left;
-                document.getElementById("runRight").innerHTML = this.boundingbox.right;
-                document.getElementById("runTop").innerHTML = this.boundingbox.top;
-                document.getElementById("runBottom").innerHTML = this.boundingbox.bottom;
-
-                document.getElementById("blockLeft").innerHTML = entity.boundingBox.left;
-                document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
-                document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
-                document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
-            }
-
             this.collission = true;
             //check if I landed on a platform first
             if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.

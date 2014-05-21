@@ -989,16 +989,17 @@ boardPieces[4] = function (startX, game) {
     var sectFour = rectPlatform(game, startX += 100, 175, 5, 1, true);
     var sectFivea = new Platform(game, startX += 500, 158, canvasWidth, 20, 4505, 248, 422);
     game.addEntity(sectFivea);
-    var sectFiveb = new Platform(game, startX += 250, 171, canvasWidth, 275, 4518, 187, 409);
-    game.addEntity(sectFiveb);
-    var sectSix = rectPlatform(game, startX += 189, 275, 8, 1);
+    var sectFiveb = rectPlatform(game, startX += 275, 275, 3, 1);
+    //var sectFiveb = new Platform(game, startX += 250, 171, canvasWidth, 275, 4518, 187, 409);
+    //game.addEntity(sectFiveb);
     var enemySeven = new Enemy(game, startX, 125);
+    var sectSix = rectPlatform(game, startX += 150, 275, 8, 1);
     game.addEntity(enemySeven);
     var specialItem = new Item(game, startX + 150, 400, 250, 2600, 4750, 82, 148, 0.8);
     game.addEntity(specialItem);
     var sectEight = rectPlatform(game, startX += 350, 325, 1, 2);
     var enemyNine = new Enemy(game, startX += 50, startingHeight);
-    var sectTen = rectPlatform(game, startX += 250, 350, 4, 1);
+    var sectTen = rectPlatform(game, startX += 200, 300, 4, 1);
 
     game.addEntity(enemyNine);
 

@@ -12,6 +12,7 @@ sdParentNode = null;
 startDisplay = null;
 gameEngine = null;
 timer = null;
+gameOver = false;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -227,7 +228,7 @@ GameEngine.prototype.setViewPort = function (viewPort) {
     this.viewPort = viewPort;
 };
 
-GameEngine.prototype.running = true;
+//GameEngine.prototype.running = true;
 
 //Intilizes the game engine. Sets up things to start the game.
 GameEngine.prototype.init = function (ctx) {
@@ -269,21 +270,21 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("click", function (e) {
         that.click = getXandY(e);
  
-        GetButtonCoordinates();
+        //GetButtonCoordinates();
 
-        function GetButtonCoordinates() {
-            var button = document.getElementById("startButton");
-            var p = GetScreenCoordinates(button);
+        //function GetButtonCoordinates() {
+        //    var button = document.getElementById("startButton");
+        //    var p = GetScreenCoordinates(button);
 
-            if (that.click.x > p.x && that.click.x < p.x + button.offsetWidth &&
-                that.click.y > p.y && that.click.y < p.y + button.offsetHeight) {
+        //    if (that.click.x > p.x && that.click.x < p.x + button.offsetWidth &&
+        //        that.click.y > p.y && that.click.y < p.y + button.offsetHeight) {
 
                 
-                //button.setAttribute("hidden", true);
-                ////button.setAttribute("disabled", true);
-                //this.gameEngine.start();
-            }
-        }
+        //        //button.setAttribute("hidden", true);
+        //        ////button.setAttribute("disabled", true);
+        //        //this.gameEngine.start();
+        //    }
+        //}
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function (e) {
@@ -427,10 +428,12 @@ GameEngine.prototype.update = function () {
 
 //What the games does during a loop of the game.
 GameEngine.prototype.loop = function () {
-    this.clockTick = this.timer.tick();
-    this.update();
-    this.viewPort.update(); // update the viewPort with Runboy's new coordinates
-    this.draw();
+   
+        this.clockTick = this.timer.tick();
+        this.update();
+        this.viewPort.update(); // update the viewPort with Runboy's new coordinates
+        this.draw();
+    
 };
 
 function Entity(game, x, y) {
@@ -628,9 +631,10 @@ FinishLine.prototype.draw = function (ctx, game) {
     } else if (this.game.running === false && this.runUpStairsCompleted === true && this.doorClosed === false) {
         this.finishLineAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y);
         this.doorClosed = this.finishLineAnimation.completed;
-    } else if (this.game.running === false) {
+    } else if (this.game.running === false && !gameOver) {
         
         this.game.endGame();
+        gameOver = true;
     }
    
     
@@ -689,6 +693,7 @@ GameTimer.prototype.update = function () {
 
 function convertTime(miliseconds) {
     var totalSeconds = 120 - Math.floor(miliseconds / 1000);
+
     var minutes = Math.floor(totalSeconds / 60);
     var seconds = totalSeconds - minutes * 60;
     if (seconds === 0) {
@@ -715,15 +720,10 @@ function startGame() {
     gameEngine.addEntity(timer);
 };
 
-GameEngine.prototype.isRunning = function () {
-    return this.running;
-};
 
-GameEngine.prototype.endGame = function() {
-    this.running = false;
+GameEngine.prototype.endGame = function () {
     timer.stopped = true;
     var timeLeft = timer.time;
-
     var timeBonus = Math.ceil((120000 - Number(timeLeft)) / 1000) * 10;
 
     var element = document.createElement('div');
@@ -763,6 +763,7 @@ GameEngine.prototype.endGame = function() {
     element2.appendChild(elem5);
 
     var resetButton = document.createElement('input');
+    document.body.appendChild(resetButton);
     resetButton.id = "rb";
     resetButton.type = "button";
     resetButton.value = "Play Again";
@@ -777,12 +778,8 @@ GameEngine.prototype.endGame = function() {
     resetButton.style.color = "red";
     resetButton.style.borderRadius = "5px";
     resetButton.onclick = function () { location.reload() };
-    document.body.appendChild(resetButton);
+    
 
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        var entity = this.entities[i];
-        entity.removeFromWorld = true;
-    }
 };
 
 var ASSET_MANAGER = new AssetManager();

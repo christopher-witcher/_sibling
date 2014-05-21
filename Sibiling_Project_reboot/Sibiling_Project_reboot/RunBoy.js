@@ -6,18 +6,18 @@ startingHeight = 435;
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game, canvasWidth, worldWidth) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 12, 8, 100, 150, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 158, 100, 150, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 12, 5, 100, 150, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 155, 100, 150, 0.01, 1, true, false);
 
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.011, 120, true, false);
    
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.011, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .02, 89, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .019754, 89, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 157, .02, 89, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 157, .019754, 89, false);
 
     this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 336, 114, 160, 0.01, 1, true);
-    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 160, 0.01, 1, true);
+    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 148, 0.01, 1, true);
     //End of Game Animation
     
     this.rewindFrame = null;
@@ -474,18 +474,18 @@ RunBoy.prototype.didICollide = function () {
 
             if (entity instanceof Platform) {
                 //prints out the two bounding boxes that are being compared onto the screen.
-                document.getElementById("runX").innerHTML = this.x;
-                document.getElementById("runWorldX").innerHTML = this.worldX;
+                //document.getElementById("runX").innerHTML = this.x;
+                //document.getElementById("runWorldX").innerHTML = this.worldX;
 
-                document.getElementById("runLeft").innerHTML = this.boundingbox.left;
-                document.getElementById("runRight").innerHTML = this.boundingbox.right;
-                document.getElementById("runTop").innerHTML = this.boundingbox.top;
-                document.getElementById("runBottom").innerHTML = this.boundingbox.bottom;
+                //document.getElementById("runLeft").innerHTML = this.boundingbox.left;
+                //document.getElementById("runRight").innerHTML = this.boundingbox.right;
+                //document.getElementById("runTop").innerHTML = this.boundingbox.top;
+                //document.getElementById("runBottom").innerHTML = this.boundingbox.bottom;
 
-                document.getElementById("blockLeft").innerHTML = entity.boundingBox.left;
-                document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
-                document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
-                document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
+                //document.getElementById("blockLeft").innerHTML = entity.boundingBox.left;
+                //document.getElementById("blockRight").innerHTML = entity.boundingBox.right;
+                //document.getElementById("blockTop").innerHTML = entity.boundingBox.top;
+                //document.getElementById("blockBottom").innerHTML = entity.boundingBox.bottom;
             }
 
             this.collission = true;

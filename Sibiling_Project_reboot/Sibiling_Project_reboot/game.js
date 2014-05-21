@@ -946,7 +946,8 @@ boardPieces[0] = function (startX, game) {
     var levelThree = rectPlatform(gameEngine, startX += 375, 296, 4, 1,true);
     var tallCrates = rectPlatform(gameEngine, startX += 455, 150, 4, 5, true);
     var sectionF = rectPlatform(gameEngine, startX += 500, 150, 8, 1, true);
-    var sectWidth = 8 * 50 + startX + 1680;
+    var dumpster = new Platform(game, startX - 100, 455, canvasWidth, 1200, 4700, 175, 118);
+    game.addEntity(dumpster);
     
     //spacerSection(game, sectWidth += 250, 415, 4,2);
     game.addEntity(zeroEnemy);

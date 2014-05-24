@@ -6,18 +6,18 @@ startingHeight = 435;
 //Sets up different animation of runboy and initializes the controls
 function RunBoy(game, canvasWidth, worldWidth) {
 
-    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 12, 8, 100, 150, 0.01, 1, true, false);
-    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 158, 100, 150, 0.01, 1, true, false);
+    this.rightStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 12, 6, 100, 150, 0.01, 1, true, false);
+    this.leftStanding = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 0, 156, 100, 150, 0.01, 1, true, false);
 
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 0, 100, 150, 0.011, 120, true, false);
    
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 100, 160, 100, 150, 0.011, 120, true, false);
 
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 160, .015, 89, false);
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 160, .015, 89, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 325, 114, 158, .015, 89, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10, 485, 114, 158, .015, 89, false);
 
     this.fallRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 336, 114, 160, 0.01, 1, true);
-    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 160, 0.01, 1, true);
+    this.fallLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), 10146, 496, 114, 148, 0.01, 1, true);
     //End of Game Animation
     
     this.rewindFrame = null;
@@ -450,6 +450,13 @@ RunBoy.prototype.draw = function (ctx) {
 
     //ctx.strokeStyle = "purple";
     //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+
+    ctx.strokeStyle = "#A4A4A4";
+    ctx.strokeRect(1000, 25, 215, 10);
+    ctx.fillStyle = "#D8D8D8";
+    ctx.fillRect(1001, 26, 213, 8);
+    ctx.fillStyle = "#40FF00";
+    ctx.fillRect(1001, 26, (this.worldX / this.worldWidth) * 214, 8);
 };
 
 RunBoy.prototype.didICollide = function () {

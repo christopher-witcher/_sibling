@@ -82,7 +82,6 @@ RunBoy.prototype.update = function () {
      * Falling
      */
     if (this.currentPlatform === null && this.y !== startingHeight && !this.runningJump && !this.jumping) {
-        console.log("here");
         this.falling = true;
         //var prevY = this.y;
         this.y = this.y + moveDistance;
@@ -93,7 +92,9 @@ RunBoy.prototype.update = function () {
             this.falling = false;
             this.standing = true;
             this.baseHeight = this.y;
+            this.falling = false;
         }
+
         this.lastBottom = this.boundingbox.bottom;
         this.lastTop = this.boundingbox.top;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
@@ -448,8 +449,8 @@ RunBoy.prototype.draw = function (ctx) {
         }
     }
 
-    //ctx.strokeStyle = "purple";
-    //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    ctx.strokeStyle = "purple";
+    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 
     ctx.strokeStyle = "#A4A4A4";
     ctx.strokeRect(1000, 25, 215, 10);
@@ -486,13 +487,13 @@ RunBoy.prototype.didICollide = function () {
             this.game.running = false;
         }
         else if (result && entity instanceof Enemy) {
-            console.log("ran into a enemy");
             this.rewindMe();
             //console.log(entity.boundingbox.x);
         }
         else if (result && entity instanceof Platform) {
 
             this.collission = true;
+
             //check if I landed on a platform first
             if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
@@ -500,6 +501,7 @@ RunBoy.prototype.didICollide = function () {
 
                 // He landed on a platform while falling
                 if (this.falling) {
+                    this.game.addListeners = true;
                     this.falling = false;
                     this.standing = true;
                     this.jumping = false;
@@ -513,6 +515,19 @@ RunBoy.prototype.didICollide = function () {
             }
             else if (this.canPass && (this.currentPlatform == null || entity.y < this.currentPlatform.y)) {
                 this.canPass = !result;
+
+                /**
+                5/24/14 Changed to help with falling.
+                **/
+                if (this.falling) {
+                    this.currentPlatform = entity;
+                    console.log("here");
+                    this.falling = false;
+                    this.standing = true;
+                    this.jumping = false;
+                    this.runningJump = false;
+                    this.baseHeight = this.y;
+                }
             }
       
             }

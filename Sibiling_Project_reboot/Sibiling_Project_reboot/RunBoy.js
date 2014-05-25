@@ -104,7 +104,10 @@ RunBoy.prototype.update = function () {
     /*
      * Running and Jumping
      */
-    if ((this.game.space && (this.game.rightArrow || this.game.leftArrow)) || this.runningJump) {
+
+
+    // Changed to to a else if!!! 5/24/2014
+    else if ((this.game.space && (this.game.rightArrow || this.game.leftArrow)) || this.runningJump) {
         this.runningJump = true;
         this.jumping = false;
         this.running = false;
@@ -200,6 +203,8 @@ RunBoy.prototype.update = function () {
                 this.jumping = false;
             }
 
+            this.lastBottom = this.boundingbox.bottom;
+            this.lastTop = this.boundingbox.top;
             this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
 
         } else { // Left
@@ -221,6 +226,8 @@ RunBoy.prototype.update = function () {
                 this.jumping = false;
             }
 
+            this.lastBottom = this.boundingbox.bottom;
+            this.lastTop = this.boundingbox.top;
             this.boundingbox = new BoundingBox(this.x - moveDistance, this.y, this.boundingbox.width, this.boundingbox.height);
         }
 
@@ -281,6 +288,8 @@ RunBoy.prototype.update = function () {
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
+        this.lastBottom = this.boundingbox.bottom;
+        this.lastTop = this.boundingbox.top;
         this.boundingbox = new BoundingBox(this.x, this.y, 80, this.boundingbox.height);
     }
 
@@ -289,7 +298,6 @@ RunBoy.prototype.update = function () {
     if (!this.canPass) {
         this.worldX = tempWorldX;
         this.x = tempX;
-        //this.lastBottom = this.boundingbox.bottom;
         this.boundingbox = new BoundingBox(this.x, this.y, this.boundingbox.width, this.boundingbox.height);
     }
         //If I can pass then I must not have a current platform near me to collide with, so make sure current platform doesn't exist.
@@ -501,7 +509,6 @@ RunBoy.prototype.didICollide = function () {
 
                 // He landed on a platform while falling
                 if (this.falling) {
-                    this.game.addListeners = true;
                     this.falling = false;
                     this.standing = true;
                     this.jumping = false;
@@ -515,19 +522,6 @@ RunBoy.prototype.didICollide = function () {
             }
             else if (this.canPass && (this.currentPlatform == null || entity.y < this.currentPlatform.y)) {
                 this.canPass = !result;
-
-                /**
-                5/24/14 Changed to help with falling.
-                **/
-                if (this.falling) {
-                    this.currentPlatform = entity;
-                    console.log("here");
-                    this.falling = false;
-                    this.standing = true;
-                    this.jumping = false;
-                    this.runningJump = false;
-                    this.baseHeight = this.y;
-                }
             }
       
             }

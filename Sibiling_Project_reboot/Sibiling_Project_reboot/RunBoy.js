@@ -106,7 +106,7 @@ RunBoy.prototype.update = function () {
      */
 
 
-    // Changed to to a else if!!! 5/24/2014
+    // !!!!!!!!!!!!Changed to to a else if!!! 5/24/2014
     else if ((this.game.space && (this.game.rightArrow || this.game.leftArrow)) || this.runningJump) {
         this.runningJump = true;
         this.jumping = false;

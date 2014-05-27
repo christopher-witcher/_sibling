@@ -75,6 +75,7 @@ function Enemy(game, startingX, startingY) {
     // set the sprite's starting position on the canvas
 
     this.canPass = true;
+    this.jump = false;
     this.height = 0;
     this.baseHeight = startingHeight;
     this.scaleBy = enemyList[this.currentEnemy].scaleBy;
@@ -90,17 +91,59 @@ Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
     
-    if (this.moveCount > maxMove) {
-        this.myDirection = !this.myDirection;
-        this.moveCount = 0;
-    }
-    if (this.myDirection) {
-        this.worldX = this.worldX + enemyMoveDistance;
-        this.moveCount++;
+    if (this.jump) {
+
+        //start jump
+        if (this.moveCount === maxMove) {
+
+            if (direction) { // Right
+                var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
+                if (duration > this.jumpRight.totalTime / 2) {
+                    duration = this.jumpRight.totalTime - duration;
+                }
+                duration = duration / this.jumpRight.totalTime;
+                this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+
+                if (this.jumpRight.isDone()) {
+                    this.jumpRight.elapsedTime = 0;
+                    this.jumping = false;
+                    this.moveCount = 0;
+                }
+
+
+            } else { // Left
+
+                var duration = this.jumpLeft.elapsedTime + this.game.clockTick;
+                if (duration > this.jumpLeft.totalTime / 2) {
+                    duration = this.jumpLeft.totalTime - duration;
+                }
+                duration = duration / this.jumpLeft.totalTime;
+                this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
+
+                if (this.jumpLeft.isDone()) {
+                    this.jumpLeft.elapsedTime = 0;
+                    this.jumping = false;
+                    this.moveCount = 0;
+                }
+            }
+        }
+        else {
+            this.moveCount++;
+        }
     }
     else {
-        this.worldX = this.worldX - enemyMoveDistance;
-        this.moveCount++;
+        if (this.moveCount > maxMove) {
+            this.myDirection = !this.myDirection;
+            this.moveCount = 0;
+        }
+        if (this.myDirection) {
+            this.worldX = this.worldX + enemyMoveDistance;
+            this.moveCount++;
+        }
+        else {
+            this.worldX = this.worldX - enemyMoveDistance;
+            this.moveCount++;
+        }
     }
     this.boundingBox = new BoundingBox(this.x, this.y, 90, 145);
     Entity.prototype.update.call(this);

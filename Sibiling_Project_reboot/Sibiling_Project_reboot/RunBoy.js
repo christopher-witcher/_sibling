@@ -54,6 +54,9 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.rewinding = false;
     this.game = game;
     this.lastFrame = null;
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    this.rewindCount = 0;
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 }
 
@@ -67,12 +70,36 @@ RunBoy.prototype.update = function () {
         return;
     }
 
-    if (this.rewinding === true && this.myRewindStack === 1) {
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    if (this.rewinding === true) {
+
+        this.boundingbox = new BoundingBox(this.lastFrame.canvasX, this.lastFrame.canvasY, this.boundingbox.width, this.boundingbox.height);
+        return;
+
+    } else if (this.myRewindStack.length === 0 && this.rewindCount > 0) {
+        ///////////////////////////////////////////////
+        var rwSound = document.getElementById('rewindSound');
+        rwSound.pause();
+        rwSound.currentTime = 0;
+        ///////////////////////////////////////////////
+        this.x = this.lastFrame.canvasX;
+        this.worldX = this.lastFrame.worldX;
+        direction = this.lastFrame.direction;
+
+        if (this.lastFrame.currentPlatform != null) {
+            this.currentPlatform = this.lastFrame.currentPlatform;
+            this.y = (this.currentPlatform.boundingBox.top - 3) - this.boundingbox.height;
+            this.worldY = this.lastFrame.worldY;
+
+        } else {
+            this.y = this.lastFrame.canvasY;
+            this.worldY = this.lastFrame.worldY;
+        }
 
         return;
-    } else if (this.rewinding === true) {
-        return;
     }
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     var maxHeight = 300;
     var tempX = this.x;
     var tempWorldX = this.worldX;
@@ -486,6 +513,9 @@ RunBoy.prototype.didICollide = function () {
         
 
         if (result && !entity.removeFromWorld && entity instanceof Item) {
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            document.getElementById('itemSound').play();
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             entity.removeFromWorld = true;
             this.game.score += entity.points;
             this.game.numItems++;
@@ -495,6 +525,12 @@ RunBoy.prototype.didICollide = function () {
             this.game.running = false;
         }
         else if (result && entity instanceof Enemy) {
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            var rwSound = document.getElementById('rewindSound');
+            rwSound.loop = 'true';
+            rwSound.play();
+            this.rewindCount++;
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.rewindMe();
             //console.log(entity.boundingbox.x);
         }

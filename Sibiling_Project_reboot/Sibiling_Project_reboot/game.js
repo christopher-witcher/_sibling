@@ -13,6 +13,10 @@ startDisplay = null;
 gameEngine = null;
 timer = null;
 gameOver = false;
+// 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+gameTimeLength = 120000;
+// 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -315,6 +319,9 @@ GameEngine.prototype.startInput = function () {
 
         if (e.keyCode === 32) {
             that.space = true;
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+            document.getElementById("jumpSound").play();
+            // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         e.preventDefault();
     }
@@ -402,12 +409,16 @@ GameEngine.prototype.update = function () {
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
 
+        // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         // check to see if time has run out
-        if (entity instanceof GameTimer) {
-            if (Number(entity.time) > 120000) {
+        if (entity instanceof GameTimer && !gameOver) {
+            if (Number(entity.time) > gameTimeLength) {
+                this.running = false;
+                gameOver = true;
                 this.endGame();
             }
         }
+        // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Update all entities' x value except Runboy
         if (!(entity instanceof RunBoy)) {
@@ -692,8 +703,9 @@ GameTimer.prototype.update = function () {
 };
 
 function convertTime(miliseconds) {
-    var totalSeconds = 120 - Math.floor(miliseconds / 1000);
-
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    var totalSeconds = (gameTimeLength / 1000) - Math.floor(miliseconds / 1000);
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var minutes = Math.floor(totalSeconds / 60);
     var seconds = totalSeconds - minutes * 60;
     if (seconds === 0) {
@@ -708,6 +720,10 @@ function convertTime(miliseconds) {
 * Starts the game. This function is called by the HTML button called "startButton".
 */
 function startGame() {
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    initAudio();
+    document.getElementById('bgSound').play();
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     if (document.getElementById("startDisplay")) {
         sdParentNode = document.getElementById("startDisplay").parentNode;
@@ -724,8 +740,9 @@ function startGame() {
 GameEngine.prototype.endGame = function () {
     timer.stopped = true;
     var timeLeft = timer.time;
-    var timeBonus = Math.ceil((120000 - Number(timeLeft)) / 1000) * 10;
-
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    var timeBonus = Math.ceil((gameTimeLength - Number(timeLeft)) / 1000) * 10;
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     var element = document.createElement('div');
     element.id = "endDisplay";
     document.body.appendChild(element);
@@ -779,6 +796,9 @@ GameEngine.prototype.endGame = function () {
     resetButton.style.borderRadius = "5px";
     resetButton.onclick = function () { location.reload() };
     
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    document.getElementById('bgSound').pause();
+    // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
 
@@ -822,6 +842,32 @@ function initialize() {
     });
 }
 
+
+// 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+function initAudio() {
+
+    var bgAudio = document.createElement('audio');
+    bgAudio.id = "bgSound";
+    document.body.appendChild(bgAudio);
+    bgAudio.src = "bgMusic.mp3";
+    bgAudio.preload = "auto";
+
+    var jumpAudio = document.createElement('audio');
+    jumpAudio.id = "jumpSound";
+    document.body.appendChild(jumpAudio);
+    jumpAudio.src = "Jump18.wav";
+
+    var itemAudio = document.createElement('audio');
+    itemAudio.id = "itemSound";
+    document.body.appendChild(itemAudio);
+    itemAudio.src = "ItemPickup.wav";
+
+    var rewindAudio = document.createElement('audio');
+    rewindAudio.id = "rewindSound";
+    document.body.appendChild(rewindAudio);
+    rewindAudio.src = "rewindSound.mp3";
+}
+// 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 function Platform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight) {
@@ -964,7 +1010,7 @@ boardPieces[1] = function (startX, game) {
 };
 
 boardPieces[2] = function (startX, game) {
-    var levelOne = rectPlatform(game, startX - 425, 184, 8, 1, true);
+    var levelOne = rectPlatform(game, startX - 425, 150, 8, 1, true);
     var levelTwo = rectPlatform(game, startX += 200, 484, 4, 2, true);
     var levelThree = rectPlatform(game, startX += 50, 209, 4, 1, true);
     return startX;

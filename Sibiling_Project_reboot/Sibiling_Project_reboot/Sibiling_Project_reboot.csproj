@@ -66,10 +66,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Background.js" />
+    <Content Include="bgMusic.mp3" />
     <Content Include="blue_player.png" />
     <Content Include="Enemy.js" />
     <Content Include="game.js" />
+    <Content Include="ItemPickup.wav" />
+    <Content Include="Jump18.wav" />
     <Content Include="obstacles.js" />
+    <Content Include="rewindSound.mp3" />
     <Content Include="RunBoy.js" />
     <Content Include="runboySprite.png" />
     <Content Include="_game.js" />

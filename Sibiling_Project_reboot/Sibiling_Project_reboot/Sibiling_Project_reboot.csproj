@@ -74,6 +74,7 @@
     <Content Include="Jump18.wav" />
     <Content Include="obstacles.js" />
     <Content Include="rewindSound.mp3" />
+    <Content Include="rewindSound3.wav" />
     <Content Include="RunBoy.js" />
     <Content Include="runboySprite.png" />
     <Content Include="_game.js" />

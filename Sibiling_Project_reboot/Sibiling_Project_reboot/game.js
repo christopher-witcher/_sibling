@@ -939,6 +939,7 @@ var spacerSection = function (game, x, y, width, height) {
 };
 
 boardPieces[0] = function (startX, game) {
+    //var zeroEnemy = new Enemy(game, startX + 650, 435, true);
     var zeroEnemy = new Enemy(game, startX + 650, 435);
 
     var levelOne = rectPlatform(game, startX, 534, 4, 1, true);

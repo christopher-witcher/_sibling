@@ -57,7 +57,7 @@ enemyMoveDistance = 3;
 maxMove = 100;
 var globalCurrentEnemy = 0;
 //Sets up different animation of runboy and initializes the controls
-function Enemy(game, startingX, startingY) {
+function Enemy(game, startingX, startingY, jump) {
     //this.currentEnemy = Math.floor(Math.random() * enemyList.length);
     if (globalCurrentEnemy >= 2) {
         globalCurrentEnemy = 0;
@@ -72,10 +72,21 @@ function Enemy(game, startingX, startingY) {
 
     this.runLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runLeftX, enemyList[this.currentEnemy].runLeftY, enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
         0.008, 120, true, false);
+
+
+    // 5/27/2014 Need to change to actual jumping animation.
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY,
+        enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
+        0.008, 120, false);
+
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runLeftX, enemyList[this.currentEnemy].runLeftY, enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
+        0.008, 120, false);
+
+
     // set the sprite's starting position on the canvas
 
     this.canPass = true;
-    this.jump = false;
+    this.jump = jump;
     this.height = 0;
     this.baseHeight = startingHeight;
     this.scaleBy = enemyList[this.currentEnemy].scaleBy;
@@ -90,13 +101,16 @@ Enemy.prototype = new Entity();
 Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
+
+    var maxHeight = 300;
     
+    ///Adding in jumping. 5/27/2014
     if (this.jump) {
 
         //start jump
-        if (this.moveCount === maxMove) {
+        if (this.moveCount === maxMove * 2) {
 
-            if (direction) { // Right
+            if (this.myDirection) { // Right
                 var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
                 if (duration > this.jumpRight.totalTime / 2) {
                     duration = this.jumpRight.totalTime - duration;
@@ -104,12 +118,14 @@ Enemy.prototype.update = function () {
                 duration = duration / this.jumpRight.totalTime;
                 this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
-                if (this.jumpRight.isDone()) {
-                    this.jumpRight.elapsedTime = 0;
-                    this.jumping = false;
-                    this.moveCount = 0;
-                }
+                this.y = this.baseHeight - this.height / 2;
 
+                if (this.jumpRight.isDone()) {
+                    console.log("just got done jumping");
+                    this.y = this.baseHeight;
+                    this.jumpRight.elapsedTime = 0;
+                    //this.moveCount = 0;
+                }
 
             } else { // Left
 
@@ -120,17 +136,22 @@ Enemy.prototype.update = function () {
                 duration = duration / this.jumpLeft.totalTime;
                 this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
+                this.y = this.baseHeight - this.height / 2;
+
                 if (this.jumpLeft.isDone()) {
+                    //console.log("just got done jumping");
+                    this.y = this.baseHeight;
                     this.jumpLeft.elapsedTime = 0;
-                    this.jumping = false;
                     this.moveCount = 0;
                 }
+
             }
         }
         else {
             this.moveCount++;
         }
-    }
+        //console.log(this.moveCount);
+    }//The end of jumping being added 5/27/2014
     else {
         if (this.moveCount > maxMove) {
             this.myDirection = !this.myDirection;
@@ -152,17 +173,27 @@ Enemy.prototype.update = function () {
 
 Enemy.prototype.draw = function (ctx) {
 
-    //walking right
-    if (this.myDirection) {
-        this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+    if (this.jump) {
+        if (this.myDirection) {
+            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+        }
+        else {
+            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+        }
     }
-    //walking left
     else {
-        this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+        //walking right
+        if (this.myDirection) {
+            this.runRight.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+        }
+            //walking left
+        else {
+            this.runLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+        }
     }
 
-    //ctx.strokeStyle = "green";
-    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    ctx.strokeStyle = "green";
+    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 Enemy.prototype.didICollide = function () {boundingBox

@@ -95,7 +95,7 @@ RunBoy.prototype.update = function () {
             this.y = this.lastFrame.canvasY;
             this.worldY = this.lastFrame.worldY;
         }
-
+        this.baseHeight = this.y;
         return;
     }
     // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ gameEngine = null;
 timer = null;
 gameOver = false;
 // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-gameTimeLength = 120000;
+gameTimeLength = 220000;
 // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -987,7 +987,7 @@ var spacerSection = function (game, x, y, width, height) {
 
 boardPieces[0] = function (startX, game) {
     //var zeroEnemy = new Enemy(game, startX + 650, 435, true);
-    var zeroEnemy = new Enemy(game, startX + 650, 435);
+    var zeroEnemy = new Enemy(game, startX + 650, 435, true);
 
     var levelOne = rectPlatform(game, startX, 534, 4, 1, true);
     var levelTwo = rectPlatform(gameEngine, startX += 450, 415, 4, 1, true);

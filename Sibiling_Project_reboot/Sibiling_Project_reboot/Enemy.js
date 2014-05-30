@@ -124,7 +124,7 @@ Enemy.prototype.update = function () {
                     console.log("just got done jumping");
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
-                    //this.moveCount = 0;
+                    this.moveCount = 0;
                 }
 
             } else { // Left

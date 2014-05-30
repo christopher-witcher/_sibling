@@ -590,7 +590,7 @@ function FinishLine(game, gameWidth, ctx) {
     //this.y = 125;
     //this.width = 394;
     //this.height = 446;
-    this.x = gameWidth;
+    this.x = gameWidth + 200;
     this.y = 100;
     this.width = 20;
     this.height = 200;

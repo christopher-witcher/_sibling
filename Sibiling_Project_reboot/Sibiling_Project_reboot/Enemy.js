@@ -15,7 +15,8 @@ enemyList[0] = {
     jumpHeight: 140,
     jumpWidth: 100,
     runOffSet: 8,
-    scaleBy: 1
+    scaleBy: 1,
+    jumpScaleBy: 1.2
 
 };
 
@@ -33,7 +34,8 @@ enemyList[1] = {
     jumpHeight: 160,
     jumpWidth: 114,
     runOffSet: 10,
-    scaleBy: 0.9
+    scaleBy: 0.9,
+    jumpScaleBy: 1.2
 };
 
 enemyList[2] = {
@@ -50,7 +52,8 @@ enemyList[2] = {
     jumpHeight: 160,
     jumpWidth: 114,
     runOffSet: 10,
-    scaleBy: 0.9
+    scaleBy: 0.9,
+    jumpScaleBy: 1.2
 };
 
 enemyMoveDistance = 3;
@@ -75,12 +78,12 @@ function Enemy(game, startingX, startingY, jump) {
 
 
     // 5/27/2014 Need to change to actual jumping animation.
-    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY,
-        enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
-        0.008, 120, false);
+    this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpRightX, enemyList[this.currentEnemy].jumpRightY,
+        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight,
+        0.015, 89, true);
 
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runLeftX, enemyList[this.currentEnemy].runLeftY, enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
-        0.008, 120, false);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpLeftX, enemyList[this.currentEnemy].jumpLeftY, enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight,
+        0.015, 89, true);
 
 
     // set the sprite's starting position on the canvas
@@ -102,7 +105,7 @@ Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function () {
 
-    var maxHeight = 300;
+    var maxHeight = 310;
     
     ///Adding in jumping. 5/27/2014
     if (this.jump) {
@@ -125,7 +128,10 @@ Enemy.prototype.update = function () {
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
+                    this.myDirection = false;
                 }
+
+               ;
 
             } else { // Left
 
@@ -143,8 +149,10 @@ Enemy.prototype.update = function () {
                     this.y = this.baseHeight;
                     this.jumpLeft.elapsedTime = 0;
                     this.moveCount = 0;
+                    this.myDirection = true;
+                    
                 }
-
+                
             }
         }
         else {
@@ -175,10 +183,10 @@ Enemy.prototype.draw = function (ctx) {
 
     if (this.jump) {
         if (this.myDirection) {
-            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+            this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y, enemyList[this.currentEnemy].jumpScaleBy);
         }
         else {
-            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y + enemyList[this.currentEnemy].runOffSet, this.scaleBy);
+            this.jumpLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y, enemyList[this.currentEnemy].jumpScaleBy);
         }
     }
     else {

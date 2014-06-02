@@ -1030,8 +1030,8 @@ boardPieces[0] = function (startX, game) {
     //var zeroEnemy = new Enemy(game, startX + 650, 435, true);
     var zeroEnemy = new Enemy(game, startX + 650, 435, true);
 
-    var levelOne = rectPlatform(game, startX, 534, 4, 1, true);
-    var levelTwo = rectPlatform(gameEngine, startX += 450, 415, 4, 1, true);
+    var levelOne = rectPlatform(game, startX, 534, 5, 1, true);
+    var levelTwo = rectPlatform(gameEngine, startX += 400, 415, 4, 1, true);
     var levelThree = rectPlatform(gameEngine, startX += 375, 296, 4, 1,true);
     var tallCrates = rectPlatform(gameEngine, startX += 455, 150, 4, 5, true);
     var sectionF = rectPlatform(gameEngine, startX += 500, 150, 8, 1, true);

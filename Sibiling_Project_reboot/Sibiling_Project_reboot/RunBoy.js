@@ -525,7 +525,7 @@ RunBoy.prototype.didICollide = function () {
 
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            document.getElementById('itemSound').play();
+            this.game.playSounds(document.getElementById('itemSound'));
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             entity.removeFromWorld = true;
             this.game.score += entity.points;
@@ -537,9 +537,7 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            var rwSound = document.getElementById('rewindSound');
-            //rwSound.loop = 'true';
-            rwSound.play();
+            this.game.playSounds(document.getElementById('rewindSound'));
             this.rewindCount++;
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.rewindMe();

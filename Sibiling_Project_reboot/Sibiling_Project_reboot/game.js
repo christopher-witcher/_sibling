@@ -859,8 +859,10 @@ function initialize() {
         var nextWidth = 900;
         //var rand = Math.floor((Math.random() * boardPieces.length));
         //var extra = Math.floor((Math.random() * 2)) === 0 ? true : false;
-        var rand = boardPieces.length - 1;
-        nextWidth = boardPieces[boardPieces.length-1](nextWidth, gameEngine, true);
+        //var rand = boardPieces.length - 1;
+        //nextWidth = boardPieces[boardPieces.length-1](nextWidth, gameEngine, true);
+        //nextWidth += 500;
+        var sect = endLevelSection(nextWidth, gameEngine);
         nextWidth += 500;
         for (var i = 0; i < boardPieces.length; i++) {
 //while(nextWidth < gameWorld.width - 200){ 
@@ -941,6 +943,61 @@ Platform.prototype.draw = function (ctx) {
     //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
     this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };
+
+function MovingPlatform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight, width, height, range, speed) {
+    this.game = game;
+    this.worldX = the_x;
+    this.worldY = the_y;
+    this.width = frameWidth;
+    this.height = frameHeight;
+    this.canvasWidth = canvasWidth;
+    this.drawPlatform = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, this.width, this.height, 0.01, 1, true);
+    
+    this.myDirection = false;
+    this.mySpeed = speed;
+    this.myRange = range;
+    this.platformWidth = width;
+    this.platformHeight = height;
+    this.miniX = this.worldX - range;
+    this.maxX = this.worldX + range;
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.platformWidth * this.width, this.platformHeight * this.height);
+    Entity.call(this, game, this.worldX, this.worldY);
+}
+
+MovingPlatform.prototype = new Entity();
+MovingPlatform.prototype.constructor = MovingPlatform;
+
+MovingPlatform.prototype.update = function () {
+    if (this.myDirection && this.worldX < this.maxX) {
+        this.worldX += this.mySpeed;
+    }else if(this.myDirection && this.worldX >= this.maxX){
+        this.myDirection = false;
+        this.worldX -= this.mySpeed;
+    }else if(this.myDirection === false && this.worldX > this.miniX) {
+        this.worldX -= this.mySpeed;
+    }else if(this.myDirection === false && this.worldX <= this.miniX) {
+        this.myDirection = true;
+        this.worldX += this.mySpeed;
+    }
+    
+
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.platformWidth* this.width, this.platformHeight * this.height);
+    Entity.prototype.update.call(this);
+}
+    
+
+MovingPlatform.prototype.draw = function(ctx) {
+    var size = 50;
+
+   for (var i = 0; i < this.platformHeight; i++) {
+       for (var j = 0; j < this.platformWidth; j++) {
+           var tempX = j * size + this.x;
+           var tempY = i * size + this.y;
+           this.drawPlatform.drawFrame(this.game.clockTick, ctx, tempX, tempY);
+       }
+   }
+
+}
 
 var leftCrateSteps = function (game, x, y, height) {
     var size = 50;
@@ -1127,7 +1184,7 @@ boardPieces[6] = function (startX, game, extra) {
     startX += rectPlatform(game, startX, 250, 3, 1, true);
     startX += 300;
     startX += rectPlatform(game, startX, 175, 3, 1, true);
-    startX += 500
+    startX += 500;
     //startX += rectPlatform(game, startX + 75, 380, 4, 1, false);
     var specialItem = new Item(game, startX + 150, 35, 750, 2600, 4750, 82, 148, 0.8);
     if (enemy === true) {
@@ -1140,6 +1197,12 @@ boardPieces[6] = function (startX, game, extra) {
     game.addEntity(specialItem);
      
     return startX;
+}
+
+var endLevelSection = function (startX, game) {
+    var size = 50;
+    var moverOne = new MovingPlatform(game, startX, 300, canvasWidth, 1450, 4900, size, size, 4, 1, 800, 3);
+    game.addEntity(moverOne);
 }
 
 

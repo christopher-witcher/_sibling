@@ -14,7 +14,7 @@ gameEngine = null;
 timer = null;
 gameOver = false;
 // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-gameTimeLength = 220000;
+gameTimeLength = 120000;
 // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -802,6 +802,19 @@ GameEngine.prototype.endGame = function () {
     // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 };
+var created = [];
+var alreadyAdded = function (section) {
+    if (created.length === 0) {
+        return false;
+    }
+    for (var i = 0; i < created.length; i++) {
+        if (created[i] === section) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 var ASSET_MANAGER = new AssetManager();
 ASSET_MANAGER.queueDownload(backImg);
@@ -817,21 +830,27 @@ function initialize() {
         var ctx = canvas.getContext('2d');
         gameEngine = new GameEngine();
         
-        var gameWorld = new Background(gameEngine, canvasWidth);
+        var gameWorld = {width: 20000 , height: canvasHeight}; //new Background(gameEngine, canvasWidth);
         this.finishLine = new FinishLine(gameEngine, gameWorld.width, ctx);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
-        var nextWidth = 700;
-        for(var i = 0; i < boardPieces.length; i++){
-            nextWidth = boardPieces[i](nextWidth, gameEngine);
+        var nextWidth = 900;
+        //var rand = Math.floor((Math.random() * boardPieces.length));
+        //var extra = Math.floor((Math.random() * 2)) === 0 ? true : false;
+        var rand = boardPieces.length - 1;
+        nextWidth = boardPieces[boardPieces.length-1](nextWidth, gameEngine, true);
+        nextWidth += 500;
+        for (var i = 0; i < boardPieces.length; i++) {
+//while(nextWidth < gameWorld.width - 200){ 
+            //extra = extra ? false : true;
+            //var random = Math.floor((Math.random() * boardPieces.length));
+               
+            //created.push(random);
+            //console.log(random);
+            nextWidth = boardPieces[i](nextWidth, gameEngine, true);
             nextWidth += 500;
         }
-        nextWidth -= 200;
-        nextWidth += spacerSection(gameEngine, nextWidth, 375, 12, 3);
-        nextWidth += rectPlatform(gameEngine, nextWidth, 450, 5, 1, true);
-        nextWidth += 200;
-        nextWidth += rectPlatform(gameEngine, nextWidth, 350, 5, 1, true);
-        var lastEnemy = new Enemy(gameEngine, nextWidth, 435);
-        gameEngine.addEntity(lastEnemy);
+        
+
         gameEngine.addEntity(this.finishLine);
         gameEngine.addEntity(boy);
         
@@ -839,7 +858,7 @@ function initialize() {
         gameEngine.setViewPort(viewPort);
 
         gameEngine.init(ctx);
-        gameEngine.addEntity(gameWorld);
+        //gameEngine.addEntity(gameWorld);
     });
 }
 
@@ -1029,7 +1048,7 @@ boardPieces[3] = function (startX, game) {
     return startX;
 };
 
-boardPieces[4] = function (startX, game) {
+boardPieces[4] = function (startX, game, twoBuildings) {
     
     var sectTwo = rectPlatform(game, startX, 150, 1, 4, false);
     var sectOne = rectPlatform(game, startX, 300, 4, 1, false);
@@ -1037,13 +1056,16 @@ boardPieces[4] = function (startX, game) {
     var sectFour = rectPlatform(game, startX += 100, 175, 5, 1, true);
     var sectFivea = new Platform(game, startX += 500, 158, canvasWidth, 20, 4505, 248, 422);
     game.addEntity(sectFivea);
-    var sectFiveb = rectPlatform(game, startX += 275, 275, 3, 1);
-    //var sectFiveb = new Platform(game, startX += 250, 171, canvasWidth, 275, 4518, 187, 409);
-    //game.addEntity(sectFiveb);
+    
+    if (twoBuildings) {
+        var sectFiveb = new Platform(game, startX += 250, 171, canvasWidth, 275, 4518, 187, 409);
+        game.addEntity(sectFiveb);
+    }
+    var sectFivec = rectPlatform(game, startX += 275, 275, 3, 1);
     var enemySeven = new Enemy(game, startX, 125);
     var sectSix = rectPlatform(game, startX += 150, 275, 8, 1);
     game.addEntity(enemySeven);
-    var specialItem = new Item(game, startX + 150, 400, 250, 2600, 4750, 82, 148, 0.8);
+    var specialItem = new Item(game, startX + 150, 400, 750, 2600, 4750, 82, 148, 0.8);
     game.addEntity(specialItem);
     var sectEight = rectPlatform(game, startX += 350, 325, 1, 2);
     var enemyNine = new Enemy(game, startX += 50, startingHeight);
@@ -1054,6 +1076,51 @@ boardPieces[4] = function (startX, game) {
 
     return startX;
 };
+
+boardPieces[5] = function (nextWidth, gameEngine) {
+    nextWidth -= 200;
+    nextWidth += spacerSection(gameEngine, nextWidth, 375, 12, 3);
+    nextWidth += rectPlatform(gameEngine, nextWidth, 450, 5, 1, true);
+    nextWidth += 200;
+    nextWidth += rectPlatform(gameEngine, nextWidth, 350, 5, 1, true);
+    var lastEnemy = new Enemy(gameEngine, nextWidth - 250, 435);
+    gameEngine.addEntity(lastEnemy);
+
+    return nextWidth;
+}
+
+boardPieces[6] = function (startX, game, extra) {
+    var randomEnemy = Math.floor(Math.random() * 33);
+    var check = randomEnemy % 2;
+    var enemy = (check === 0) ? true : false;
+    console.log('Enemy' + enemy);
+    startX -= 500
+    
+    startX = startX + 75;
+    var sectOne = rectPlatform(game, startX+100, 470, 4, 2, extra);
+    startX += spacerSection(game, startX, 250, 5, 1);
+    startX = startX + 200;
+    startX += rectPlatform(game, startX, 350, 5, 1, true);
+    startX = startX + 300;
+    startX += rectPlatform(game, startX, 250, 3, 1, true);
+    startX += 300;
+    startX += rectPlatform(game, startX, 175, 3, 1, true);
+    startX += 500
+    //startX += rectPlatform(game, startX + 75, 380, 4, 1, false);
+    var specialItem = new Item(game, startX + 150, 35, 750, 2600, 4750, 82, 148, 0.8);
+    if (enemy === true) {
+        var lastEnemy = new Enemy(game, startX + 75, 35);
+        game.addEntity(lastEnemy);
+    }
+    startX += rectPlatform(game, startX + 75, 175, 8, 1, false);
+    rectPlatform(game, startX - 225, 375, 5, 1, true);
+    startX += rectPlatform(game, startX + 25, 225, 1, 4, false);
+    game.addEntity(specialItem);
+     
+    return startX;
+}
+
+
 
 
 /******************

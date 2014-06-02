@@ -560,6 +560,8 @@ RunBoy.prototype.didICollide = function () {
                     this.runningJump = false;
                     this.baseHeight = this.y;
                 }
+
+               
                 
             }
             else if (entity.boundingBox.bottom < this.lastTop && !this.landed) {

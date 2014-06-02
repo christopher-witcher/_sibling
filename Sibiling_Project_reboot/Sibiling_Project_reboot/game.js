@@ -226,6 +226,29 @@ function GameEngine() {
     this.runInsideComplete = false;
     this.closeDoorCompleted = false;
     
+    var channel_max = 8;										// number of channels
+    this.audiochannels = new Array();
+    for (a = 0; a < channel_max; a++) {							// prepare the channels
+        this.audiochannels[a] = new Array();
+        this.audiochannels[a]['channel'] = new Audio();			// create a new audio object
+        this.audiochannels[a]['finished'] = -1;					// expected end time for this channel
+    }
+
+}
+
+GameEngine.prototype.playSounds = function (audioElement) {
+    
+    for (a = 0; a < this.audiochannels.length; a++) {
+        var now = new Date();
+        if (this.audiochannels[a]['finished'] < now.getTime()) { // is this channel finished?
+
+            this.audiochannels[a]['finished'] = now.getTime() + audioElement.duration * 1000;
+            this.audiochannels[a]['channel'].src = audioElement.src;
+            this.audiochannels[a]['channel'].load();
+            this.audiochannels[a]['channel'].play();
+            break;
+        }
+    }
 }
 
 GameEngine.prototype.setViewPort = function (viewPort) {
@@ -320,7 +343,7 @@ GameEngine.prototype.startInput = function () {
         if (e.keyCode === 32) {
             that.space = true;
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            document.getElementById("jumpSound").play();
+            that.playSounds(document.getElementById('jumpSound'));
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         }
         e.preventDefault();
@@ -590,11 +613,11 @@ function FinishLine(game, gameWidth, ctx) {
     //this.y = 125;
     //this.width = 394;
     //this.height = 446;
-    this.x = gameWidth + 200;
+    this.x = gameWidth + 260;
     this.y = 100;
-    this.width = 20;
+    this.width = 150;
     this.height = 200;
-    this.boundingBoxOffSetX = 294;
+    this.boundingBoxOffSetX = 210;
     this.boundingBoxOffSetY = 225;
     this.runUpStairsCompleted = false;
     this.doorClosed = false;
@@ -868,7 +891,6 @@ function initAudio() {
     document.body.appendChild(rewindAudio);
     rewindAudio.src = "rewindSound3.wav";
 }
-// 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 function Platform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight) {

@@ -110,7 +110,7 @@ Enemy.prototype.update = function () {
     if (this.jump) {
 
         //start jump
-        if (this.moveCount === maxMove * 2) {
+        if (this.moveCount === 500) {
 
             if (this.myDirection) { // Right
                 var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
@@ -121,11 +121,13 @@ Enemy.prototype.update = function () {
                 this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
                 this.y = this.baseHeight - this.height / 2;
-
+                console.log(this.jumpRight.isDone());
                 if (this.jumpRight.isDone()) {
+                    //console.log("here");
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
+                    console.log(this.moveCount);
                     this.myDirection = false;
                 }
 

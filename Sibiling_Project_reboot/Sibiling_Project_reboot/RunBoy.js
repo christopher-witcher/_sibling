@@ -66,7 +66,7 @@ RunBoy.prototype.constructor = RunBoy;
 //The update method for run boy
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
-    console.log("in firt part of update");
+    //console.log("in firt part of update");
     if (this.game.running === false) {
         return;
     }

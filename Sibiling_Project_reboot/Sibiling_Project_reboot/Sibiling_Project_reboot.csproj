@@ -68,6 +68,7 @@
     <Content Include="Background.js" />
     <Content Include="bgMusic.mp3" />
     <Content Include="blue_player.png" />
+    <Content Include="CityBackground.png" />
     <Content Include="Enemy.js" />
     <Content Include="game.js" />
     <Content Include="ItemPickup.wav" />

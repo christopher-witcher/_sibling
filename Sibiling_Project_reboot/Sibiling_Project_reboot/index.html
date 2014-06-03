@@ -11,39 +11,39 @@
 <body>
 
     <canvas id="world" width="1250" height="600"
-            style="border-radius: 5px 5px; -moz-box-shadow: 10px 10px 5px #808080; -webkit-box-shadow: 10px 10px 5px #808080; box-shadow: 10px 10px 5px #808080; -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; border: 0; position: absolute; left: 0; top: 23px; z-index: 0; background: skyblue; 
-    background: -webkit-linear-gradient(top, skyblue 0%, #fff 100%); background: -linear-gradient(top, skyblue 0%, skyblue 100%); background: -moz-linear-gradient(top, skyblue 0%, #fff 100%); "></canvas>
+            style="border-radius: 5px 5px; -moz-box-shadow: 10px 10px 5px #808080; -webkit-box-shadow: 10px 10px 5px #808080; box-shadow: 10px 10px 5px #808080; -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; border: 0; position: absolute; left: 0; top: 23px; z-index: 0;  
+     background: -moz-linear-gradient(top, skyblue 0%, #fff 100%); background-image: url('CityBackground.png')"></canvas>
+    <canvas id="backColor" width="1250" height="600" style="background: -webkit-linear-gradient(top, skyblue 0%, #fff 100%); background: -linear-gradient(top, skyblue 0%, skyblue 100%);"></canvas>
+        <div style="position: absolute; left: 5px; top: 0px; z-index: 0;">Game Prototype - Team 1 - S. Lantz | T. Nunn | C. Witcher</div>
+        <span style="position: absolute; left: 1110px; top: 28px; z-index: 0;">Game Time: <span id="timer"></span></span>
+        <span style="position: absolute; left: 1000px; top: 28px; z-index: 0;">Score: <span id="score"></span></span>
+        <!--<div style="position: absolute; left: 5px; top: 28px; z-index: 0;">RunBoy x: <span id="runX"></span>, worldX: <span id="runWorldX"></span></div>
+        <div style="position: absolute; left: 5px; top: 43px; z-index: 0;">RunBoy BoundingBox - Left: <span id="runLeft"></span>, Right: <span id="runRight"></span>, Top: <span id="runTop"></span>, Bottom: <span id="runBottom"></span></div>
+        <div style="position: absolute; left: 5px; top: 58px; z-index: 0;">Block BoundingBox - Left: <span id="blockLeft"></span>, Right: <span id="blockRight"></span>, Top: <span id="blockTop"></span>, Bottom: <span id="blockBottom"></span></div>-->
 
-    <div style="position: absolute; left: 5px; top: 0px; z-index: 0;">Game Prototype - Team 1 - S. Lantz | T. Nunn | C. Witcher</div>
-    <span style="position: absolute; left: 1110px; top: 28px; z-index: 0;">Game Time: <span id="timer"></span></span>
-    <span style="position: absolute; left: 1000px; top: 28px; z-index: 0;">Score: <span id="score"></span></span>
-    <!--<div style="position: absolute; left: 5px; top: 28px; z-index: 0;">RunBoy x: <span id="runX"></span>, worldX: <span id="runWorldX"></span></div>
-    <div style="position: absolute; left: 5px; top: 43px; z-index: 0;">RunBoy BoundingBox - Left: <span id="runLeft"></span>, Right: <span id="runRight"></span>, Top: <span id="runTop"></span>, Bottom: <span id="runBottom"></span></div>
-    <div style="position: absolute; left: 5px; top: 58px; z-index: 0;">Block BoundingBox - Left: <span id="blockLeft"></span>, Right: <span id="blockRight"></span>, Top: <span id="blockTop"></span>, Bottom: <span id="blockBottom"></span></div>-->
-    
-    <div id="startDisplay">
-        <div id="gameTitle" style="position: absolute; text-align: center; margin-left: 200px; left: 280px; top: 120px; z-index: 0; font-size: 65px; color: red; text-shadow: 0 0 5px #F08080, 0 0 10px #F08080, 0 0 20px #F08080, 0 0 30px #F08080, 0 0 40px #F08080; ">
-            Sibling Rivalry<br />
+        <div id="startDisplay">
+            <div id="gameTitle" style="position: absolute; text-align: center; margin-left: 200px; left: 280px; top: 120px; z-index: 0; font-size: 65px; color: red; text-shadow: 0 0 5px #F08080, 0 0 10px #F08080, 0 0 20px #F08080, 0 0 30px #F08080, 0 0 40px #F08080; ">
+                Sibling Rivalry<br />
+            </div>
+            <div id="instructions" style="position: absolute; left: 280px; top: 220px; z-index: 0; font-size: 35px; color: red; text-shadow: 0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF; ">
+                <ul>
+                    <li>Get to the finish line before the clock runs out</li>
+                    <li>Collect points by picking up toys</li>
+                    <li>Earn extra points for finishing early.</li>
+                </ul>
+            </div>
+            <div style="position: absolute; left: 530px; top: 450px; z-index: 0;">
+                <input id="startButton" type="button" value="Start Game" style="display: inline-block; width: 200px; border: 1px solid red; background-color: #A5F1FF; color: red; font-size: 150%; border-radius: 5px; " onclick="startGame();" />
+            </div>
+            <div id="controls" style="position: absolute; left: 1050px; top: 450px; z-index: 0; border: 1px solid red; background-color: #A5F1FF; border-radius: 5px; color: red;">
+                <table>
+                    <tr><th colspan="2">Controls</th><th></th></tr>
+                    <tr><td><strong>left:</strong></td><td>left arrow</td></tr>
+                    <tr><td><strong>right:</strong></td><td>right arrow</td></tr>
+                    <tr><td><strong>jump:</strong></td><td>space bar</td></tr>
+                </table>
+            </div>
         </div>
-        <div id="instructions" style="position: absolute; left: 280px; top: 220px; z-index: 0; font-size: 35px; color: red; text-shadow: 0 0 5px #A5F1FF, 0 0 10px #A5F1FF, 0 0 20px #A5F1FF, 0 0 30px #A5F1FF, 0 0 40px #A5F1FF; ">
-            <ul>
-                <li>Get to the finish line before the clock runs out</li>
-                <li>Collect points by picking up toys</li>
-                <li>Earn extra points for finishing early.</li>
-            </ul>
-        </div>
-        <div style="position: absolute; left: 530px; top: 450px; z-index: 0;">
-            <input id="startButton" type="button" value="Start Game" style="display: inline-block; width: 200px; border: 1px solid red; background-color: #A5F1FF; color: red; font-size: 150%; border-radius: 5px; " onclick="startGame();" />
-        </div>
-        <div id="controls" style="position: absolute; left: 1050px; top: 450px; z-index: 0; border: 1px solid red; background-color: #A5F1FF; border-radius: 5px; color: red;">
-            <table>
-                <tr><th colspan="2">Controls</th><th></th></tr>
-                <tr><td><strong>left:</strong></td><td>left arrow</td></tr>
-                <tr><td><strong>right:</strong></td><td>right arrow</td></tr>
-                <tr><td><strong>jump:</strong></td><td>space bar</td></tr>
-            </table>
-        </div>
-    </div>
 
 
 </body>

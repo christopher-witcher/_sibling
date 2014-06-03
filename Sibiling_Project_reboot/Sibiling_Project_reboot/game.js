@@ -862,8 +862,8 @@ function initialize() {
         //var rand = boardPieces.length - 1;
         //nextWidth = boardPieces[boardPieces.length-1](nextWidth, gameEngine, true);
         //nextWidth += 500;
-        var sect = endLevelSection(nextWidth, gameEngine);
-        nextWidth = nextWidth + sect;
+        //var sect = endLevelSection(nextWidth, gameEngine);
+        //nextWidth = nextWidth + sect;
         for (var i = 0; i < boardPieces.length; i++) {
             //while(nextWidth < gameWorld.width - 200){ 
             //extra = extra ? false : true;
@@ -874,7 +874,12 @@ function initialize() {
             nextWidth = boardPieces[i](nextWidth, gameEngine, true);
             nextWidth += 500;
         }
-        
+        nextWidth = boardPieces[0](nextWidth, gameEngine, true);
+        nextWidth += 500;
+        spacerSection(gameEngine, nextWidth, 400, 10, 2);
+        nextWidth = nextWidth + 500;
+        var sect = endLevelSection(nextWidth, gameEngine);
+        //nextWidth = nextWidth + sect;
 
         gameEngine.addEntity(this.finishLine);
         gameEngine.addEntity(boy);
@@ -1183,8 +1188,8 @@ boardPieces[6] = function (startX, game, extra) {
         var lastEnemy = new Enemy(game, startX + 75, 35);
         game.addEntity(lastEnemy);
     }
-    startX += rectPlatform(game, startX + 75, 175, 8, 1, false);
-    rectPlatform(game, startX - 225, 375, 5, 1, true);
+    rectPlatform(game, startX + 75, 175, 8, 1, false);
+    startX += rectPlatform(game, startX + 25, 375, 8, 1, true);
     startX += rectPlatform(game, startX + 25, 225, 1, 4, false);
     game.addEntity(specialItem);
      
@@ -1197,6 +1202,26 @@ var endLevelSection = function (startX, game) {
     var sectTwo = rectPlatform(game, startX, 300, 4, 1, false);
     startX = startX + 400;
     var sectThree = rectPlatform(game, startX, 450, 4, 1, false);
+    var sectFour = rectPlatform(game, startX + 50, 150, 4, 1, false);
+    startX = startX + 375;
+    var sectFive = rectPlatform(game, startX, 275, 7, 1, false);
+    var enemyOne = new Enemy(game, startX, 135, false)
+    game.addEntity(enemyOne);
+    startX = startX + 50 * 6;
+    var sectSix = rectPlatform(game, startX, 125, 1, 10, false);
+    startX = startX + 50;
+    var sectSix = rectPlatform(game, startX, 125, 2, 1, false);
+    var sectEight = rectPlatform(game, startX, 375, 5, 1, false);
+    var zeroEnemy = new Enemy(game, startX + 100, 185, true);
+    game.addEntity(zeroEnemy);
+    startX = startX + 200;
+
+    var sectSeven = rectPlatform(game, startX, 125, 2, 1, false);
+
+    var stairOne = rightCrateSteps(game, startX + 450, 125, 9);
+    startX = startX + 900;
+    var sectTen = rectPlatform(game, startX + 150, 0, 4, 3, false);
+
     return startX + 500;
 }
 

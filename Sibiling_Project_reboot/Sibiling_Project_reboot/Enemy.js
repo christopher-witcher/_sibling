@@ -11,10 +11,16 @@ enemyList[0] = {
     jumpLeftX: 0,
     jumpLeftY: 1650,
     jumpRightX: 0,
-    jumpRight: 1815,
+    jumpRightY: 1815,
     jumpHeight: 140,
     jumpWidth: 100,
     runOffSet: 8,
+    standingRightX: 0,
+    standingRightY: 1350,
+    standingLeftX: 0,
+    standingLeftY: 1515,
+    standingWidth: 100,
+    standingHeight: 150,
     scaleBy: 1,
     jumpScaleBy: 1.2
 
@@ -34,6 +40,12 @@ enemyList[1] = {
     jumpHeight: 160,
     jumpWidth: 114,
     runOffSet: 10,
+    standingRightX: 0,
+    standingRightY: 2100,
+    standingLeftX: 0,
+    standingLeftY: 2250,
+    standingWidth: 100,
+    standingHeight: 150,
     scaleBy: 0.9,
     jumpScaleBy: 1.2
 };
@@ -52,6 +64,12 @@ enemyList[2] = {
     jumpHeight: 160,
     jumpWidth: 114,
     runOffSet: 10,
+    standingRightX: 0,
+    standingRightY: 800,
+    standingLeftX: 0,
+    standingLeftY: 640,
+    standingWidth: 100,
+    standingHeight: 150,
     scaleBy: 0.9,
     jumpScaleBy: 1.2
 };
@@ -84,7 +102,11 @@ function Enemy(game, startingX, startingY, jump) {
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpLeftX, enemyList[this.currentEnemy].jumpLeftY,
         enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, false);
 
+    this.standingRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].standingRightX, enemyList[this.currentEnemy].standingRightY,
+        enemyList[this.currentEnemy].standingWidth, enemyList[this.currentEnemy].standingHeight, 1, 1, true);
 
+    this.standingLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].standingLeftX, enemyList[this.currentEnemy].standingLeftY,
+        enemyList[this.currentEnemy].standingWidth, enemyList[this.currentEnemy].standingHeight, 1, 1, true);
     // set the sprite's starting position on the canvas
 
     this.canPass = true;
@@ -184,10 +206,12 @@ Enemy.prototype.draw = function (ctx) {
 
     if (this.standing) {
         if (this.myDirection) {
-            //Animation for standing to the right.
+            //Animation for standing to the right
+            this.standingRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
         else {
             //Animation for standing to the left.
+            this.standingLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
         }
     }
     else if (this.jump) {

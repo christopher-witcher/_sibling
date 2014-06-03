@@ -548,7 +548,8 @@ RunBoy.prototype.didICollide = function () {
             this.collission = true;
 
             //check if I landed on a platform first
-            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
+            if (entity.boundingBox.top > this.lastBottom && !this.landed && entity.boundingBox.right >= this.boundingbox.left + 10 && 
+                entity.boundingBox.left <= this.boundingbox.right - 10) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 
@@ -559,10 +560,9 @@ RunBoy.prototype.didICollide = function () {
                     this.jumping = false;
                     this.runningJump = false;
                     this.baseHeight = this.y;
-                }
-
-               
-                
+                    console.log(entity.boundingBox.right);
+                    console.log(this.boundingbox.left + 7);
+                } 
             }
             else if (entity.boundingBox.bottom < this.lastTop && !this.landed) {
                 this.landed = result;

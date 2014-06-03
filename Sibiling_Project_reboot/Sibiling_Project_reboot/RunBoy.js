@@ -66,6 +66,7 @@ RunBoy.prototype.constructor = RunBoy;
 //The update method for run boy
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
+    //console.log("in firt part of update");
     if (this.game.running === false) {
         return;
     }
@@ -104,9 +105,11 @@ RunBoy.prototype.update = function () {
             this.game.addListeners = false;
         } else {
             this.game.addListeners = true;
+            this.falling = false;
+            this.jumping = false;
+            this.runningJump = false;
         }
         // 5/30 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
         return;
     }
     // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -521,8 +524,6 @@ RunBoy.prototype.didICollide = function () {
         var entity = this.game.entities[i];
         var result = this.boundingbox.collide(entity.boundingBox);
 
-        
-
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.game.playSounds(document.getElementById('itemSound'));
@@ -535,7 +536,7 @@ RunBoy.prototype.didICollide = function () {
         else if (result && entity instanceof FinishLine) {
             this.game.running = false;
         }
-        else if (result && entity instanceof Enemy) {
+        else if (result && entity instanceof Enemy && !this.rewinding) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.game.playSounds(document.getElementById('rewindSound'));
             this.rewindCount++;
@@ -547,8 +548,20 @@ RunBoy.prototype.didICollide = function () {
 
             this.collission = true;
 
+            //if (entity instanceof MovingPlatform) {
+            //    if (entity.myDirection) {
+            //        moveDistance = entity.mySpeed;
+            //    }
+            //    else {
+            //        moveDistance = -1 * entity.mySpeed;
+            //    }
+            //    this.move();
+            //    moveDistance = 7;
+            //}
+
             //check if I landed on a platform first
-            if (entity.boundingBox.top > this.lastBottom && !this.landed) { //put in separate if state and change landed.
+            if (entity.boundingBox.top > this.lastBottom && !this.landed && entity.boundingBox.right >= this.boundingbox.left + 10 && 
+                entity.boundingBox.left <= this.boundingbox.right - 10) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 
@@ -559,10 +572,7 @@ RunBoy.prototype.didICollide = function () {
                     this.jumping = false;
                     this.runningJump = false;
                     this.baseHeight = this.y;
-                }
-
-               
-                
+                } 
             }
             else if (entity.boundingBox.bottom < this.lastTop && !this.landed) {
                 this.landed = result;

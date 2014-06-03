@@ -985,8 +985,7 @@ MovingPlatform.prototype.update = function () {
     
 
 MovingPlatform.prototype.draw = function(ctx) {
-   
-   
+ 
            this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 
 }

@@ -110,7 +110,6 @@ RunBoy.prototype.update = function () {
             this.runningJump = false;
         }
         // 5/30 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        console.log("just finshed rewinding");
         return;
     }
     // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -525,8 +524,6 @@ RunBoy.prototype.didICollide = function () {
         var entity = this.game.entities[i];
         var result = this.boundingbox.collide(entity.boundingBox);
 
-        
-
         if (result && !entity.removeFromWorld && entity instanceof Item) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.game.playSounds(document.getElementById('itemSound'));
@@ -550,6 +547,17 @@ RunBoy.prototype.didICollide = function () {
         else if (result && entity instanceof Platform) {
 
             this.collission = true;
+
+            //if (entity instanceof MovingPlatform) {
+            //    if (entity.myDirection) {
+            //        moveDistance = entity.mySpeed;
+            //    }
+            //    else {
+            //        moveDistance = -1 * entity.mySpeed;
+            //    }
+            //    this.move();
+            //    moveDistance = 7;
+            //}
 
             //check if I landed on a platform first
             if (entity.boundingBox.top > this.lastBottom && !this.landed && entity.boundingBox.right >= this.boundingbox.left + 10 && 

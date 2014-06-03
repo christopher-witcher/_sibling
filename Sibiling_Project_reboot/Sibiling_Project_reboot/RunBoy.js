@@ -66,6 +66,7 @@ RunBoy.prototype.constructor = RunBoy;
 //The update method for run boy
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
+    console.log("in firt part of update");
     if (this.game.running === false) {
         return;
     }
@@ -104,9 +105,12 @@ RunBoy.prototype.update = function () {
             this.game.addListeners = false;
         } else {
             this.game.addListeners = true;
+            this.falling = false;
+            this.jumping = false;
+            this.runningJump = false;
         }
         // 5/30 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
+        console.log("just finshed rewinding");
         return;
     }
     // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -535,7 +539,7 @@ RunBoy.prototype.didICollide = function () {
         else if (result && entity instanceof FinishLine) {
             this.game.running = false;
         }
-        else if (result && entity instanceof Enemy) {
+        else if (result && entity instanceof Enemy && !this.rewinding) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.game.playSounds(document.getElementById('rewindSound'));
             this.rewindCount++;
@@ -560,8 +564,6 @@ RunBoy.prototype.didICollide = function () {
                     this.jumping = false;
                     this.runningJump = false;
                     this.baseHeight = this.y;
-                    console.log(entity.boundingBox.right);
-                    console.log(this.boundingbox.left + 7);
                 } 
             }
             else if (entity.boundingBox.bottom < this.lastTop && !this.landed) {

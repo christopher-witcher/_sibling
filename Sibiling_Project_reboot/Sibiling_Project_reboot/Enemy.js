@@ -79,11 +79,10 @@ function Enemy(game, startingX, startingY, jump) {
 
     // 5/27/2014 Need to change to actual jumping animation.
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpRightX, enemyList[this.currentEnemy].jumpRightY,
-        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight,
-        0.015, 89, true);
+        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, true);
 
-    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpLeftX, enemyList[this.currentEnemy].jumpLeftY, enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight,
-        0.015, 89, true);
+    this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpLeftX, enemyList[this.currentEnemy].jumpLeftY,
+        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, true);
 
 
     // set the sprite's starting position on the canvas
@@ -124,14 +123,11 @@ Enemy.prototype.update = function () {
                 this.y = this.baseHeight - this.height / 2;
 
                 if (this.jumpRight.isDone()) {
-                    console.log("just got done jumping");
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
                     this.myDirection = false;
                 }
-
-               ;
 
             } else { // Left
 
@@ -145,7 +141,6 @@ Enemy.prototype.update = function () {
                 this.y = this.baseHeight - this.height / 2;
 
                 if (this.jumpLeft.isDone()) {
-                    //console.log("just got done jumping");
                     this.y = this.baseHeight;
                     this.jumpLeft.elapsedTime = 0;
                     this.moveCount = 0;

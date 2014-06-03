@@ -101,14 +101,7 @@ RunBoy.prototype.update = function () {
         this.baseHeight = this.y;
 
         // de-activate keydown Listeners while jumping or falling, otherwise activate them
-        if (this.falling || this.jumping || this.runningJump) {
-            this.game.addListeners = false;
-        } else {
-            this.game.addListeners = true;
-            this.falling = false;
-            this.jumping = false;
-            this.runningJump = false;
-        }
+        this.game.addListeners = true;
         // 5/30 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         return;
     }

@@ -79,16 +79,17 @@ function Enemy(game, startingX, startingY, jump) {
 
     // 5/27/2014 Need to change to actual jumping animation.
     this.jumpRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpRightX, enemyList[this.currentEnemy].jumpRightY,
-        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, true);
+        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, false);
 
     this.jumpLeft = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].jumpLeftX, enemyList[this.currentEnemy].jumpLeftY,
-        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, true);
+        enemyList[this.currentEnemy].jumpWidth, enemyList[this.currentEnemy].jumpHeight, 0.015, 89, false);
 
 
     // set the sprite's starting position on the canvas
 
     this.canPass = true;
     this.jump = jump;
+    this.standing = jump; //will start at standing if jump is true.
     this.height = 0;
     this.baseHeight = startingHeight;
     this.scaleBy = enemyList[this.currentEnemy].scaleBy;
@@ -105,12 +106,14 @@ Enemy.prototype.constructor = Enemy;
 Enemy.prototype.update = function () {
 
     var maxHeight = 310;
-    
+
     ///Adding in jumping. 5/27/2014
     if (this.jump) {
 
         //start jump
-        if (this.moveCount === 500) {
+        if (this.moveCount === maxMove * 2) {
+
+            this.standing = false;
 
             if (this.myDirection) { // Right
                 var duration = this.jumpRight.elapsedTime + this.game.clockTick; //the duration of the jump.
@@ -127,8 +130,9 @@ Enemy.prototype.update = function () {
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
-                    console.log(this.moveCount);
-                    this.myDirection = false;
+                    //console.log(this.moveCount);
+                    //this.myDirection = false;
+                    this.standing = true;
                 }
 
             } else { // Left
@@ -146,10 +150,10 @@ Enemy.prototype.update = function () {
                     this.y = this.baseHeight;
                     this.jumpLeft.elapsedTime = 0;
                     this.moveCount = 0;
-                    this.myDirection = true;
-                    
+                    // this.myDirection = true;
+                    this.standing = true;
                 }
-                
+
             }
         }
         else {
@@ -178,7 +182,15 @@ Enemy.prototype.update = function () {
 
 Enemy.prototype.draw = function (ctx) {
 
-    if (this.jump) {
+    if (this.standing) {
+        if (this.myDirection) {
+            //Animation for standing to the right.
+        }
+        else {
+            //Animation for standing to the left.
+        }
+    }
+    else if (this.jump) {
         if (this.myDirection) {
             this.jumpRight.drawFrame(this.game.clockTick, ctx, this.x, this.y, enemyList[this.currentEnemy].jumpScaleBy);
         }
@@ -201,7 +213,8 @@ Enemy.prototype.draw = function (ctx) {
     ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
-Enemy.prototype.didICollide = function () {boundingBox
+Enemy.prototype.didICollide = function () {
+    boundingBox
     //console.log("check if they collide");
     this.canPass = true;
 

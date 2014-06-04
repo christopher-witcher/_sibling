@@ -40,7 +40,7 @@ function RunBoy(game, canvasWidth, worldWidth) {
     this.canvasWidth = canvasWidth;
     this.worldWidth = worldWidth;
     this.worldX = this.x;
-    //this.worldX = 8100;
+    //this.worldX = 15000;
     this.worldY = this.y;
     this.boundingbox = new BoundingBox(this.x, this.y, 90, 145); //145
     //when its null I'm not currently on a platform.
@@ -89,7 +89,8 @@ RunBoy.prototype.update = function () {
 
         if (this.lastFrame.currentPlatform != null) {
             this.currentPlatform = this.lastFrame.currentPlatform;
-            this.y = (this.currentPlatform.boundingBox.top - 3) - this.boundingbox.height;
+            //this.y = (this.currentPlatform.boundingBox.top - 3) - this.boundingbox.height;
+            this.y = this.lastFrame.canvasY;
             this.worldY = this.lastFrame.worldY;
 
         } else {
@@ -322,6 +323,7 @@ RunBoy.prototype.update = function () {
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
         this.standing = true;
+        this.falling = false;
         this.lastBottom = this.boundingbox.bottom;
         this.lastTop = this.boundingbox.top;
         this.boundingbox = new BoundingBox(this.x, this.y, 80, this.boundingbox.height);
@@ -411,7 +413,7 @@ RunBoy.prototype.moveRewind = function () {
     this.jumping = this.rewindFrame.jumping;
     this.runningJump = this.rewindFrame.runningJump;
     this.currentPlatform = this.rewindFrame.currentPlatform;
-    this.worldY = this.lastFrame.worldY;
+    //this.worldY = this.lastFrame.worldY;
 }
 
 RunBoy.prototype.draw = function (ctx) {
@@ -553,8 +555,8 @@ RunBoy.prototype.didICollide = function () {
             //}
 
             //check if I landed on a platform first
-            if (entity.boundingBox.top > this.lastBottom && !this.landed && entity.boundingBox.right >= this.boundingbox.left + 10 && 
-                entity.boundingBox.left <= this.boundingbox.right - 10) { //put in separate if state and change landed.
+            if (entity.boundingBox.top > this.lastBottom && !this.landed && entity.boundingBox.right >= this.boundingbox.left + moveDistance && 
+                entity.boundingBox.left <= this.boundingbox.right - moveDistance) { //put in separate if state and change landed.
                 this.currentPlatform = entity;
                 this.landed = result;
 

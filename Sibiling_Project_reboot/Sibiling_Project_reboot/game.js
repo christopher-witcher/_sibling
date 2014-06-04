@@ -613,8 +613,8 @@ function FinishLine(game, gameWidth, ctx) {
     //this.y = 125;
     //this.width = 394;
     //this.height = 446;
-    this.x = gameWidth + 260;
-    this.y = 100;
+    this.x = gameWidth + 240;
+    this.y = 140;
     this.width = 150;
     this.height = 200;
     this.boundingBoxOffSetX = 210;
@@ -853,7 +853,7 @@ function initialize() {
         var ctx = canvas.getContext('2d');
         gameEngine = new GameEngine();
         
-        var gameWorld = {width: 20000 , height: canvasHeight}; //new Background(gameEngine, canvasWidth);
+        var gameWorld = {width: 21000 , height: canvasHeight}; //new Background(gameEngine, canvasWidth);
         this.finishLine = new FinishLine(gameEngine, gameWorld.width, ctx);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
         
@@ -901,6 +901,7 @@ function initAudio() {
     bgAudio.id = "bgSound";
     document.body.appendChild(bgAudio);
     bgAudio.src = "bgMusic.mp3";
+    bgAudio.volume = "0.4";
     bgAudio.preload = "auto";
 
     var jumpAudio = document.createElement('audio');
@@ -1223,13 +1224,17 @@ var endLevelSection = function (startX, game) {
     startX = startX + 900;
     var sectTen = rectPlatform(game, startX + 150, 0, 4, 3, false);
     startX = startX + 400;
-    buildMovingPlatform(startX, game, 4, 450, 85, 0.5);
+    rectPlatform(game, startX, 450, 4, 1, true);
     startX = startX + 350;
-    buildMovingPlatform(startX, game, 4, 325, 100, 1);
+    rectPlatform(game, startX,325,4,1,true);
     startX = startX + 350;
-    buildMovingPlatform(startX, game, 4, 200, 140, 2);
-    var lastBuilding = new Platform(game, startX + 400, 100, canvasWidth, 900, 4400, 270, 580, 0.8);
+    rectPlatform(game, startX, 200, 4, 1, true);
+    startX = startX + 400;
+    var lastBuilding = new Platform(game, startX, 100, canvasWidth, 900, 4400, 270, 580, 0.8);
     game.addEntity(lastBuilding);
+    startX = startX + 450;
+    var sectEleven = rectPlatform(game, startX, -100, 4, 4, false);
+
 
     return startX + 500;
 }
@@ -1296,7 +1301,7 @@ gameItems[4] = {
 };
 
 var buildGrown = function (game, width) {
-    for (var x = 0; x <= (width/160); x++) {
+    for (var x = -100; x <= (width/160); x++) {
         var ground = new Platform(game, x * 160, 580, canvasWidth, 0, 4000, 1200, 37);
         game.addEntity(ground);
     }

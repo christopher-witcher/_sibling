@@ -21,8 +21,9 @@ enemyList[0] = {
     standingLeftY: 1515,
     standingWidth: 100,
     standingHeight: 150,
-    scaleBy: 1,
-    jumpScaleBy: 1.2
+    scaleBy: 1.1,
+    jumpScaleBy: 1.1,
+    standingScale: 1.1
 
 };
 
@@ -47,7 +48,8 @@ enemyList[1] = {
     standingWidth: 100,
     standingHeight: 150,
     scaleBy: 0.9,
-    jumpScaleBy: 1.2
+    jumpScaleBy: 1.2,
+    standingScale: 0.9
 };
 
 enemyList[2] = {
@@ -70,13 +72,16 @@ enemyList[2] = {
     standingLeftY: 640,
     standingWidth: 100,
     standingHeight: 150,
-    scaleBy: 0.9,
-    jumpScaleBy: 1.2
+    scaleBy:1,
+    jumpScaleBy: 1.1,
+    standingScale: 1.3
 };
 
 enemyMoveDistance = 3;
 maxMove = 100;
-var globalCurrentEnemy = 0;
+var randomEnemy = Math.floor(Math.random() * 3);
+var globalCurrentEnemy = randomEnemy;
+
 //Sets up different animation of runboy and initializes the controls
 function Enemy(game, startingX, startingY, jump) {
     //this.currentEnemy = Math.floor(Math.random() * enemyList.length);
@@ -86,6 +91,7 @@ function Enemy(game, startingX, startingY, jump) {
         globalCurrentEnemy += 1;
     }
     this.currentEnemy = globalCurrentEnemy;
+    
     //Animations for the enemy.
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY,
         enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
@@ -115,6 +121,7 @@ function Enemy(game, startingX, startingY, jump) {
     this.height = 0;
     this.baseHeight = startingY;
     this.scaleBy = enemyList[this.currentEnemy].scaleBy;
+    this.standingScale = enemyList[this.currentEnemy].standingScale;
     this.myDirection = true;
     this.moveCount = 0;
 
@@ -145,10 +152,14 @@ Enemy.prototype.update = function () {
                 duration = duration / this.jumpRight.totalTime;
                 this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
+                this.y = this.baseHeight - this.height / 2;
+                //console.log(this.jumpRight.isDone());
                 if (this.jumpRight.isDone()) {
+                    //console.log("here");
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
+                    //console.log(this.moveCount);
                     this.myDirection = false;
                     this.standing = true;
                 }
@@ -203,11 +214,11 @@ Enemy.prototype.draw = function (ctx) {
     if (this.standing) {
         if (this.myDirection) {
             //Animation for standing to the right
-            this.standingRight.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.standingRight.drawFrame(this.game.clockTick, ctx, this.x, this.y, this.standingScale);
         }
         else {
             //Animation for standing to the left.
-            this.standingLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+            this.standingLeft.drawFrame(this.game.clockTick, ctx, this.x, this.y, this.standingScale);
         }
     }
     else if (this.jump) {

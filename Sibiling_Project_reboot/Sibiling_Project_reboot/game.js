@@ -856,6 +856,7 @@ function initialize() {
         var gameWorld = {width: 20000 , height: canvasHeight}; //new Background(gameEngine, canvasWidth);
         this.finishLine = new FinishLine(gameEngine, gameWorld.width, ctx);
         var boy = new RunBoy(gameEngine, canvasWidth, gameWorld.width);
+        
         var nextWidth = 900;
         //var rand = Math.floor((Math.random() * boardPieces.length));
         //var extra = Math.floor((Math.random() * 2)) === 0 ? true : false;
@@ -880,7 +881,7 @@ function initialize() {
         nextWidth = nextWidth + 500;
         var sect = endLevelSection(nextWidth, gameEngine);
         //nextWidth = nextWidth + sect;
-
+        buildGrown(gameEngine, gameWorld.width);
         gameEngine.addEntity(this.finishLine);
         gameEngine.addEntity(boy);
         
@@ -1204,15 +1205,15 @@ var endLevelSection = function (startX, game) {
     var sectThree = rectPlatform(game, startX, 450, 4, 1, false);
     var sectFour = rectPlatform(game, startX + 50, 150, 4, 1, false);
     startX = startX + 375;
-    var sectFive = rectPlatform(game, startX, 275, 7, 1, false);
+    var sectFive = rectPlatform(game, startX, 275, 8, 1, false);
     var enemyOne = new Enemy(game, startX, 135, false)
     game.addEntity(enemyOne);
-    startX = startX + 50 * 6;
+    startX = startX + 50 * 7;
     var sectSix = rectPlatform(game, startX, 125, 1, 10, false);
     startX = startX + 50;
     var sectSix = rectPlatform(game, startX, 125, 2, 1, false);
-    var sectEight = rectPlatform(game, startX, 375, 5, 1, false);
-    var zeroEnemy = new Enemy(game, startX + 100, 185, true);
+    var sectEight = rectPlatform(game, startX, 325, 5, 1, false);
+    var zeroEnemy = new Enemy(game, startX + 100, 180, true);
     game.addEntity(zeroEnemy);
     startX = startX + 200;
 
@@ -1227,7 +1228,7 @@ var endLevelSection = function (startX, game) {
     buildMovingPlatform(startX, game, 4, 325, 100, 1);
     startX = startX + 350;
     buildMovingPlatform(startX, game, 4, 200, 140, 2);
-    var lastBuilding = new Platform(game, startX + 400, 100, canvasWidth, 900, 4400, 270, 580);
+    var lastBuilding = new Platform(game, startX + 400, 100, canvasWidth, 900, 4400, 270, 580, 0.8);
     game.addEntity(lastBuilding);
 
     return startX + 500;
@@ -1294,16 +1295,10 @@ gameItems[4] = {
     points: 40
 };
 
-//gameItems[5]
+var buildGrown = function (game, width) {
+    for (var x = 0; x <= (width/160); x++) {
+        var ground = new Platform(game, x * 160, 580, canvasWidth, 0, 4000, 1200, 37);
+        game.addEntity(ground);
+    }
 
-//gameItems[6]
-
-//gameItems[7]
-
-//gameItems[8]
-
-//gameItems[9]
-
-//gameItems[10]
-
-//gameItems[11]
+}

@@ -89,8 +89,7 @@ RunBoy.prototype.update = function () {
 
         if (this.lastFrame.currentPlatform != null) {
             this.currentPlatform = this.lastFrame.currentPlatform;
-            //this.y = (this.currentPlatform.boundingBox.top - 3) - this.boundingbox.height;
-            this.y = this.lastFrame.canvasY;
+            this.y = (this.currentPlatform.boundingBox.top - 3) - this.boundingbox.height;
             this.worldY = this.lastFrame.worldY;
 
         } else {

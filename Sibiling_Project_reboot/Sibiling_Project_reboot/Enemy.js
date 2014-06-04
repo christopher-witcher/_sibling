@@ -90,8 +90,8 @@ function Enemy(game, startingX, startingY, jump) {
     } else {
         globalCurrentEnemy += 1;
     }
-    //this.currentEnemy = globalCurrentEnemy;
-    this.currentEnemy = 2;
+    this.currentEnemy = globalCurrentEnemy;
+    
     //Animations for the enemy.
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY,
         enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,

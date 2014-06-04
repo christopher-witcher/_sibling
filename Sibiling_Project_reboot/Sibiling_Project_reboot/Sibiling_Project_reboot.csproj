@@ -58,6 +58,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\PublishProfiles\sibling-rivalry.pubxml" />
+    <None Include="Properties\PublishProfiles\siblingrivalry.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -66,7 +66,6 @@ RunBoy.prototype.constructor = RunBoy;
 //The update method for run boy
 //has the controls for when he will run and jump and will move the player across the screen.
 RunBoy.prototype.update = function () {
-    //console.log("in firt part of update");
     if (this.game.running === false) {
         return;
     }
@@ -78,6 +77,7 @@ RunBoy.prototype.update = function () {
         return;
 
     } else if (this.myRewindStack.length === 0 && this.rewindCount > 0) {
+        console.log("finish rewind");
         ///////////////////////////////////////////////
         var rwSound = document.getElementById('rewindSound');
         rwSound.pause();
@@ -117,6 +117,7 @@ RunBoy.prototype.update = function () {
      * Falling
      */
     if (this.currentPlatform === null && this.y !== startingHeight && !this.runningJump && !this.jumping) {
+        console.log("falling");
         this.falling = true;
         //var prevY = this.y;
         this.y = this.y + moveDistance;
@@ -143,6 +144,7 @@ RunBoy.prototype.update = function () {
 
     // !!!!!!!!!!!!Changed to to a else if!!! 5/24/2014
     else if ((this.game.space && (this.game.rightArrow || this.game.leftArrow)) || this.runningJump) {
+        console.log("run and jump");
         this.runningJump = true;
         this.jumping = false;
         this.running = false;
@@ -212,6 +214,7 @@ RunBoy.prototype.update = function () {
          * Standing and Jumping
          */
     } else if ((this.game.space && this.standing) || this.jumping) {
+        console.log("Standing jump");
         this.jumping = true;
         this.runningJump = false;
         this.running = false;
@@ -286,6 +289,7 @@ RunBoy.prototype.update = function () {
          * Running Right
          */
     } else if (this.game.rightArrow) {
+        console.log("running right");
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -304,6 +308,7 @@ RunBoy.prototype.update = function () {
          * Running Left
          */
     } else if (this.game.leftArrow) {
+        console.log("running left");
         this.running = true;
         this.standing = false;
         this.jumping = false;
@@ -322,6 +327,7 @@ RunBoy.prototype.update = function () {
          * Standing
          */
     } else if (!this.game.leftArrow && !this.game.rightArrow && !this.game.space) {
+        console.log("standing");
         this.standing = true;
         this.falling = false;
         this.lastBottom = this.boundingbox.bottom;
@@ -347,6 +353,7 @@ RunBoy.prototype.update = function () {
     } else {
         this.game.addListeners = true;
     }
+    console.log("update done");
 
     Entity.prototype.update.call(this);
 };

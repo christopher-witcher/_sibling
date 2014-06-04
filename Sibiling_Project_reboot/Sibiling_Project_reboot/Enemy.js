@@ -113,7 +113,7 @@ function Enemy(game, startingX, startingY, jump) {
     this.jump = jump;
     this.standing = jump; //will start at standing if jump is true.
     this.height = 0;
-    this.baseHeight = startingHeight;
+    this.baseHeight = startingY;
     this.scaleBy = enemyList[this.currentEnemy].scaleBy;
     this.myDirection = true;
     this.moveCount = 0;
@@ -153,7 +153,7 @@ Enemy.prototype.update = function () {
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
                     //console.log(this.moveCount);
-                    //this.myDirection = false;
+                    this.myDirection = false;
                     this.standing = true;
                 }
 
@@ -172,7 +172,7 @@ Enemy.prototype.update = function () {
                     this.y = this.baseHeight;
                     this.jumpLeft.elapsedTime = 0;
                     this.moveCount = 0;
-                    // this.myDirection = true;
+                    this.myDirection = true;
                     this.standing = true;
                 }
 

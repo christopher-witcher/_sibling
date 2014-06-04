@@ -949,52 +949,52 @@ Platform.prototype.draw = function (ctx) {
     this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 };
 
-//function MovingPlatform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight, range, speed) {
-//    this.game = game;
-//    this.worldX = the_x;
-//    this.worldY = the_y;
-//    this.width = frameWidth;
-//    this.height = frameHeight;
-//    this.canvasWidth = canvasWidth;
-//    this.drawPlatform = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, 1, 1, true);
+function MovingPlatform(game, the_x, the_y, canvasWidth, clipX, clipY, frameWidth, frameHeight, range, speed) {
+    this.game = game;
+    this.worldX = the_x;
+    this.worldY = the_y;
+    this.width = frameWidth;
+    this.height = frameHeight;
+    this.canvasWidth = canvasWidth;
+    this.drawPlatform = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), clipX, clipY, 1, 1, true);
     
-//    this.myDirection = false;
-//    this.mySpeed = speed;
-//    this.myRange = range;
-//    this.miniX = the_y - range;
-//    this.maxX = the_y + range;
-//    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
-//    Platform.call(this, game, this.worldX, this.worldY, canvasWidth, clipX, clipY, frameWidth, frameHeight);
-//}
+    this.myDirection = false;
+    this.mySpeed = speed;
+    this.myRange = range;
+    this.miniX = the_x - range;
+    this.maxX = the_x + range;
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.width, this.height);
+    Platform.call(this, game, this.worldX, this.worldY, canvasWidth, clipX, clipY, frameWidth, frameHeight);
+}
 
-//MovingPlatform.prototype = new Platform();
-//MovingPlatform.prototype.constructor = MovingPlatform;
+MovingPlatform.prototype = new Platform();
+MovingPlatform.prototype.constructor = MovingPlatform;
 
-//MovingPlatform.prototype.update = function () {
-//    if (this.myDirection && this.y < this.maxX) {
-//        this.y += this.mySpeed;
-//    }else if(this.myDirection && this.y >= this.maxX){
-//        this.myDirection = false;
-//        this.y -= this.mySpeed;
-//    }else if(this.myDirection === false && this.y > this.miniX) {
-//        this.y -= this.mySpeed;
-//    }else if(this.myDirection === false && this.y <= this.miniX) {
-//        this.myDirection = true;
-//        this.y += this.mySpeed;
-//    }
+MovingPlatform.prototype.update = function () {
+    if (this.myDirection && this.worldX < this.maxX) {
+        this.worldX += this.mySpeed;
+    }else if(this.myDirection && this.worldX >= this.maxX){
+        this.myDirection = false;
+        this.worldX -= this.mySpeed;
+    }else if(this.myDirection === false && this.worldX >= this.miniX) {
+        this.worldX -= this.mySpeed;
+    }else if(this.myDirection === false && this.worldX < this.miniX) {
+        this.myDirection = true;
+        this.worldX += this.mySpeed;
+    }
     
     
-//    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.height, this.width); //this.platformWidth * this.width, this.platformHeight * this.height);
-//    Platform.prototype.update.call(this);
-//}
+    this.boundingBox = new BoundingBox(this.worldX, this.worldY, this.height, this.width); //this.platformWidth * this.width, this.platformHeight * this.height);
+    Platform.prototype.update.call(this);
+}
     
 
-//MovingPlatform.prototype.draw = function(ctx) {
+MovingPlatform.prototype.draw = function(ctx) {
    
    
-//           this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
+           this.drawPlatform.drawFrame(this.game.clockTick, ctx, this.x, this.y);
 
-//}
+}
 
 var leftCrateSteps = function (game, x, y, height) {
     var size = 50;
@@ -1221,20 +1221,28 @@ var endLevelSection = function (startX, game) {
     var stairOne = rightCrateSteps(game, startX + 450, 125, 9);
     startX = startX + 900;
     var sectTen = rectPlatform(game, startX + 150, 0, 4, 3, false);
+    startX = startX + 400;
+    buildMovingPlatform(startX, game, 4, 450, 85, 0.5);
+    startX = startX + 350;
+    buildMovingPlatform(startX, game, 4, 325, 100, 1);
+    startX = startX + 350;
+    buildMovingPlatform(startX, game, 4, 200, 140, 2);
+    var lastBuilding = new Platform(game, startX + 400, 100, canvasWidth, 900, 4400, 270, 580);
+    game.addEntity(lastBuilding);
 
     return startX + 500;
 }
 
-//var buildMovingPlatform = function (startX, game, width, position, range, speed) {
-//    var size = 50;
-//    for (var i = 0; i < width; i++) {
-//        var mover = new MovingPlatform(game, startX + (size * i), position, canvasWidth, 1450, 4900, size, size, range, speed);
-//        game.addEntity(mover);
-//    }
+var buildMovingPlatform = function (startX, game, width, position, range, speed) {
+    var size = 50;
+    for (var i = 0; i < width; i++) {
+        var mover = new MovingPlatform(game, startX + (size * i), position, canvasWidth, 1450, 4900, size, size, range, speed);
+        game.addEntity(mover);
+    }
     
-//    return (size * width) + startX;
+    return (size * width) + startX;
     
-//}
+}
 
 
 

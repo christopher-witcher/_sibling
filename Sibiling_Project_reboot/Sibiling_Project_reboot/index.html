@@ -7,6 +7,11 @@
     <script type="text/javascript" src="./RunBoy.js"></script>
     <script type="text/javascript" src="./Background.js"></script>
     <script type="text/javascript" src="./Enemy.js"></script>
+    <style type="text/css">
+        .scoreBox{
+            position: absolute; text-align: center; margin-left: 0px; left: 280px; top: 120px; z-index: 0; font-size: 18px; color: red; text-shadow: 0 0 5px #F08080, 0 0 10px #F08080, 0 0 20px #F08080, 0 0 30px #F08080, 0 0 40px #F08080; 
+        }
+    </style>
 </head>
 <body>
 
@@ -15,8 +20,8 @@
      background: -moz-linear-gradient(top, skyblue 0%, #fff 100%); background-image: url('CityBackground.png')"></canvas>
     <canvas id="backColor" width="1250" height="600" style="background: -webkit-linear-gradient(top, skyblue 0%, #fff 100%); background: -linear-gradient(top, skyblue 0%, skyblue 100%); border: 0; position: absolute; border-radius: 20px; left: 0; top: 23px; z-index: -2"></canvas>
         <div style="position: absolute; left: 5px; top: 0px; z-index: 0;">Game Prototype - Team 1 - S. Lantz | T. Nunn | C. Witcher</div>
-        <span style="position: absolute; left: 1110px; top: 28px; z-index: 0;">Game Time: <span id="timer"></span></span>
-        <span style="position: absolute; left: 1000px; top: 28px; z-index: 0;">Score: <span id="score"></span></span>
+        <span class="scoreBox" style="position: absolute; left: 1110px; top: 28px; z-index: 0;">Game Time: <span id="timer"></span></span>
+        <span class="scoreBox"style="position: absolute; left: 1000px; top: 28px; z-index: 0;">Score: <span id="score"></span></span>
         <!--<div style="position: absolute; left: 5px; top: 28px; z-index: 0;">RunBoy x: <span id="runX"></span>, worldX: <span id="runWorldX"></span></div>
         <div style="position: absolute; left: 5px; top: 43px; z-index: 0;">RunBoy BoundingBox - Left: <span id="runLeft"></span>, Right: <span id="runRight"></span>, Top: <span id="runTop"></span>, Bottom: <span id="runBottom"></span></div>
         <div style="position: absolute; left: 5px; top: 58px; z-index: 0;">Block BoundingBox - Left: <span id="blockLeft"></span>, Right: <span id="blockRight"></span>, Top: <span id="blockTop"></span>, Bottom: <span id="blockBottom"></span></div>-->

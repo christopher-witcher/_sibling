@@ -500,15 +500,15 @@ RunBoy.prototype.draw = function (ctx) {
         }
     }
 
-    ctx.strokeStyle = "purple";
-    ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
+    //ctx.strokeStyle = "purple";
+    //ctx.strokeRect(this.boundingbox.x, this.boundingbox.y, this.boundingbox.width, this.boundingbox.height);
 
     ctx.strokeStyle = "#A4A4A4";
-    ctx.strokeRect(1000, 25, 215, 10);
+    ctx.strokeRect(1005, 25, 215, 10);
     ctx.fillStyle = "#D8D8D8";
-    ctx.fillRect(1001, 26, 213, 8);
+    ctx.fillRect(1006, 26, 213, 8);
     ctx.fillStyle = "#40FF00";
-    ctx.fillRect(1001, 26, (this.worldX / this.worldWidth) * 214, 8);
+    ctx.fillRect(1006, 26, (this.worldX / this.worldWidth) * 214, 8);
 };
 
 RunBoy.prototype.didICollide = function () {

@@ -49,7 +49,7 @@ enemyList[1] = {
     standingHeight: 150,
     scaleBy: 0.9,
     jumpScaleBy: 1.2,
-    standingScale: 0.9
+    standingScale: 1.1
 };
 
 enemyList[2] = {
@@ -74,7 +74,7 @@ enemyList[2] = {
     standingHeight: 150,
     scaleBy:1,
     jumpScaleBy: 1.1,
-    standingScale: 1.3
+    standingScale: 1.1
 };
 
 enemyMoveDistance = 3;
@@ -90,8 +90,8 @@ function Enemy(game, startingX, startingY, jump) {
     } else {
         globalCurrentEnemy += 1;
     }
-    this.currentEnemy = globalCurrentEnemy;
-    
+    //this.currentEnemy = globalCurrentEnemy;
+    this.currentEnemy = 2;
     //Animations for the enemy.
     this.runRight = new Animation(ASSET_MANAGER.getAsset(heroSpriteSheet), enemyList[this.currentEnemy].runRightX, enemyList[this.currentEnemy].runRightY,
         enemyList[this.currentEnemy].runWidth, enemyList[this.currentEnemy].runHeight,
@@ -240,8 +240,8 @@ Enemy.prototype.draw = function (ctx) {
         }
     }
 
-    ctx.strokeStyle = "green";
-    ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
+    //ctx.strokeStyle = "green";
+    //ctx.strokeRect(this.boundingBox.x, this.boundingBox.y, this.boundingBox.width, this.boundingBox.height);
 };
 
 Enemy.prototype.didICollide = function () {

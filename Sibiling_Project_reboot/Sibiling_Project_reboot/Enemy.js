@@ -145,14 +145,10 @@ Enemy.prototype.update = function () {
                 duration = duration / this.jumpRight.totalTime;
                 this.height = (4 * duration - 4 * duration * duration) * maxHeight + 17;
 
-                this.y = this.baseHeight - this.height / 2;
-                console.log(this.jumpRight.isDone());
                 if (this.jumpRight.isDone()) {
-                    //console.log("here");
                     this.y = this.baseHeight;
                     this.jumpRight.elapsedTime = 0;
                     this.moveCount = 0;
-                    //console.log(this.moveCount);
                     this.myDirection = false;
                     this.standing = true;
                 }

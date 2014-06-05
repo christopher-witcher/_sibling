@@ -440,7 +440,18 @@ GameEngine.prototype.update = function () {
                 gameOver = true;
                 this.endGame();
             }
+            var backCanvas = document.getElementById('backColor');
+            if (Number(entity.time) < 30000) {
+                backCanvas.className = "morningBG";
+            } else if (Number(entity.time) >= 30000 && Number(entity.time) < 60000) {
+                backCanvas.className = "noonBG";
+            } else if (Number(entity.time) >= 60000 && Number(entity.time) < 90000) {
+                backCanvas.className = "eveningBG";
+            } else {
+                backCanvas.className = "nightBG";
+            }
         }
+
         // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
         // Update all entities' x value except Runboy

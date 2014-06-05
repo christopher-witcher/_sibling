@@ -11,8 +11,45 @@
         .scoreBox{
             position: absolute; text-align: center; margin-left: 0px; left: 280px; top: 120px; z-index: 0; font-size: 18px; color: red; text-shadow: 0 0 5px #F08080, 0 0 10px #F08080, 0 0 20px #F08080, 0 0 30px #F08080, 0 0 40px #F08080; 
         }
-        .morningBG{
-
+        .morningBG {
+            background: -webkit-linear-gradient(top, yellow 0%, white 100%);
+            background: -linear-gradient(top, yellow 0%, white 100%);
+            border: 0;
+            position: absolute;
+            border-radius: 20px;
+            left: 0;
+            top: 23px;
+            z-index: -2;
+        }
+        .noonBG {
+            background: -webkit-linear-gradient(top, skyblue 0%, #fff 100%);
+            background: -linear-gradient(top, skyblue 0%, white 100%);
+            border: 0;
+            position: absolute;
+            border-radius: 20px;
+            left: 0;
+            top: 23px;
+            z-index: -2;
+        }
+        .eveningBG {
+            background: -webkit-linear-gradient(top, red 0%, #fff 100%);
+            background: -linear-gradient(top, red 0%, white 100%);
+            border: 0;
+            position: absolute;
+            border-radius: 20px;
+            left: 0;
+            top: 23px;
+            z-index: -2;
+        }
+        .nightBG {
+            background: -webkit-linear-gradient(top, black 0%, #fff 100%);
+            background: -linear-gradient(top, black 0%, white 100%);
+            border: 0;
+            position: absolute;
+            border-radius: 20px;
+            left: 0;
+            top: 23px;
+            z-index: -2;
         }
     </style>
 </head>
@@ -21,10 +58,9 @@
     <canvas id="world" width="1250" height="600"
             style="-moz-box-shadow: 10px 10px 5px #808080; -webkit-box-shadow: 10px 10px 5px #808080; box-shadow: 10px 10px 5px #808080;
          -webkit-border-radius: 20px; -moz-border-radius: 20px; border-radius: 20px; border: 0; position: absolute; left: 0; top: 23px; z-index: 0; 
-         background: -moz-linear-gradient(top, yellow 0%, #fff 100%); background-image: url('CityBackground.png'); "></canvas>
+         background-image: url('CityBackground.png'); "></canvas>
 
-    <canvas id="backColor" width="1250" height="600" style="background: -webkit-linear-gradient(top, black 0%, #fff 100%); 
-        background: -linear-gradient(top, black 0%, black 100%); border: 0; position: absolute; border-radius: 20px; left: 0; top: 23px; z-index: -2; "></canvas>
+    <canvas id="backColor" width="1250" height="600" class="morningBG"></canvas>
 
         <div style="position: absolute; left: 5px; top: 0px; z-index: 0;">Sibling Rivalry - S. Lantz | T. Nunn | C. Witcher</div>
         <span class="scoreBox" style="position: absolute; left: 1110px; top: 28px; z-index: 0;">Game Time: <span id="timer"></span></span>

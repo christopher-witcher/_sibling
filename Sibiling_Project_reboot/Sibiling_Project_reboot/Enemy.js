@@ -140,7 +140,7 @@ Enemy.prototype.update = function () {
     if (this.jump) {
 
         //start jump
-        if (this.moveCount === maxMove * 2) {
+        if (this.moveCount === maxMove) {
 
             this.standing = false;
 

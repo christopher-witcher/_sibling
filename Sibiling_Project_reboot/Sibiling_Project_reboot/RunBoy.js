@@ -539,7 +539,8 @@ RunBoy.prototype.didICollide = function () {
         }
         else if (result && entity instanceof Enemy && !this.rewinding) {
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            this.game.playSounds(document.getElementById('rewindSound'));
+            
+            document.getElementById('rewindSound').play();
             this.rewindCount++;
             // 5/28 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
             this.rewindMe();

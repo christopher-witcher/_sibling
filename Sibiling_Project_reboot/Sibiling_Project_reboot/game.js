@@ -1191,8 +1191,8 @@ boardPieces[6] = function (startX, game, extra) {
         game.addEntity(lastEnemy);
     }
     rectPlatform(game, startX + 75, 175, 8, 1, false);
-    startX += rectPlatform(game, startX + 25, 375, 8, 1, true);
-    startX += rectPlatform(game, startX + 25, 225, 1, 4, false);
+    startX += rectPlatform(game, startX + 25, 425, 8, 1, true);
+    //startX += rectPlatform(game, startX + 25, 225, 1, 4, false);
     game.addEntity(specialItem);
      
     return startX;
